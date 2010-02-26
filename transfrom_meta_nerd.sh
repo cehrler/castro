@@ -2,7 +2,7 @@
 
 cd data
 
-for file in *.meta; do
+for file in *.ner; do
     name=`basename "${file}" .meta`
     python ../scripts/extract_ner.py ${name}
 done
