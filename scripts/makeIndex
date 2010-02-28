@@ -1,0 +1,132 @@
+#!/usr/bin/perl
+
+use strict;
+
+my $neListFile = $ARGV[0];
+my $inpFilesList = $ARGV[1];
+
+open(NELIST, "<$neListFile") || die "Can't open $neListFile";
+open(INPFILES, "<$inpFilesList") || die "Can't open $inpFilesList";
+
+my %neTypeCounts = ();
+my %NE = ();
+my $neTyp = "";
+my $ind = 1;
+my %index = ();
+
+while (my $line = <NELIST>)
+{
+	chomp($line);
+	if ($line =~ m/^<(.*)>$/)
+	{
+	   if ($neTyp ne "")
+	   {
+	   	 $neTypeCounts{$neTyp} = $ind - 1;
+	   	 
+	   }
+	   $neTyp = $1;
+	   $NE{$neTyp} = {};
+	   print "neTyp = $neTyp\n";
+	   $ind = 1;
+	}
+	else
+	{
+		print "line: $line\n";
+		if ($line =~ m/^##(.*)$/)
+		{
+		  $NE{$neTyp}{$1} = $ind;
+		  print "NE{$neTyp}{$1} = ".$NE{$neTyp}{$1}."\n";
+		  $ind++;
+		}
+		else
+		{
+			#die "Line doesn't match: $line";
+		}
+	}
+
+}
+
+close(NELIST);
+
+my $neName;
+my $neCount;
+
+my $counter = 0;
+
+while (my $line = <INPFILES>)
+{
+	chomp($line);
+	my $mod = "";
+	
+	open(FILE, "<$line") || die "Can't open file $line";
+	print "$line\n";
+	while (my $radek = <FILE>)
+	{
+		chomp($radek);
+	    print "processing: $radek\n";
+		if ($radek =~ m/^<(.*)>$/)
+		{
+			if (defined($NE{$1}))
+			{
+				$mod = $1;
+			}
+			else
+			{
+				print "Undefined NE: $1\n";				
+				$mod = "";
+			}
+		}
+		elsif ($mod ne "")
+		{
+			if ($radek =~ m/^(.*) ([0-9]+)$/)
+			{
+			  $neName = $1;
+			  $neCount = $2;
+			  if (!(defined($NE{$mod}{$neName})))
+			  {
+			  	die "Undefined named entity: $mod->$neName";
+			  }
+			  
+			  $index{$mod}[$counter][$NE{$mod}{$neName} - 1] = $neCount;
+			  print "{$mod}[$counter][".$NE{$mod}{$neName}." - 1] = ".$index{$mod}[$counter][$NE{$mod}{$neName}]."\n";
+			}
+			else
+			{
+				die "NE line doesn't match: $radek";
+			}
+			
+		}
+		
+	}
+	
+	$counter++;
+	close(FILE);
+}
+
+close(INPFILES);
+
+foreach my $key (keys %index)
+{
+  open(INDEXOUT, ">$key.ind");
+
+  my @indF = @{$index{$key}};
+  print "number of speeches: ".scalar(@indF)."\n";
+  for (my $i = 0; $i < scalar(@indF); $i++)
+  {
+  	my @indOF = @{$indF[$i]};
+  	for (my $i = 0; $i < $neTypeCounts{$key}; $i++)
+  	{
+  	  my $val = $indOF[$i];
+  	  if ($val eq "") { print INDEXOUT "0 "; }
+  	  else
+  	  {
+  	    print INDEXOUT "$val "; 
+  	  }
+  	}
+  	print INDEXOUT "\n";
+  }
+
+  close(INDEXOUT);
+  
+}
+
