@@ -1,5 +1,5 @@
 
-public class Edge implements Comparable {
+public class Edge implements Comparable<Object> {
 	private Node node1;
 	private Node node2;
 	

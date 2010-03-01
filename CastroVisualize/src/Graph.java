@@ -8,7 +8,8 @@ public class Graph {
 	private List<Edge> edges;
 	
 	public Graph() {
-		// nothing to do here yet
+		nodes = new ArrayList<Node>();
+		edges = new ArrayList<Edge>();
 	}
 	
 	public List<Node> getNodes() {

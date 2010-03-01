@@ -5,7 +5,7 @@ import java.util.TreeMap;
 
 
 
-class Node implements Comparable {
+class Node implements Comparable<Object> {
 	
 	private Integer id;
 	
