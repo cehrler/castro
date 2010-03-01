@@ -1,0 +1,252 @@
+#!/usr/bin/perl
+
+use strict;
+use File::Basename;
+
+my @entries = ();
+my %places = ();
+my %sources = ();
+my %authors = ();
+my %reportnbrs = ();
+my %doctypes = ();
+
+$places{"NULL"} = "NULL";
+$sources{"NULL"} = "NULL";
+$authors{"NULL"} = "NULL";
+$reportnbrs{"NULL"} = "NULL";
+$doctypes{"NULL"} = "NULL";
+
+my %categories = ();
+my %nullCategories = ();
+my $placeIndex = 1;
+my $sourceIndex = 1;
+my $authorIndex = 1;
+my $reportnbrIndex = 1;
+my $doctypeIndex = 1;
+
+my $speech_id_counter = 0;
+
+sub formatDate {
+	my $date = shift;
+	return substr($date, 0, 4)."-".substr($date, 4, 2)."-".substr($date, 6, 2);
+}
+
+sub checkParanthesis {
+	my $s = shift;
+	$s =~ s/([^\\])"/\1\\"/g;
+	$s =~ s/^"/\\"/g;
+	return $s;
+}
+
+sub parseFile {
+	my $fileName = shift;
+	my $entry;
+	
+	my $category;
+	my $value;
+	
+	open(METAFILE, "<../data/$fileName.meta") || die "Can't open meta-info file ../data/$fileName.meta";
+	
+	while (my $line = <METAFILE>)
+	{
+		chomp($line);		
+		
+		if ($line =~ m/^([^ ]+) (.+)$/)
+		{
+			$category = $1;
+			
+			if ($category eq "DATE") { $category = "SPEECH_DATE"; }
+			if ($category eq "INIT" || $category eq "HEADER" || (! $category =~ m/^[A-Z_]+/) ) { next; }
+
+			if ($category ne "DOCUMENT_TYPE" && $category ne "PLACE" && $category ne "REPORT_DATE" && $category ne "REPOR_NBR" && $category ne "SPEECH_DATE" && $category ne "AUTHOR" && $category ne "SOURCE" && $category ne "HEADLINE") 
+			{
+			  next; 
+			}
+			
+			$value = $2;
+			
+			$categories{$1} = 1;
+			
+			if ($category eq "PLACE" && !defined($places{$value})) { $places{$value} = $placeIndex; $placeIndex++ }
+			if ($category eq "SOURCE" && !defined($sources{$value})) { $sources{$value} = $sourceIndex; $sourceIndex++ }
+			if ($category eq "AUTHOR" && !defined($authors{$value})) { $authors{$value} = $authorIndex; $authorIndex++ }
+			if ($category eq "REPORT_NBR" && !defined($reportnbrs{$value})) { $reportnbrs{$value} = $reportnbrIndex; $reportnbrIndex++ }
+			if ($category eq "DOCUMENT_TYPE" && !defined($doctypes{$value})) { $doctypes{$value} = $doctypeIndex; $doctypeIndex++ }
+			
+			if ($category eq "YEAR") { next; }
+			if ($category eq "SPEECH_DATE" || $category eq "REPORT_DATE")
+			{
+				$value = formatDate($value);
+			}
+			
+			$value = checkParanthesis($value);
+			
+			$entry->{$category} = $value;
+			
+		}
+		elsif ($line =~ m/^([^ ]+) $/)
+		{
+			$category = $1;
+			if ($category eq "DATE") { $category = "SPEECH_DATE"; }
+			if ($category ne "DOCUMENT_TYPE" && $category ne "PLACE" && $category ne "REPORT_DATE" && $category ne "REPOR_NBR" && $category ne "SPEECH_DATE" && $category ne "AUTHOR" && $category ne "SOURCE" && $category ne "HEADLINE") 
+			{
+			  next; 
+			}
+			if ($category eq "INIT" || $category eq "HEADER") { next; }
+
+			$nullCategories{$category} = 1;
+			$entry->{$category} = "NULL";
+		}
+		else
+		{
+			#die "Can't parse line $line, file: $fileName";
+		}
+		
+	}
+	
+	close(METAFILE);
+	
+	my $text = `cat ../data/$fileName.text`;
+	$text = checkParanthesis($text);
+	if ($text eq "") { die "Empty content of ../data/$fileName.text ???"; }
+	$entry->{"SPEECH_TEXT"} = $text;
+	$entry->{"FILENAME"} = $fileName;
+	$speech_id_counter++;
+	$entry->{"SPEECH_ID"} = $speech_id_counter;
+	push(@entries, $entry);
+}
+
+print "DROP DATABASE castro_db;\n";
+print "CREATE DATABASE castro_db;\n";
+print "use castro_db;\n\n";
+print "CREATE TABLE speech (\
+SPEECH_ID INT NOT NULL PRIMARY KEY,\
+FILENAME VARCHAR(20),\
+DOCUMENT_TYPE_ID INT,\
+PLACE_ID INT,\
+REPORT_DATE DATE,\
+REPORT_NBR_ID INT,\
+SPEECH_DATE DATE,\
+AUTHOR_ID INT,\
+SOURCE_ID INT,\
+HEADLINE VARCHAR(200),\
+SPEECH_TEXT MEDIUMTEXT );\n\n";
+
+print "CREATE TABLE document_type (DOCTYPE_ID INT NOT NULL PRIMARY KEY, VALUE VARCHAR(20) NOT NULL); \n";
+print "CREATE TABLE place (PLACE_ID INT NOT NULL PRIMARY KEY, VALUE VARCHAR(50) NOT NULL); \n";
+print "CREATE TABLE source (SOURCE_ID INT NOT NULL PRIMARY KEY, VALUE VARCHAR(50) NOT NULL); \n";
+print "CREATE TABLE author (AUTHOR_ID INT NOT NULL PRIMARY KEY, VALUE VARCHAR(50) NOT NULL); \n";
+print "CREATE TABLE report_nbr (REPORTNBR_ID INT NOT NULL PRIMARY KEY, VALUE VARCHAR(20) NOT NULL); \n\n";
+
+
+open(FILES, ">./filelist.txt") || die "Can't open >./filelist.txt";
+
+my $files_s = `find ../data -name *\.meta`;
+
+my @files = sort split(/\n/, $files_s);
+
+for (my $i = 0; $i < scalar(@files); $i++)
+{
+	print FILES basename($files[$i])."\n";
+	
+	my $withoutSuff = substr(basename($files[$i]), 0, index(basename($files[$i]), '.'));
+	
+	parseFile($withoutSuff);
+	
+}
+
+for (my $i = 0; $i < scalar(@entries); $i++)
+{
+	print "INSERT INTO speech (";
+	my $first = 1;
+	foreach my $key (keys %{$entries[$i]})
+	{
+		if ($key ne "PLACE" && $key ne "SOURCE" && $key ne "AUTHOR" && $key ne "REPORT_NBR" && $key ne "DOCUMENT_TYPE" && $key ne "SPEECH_ID" && $key ne "SPEECH_TEXT" && $key ne "HEADLINE" && $key ne "SPEECH_DATE" && $key ne "REPORT_DATE" && $key ne "FILENAME") { next; }
+		
+		if ($first != 1) { print ", "; }
+		print "$key";
+		if ($key eq "PLACE" || $key eq "SOURCE" || $key eq "AUTHOR" || $key eq "REPORT_NBR" || $key eq "DOCUMENT_TYPE") { print "_ID"; }
+		$first = 0;
+		
+	}
+	print ") VALUES (";
+	$first = 1;
+	foreach my $key (keys %{$entries[$i]})
+	{		
+		if ($key ne "PLACE" && $key ne "SOURCE" && $key ne "AUTHOR" && $key ne "REPORT_NBR" && $key ne "DOCUMENT_TYPE" && $key ne "SPEECH_ID" && $key ne "SPEECH_TEXT" && $key ne "HEADLINE" && $key ne "SPEECH_DATE" && $key ne "REPORT_DATE" && $key ne "FILENAME") { next; }
+		if ($first != 1) { print ", "; }
+		if ($key eq "PLACE") { print $places{$entries[$i]->{$key}}; }
+		elsif ($key eq "SOURCE") { print $sources{$entries[$i]->{$key}}; }
+		elsif ($key eq "AUTHOR") { print $authors{$entries[$i]->{$key}}; }
+		elsif ($key eq "REPORT_NBR") 
+		{ 
+		  if (!defined($reportnbrs{$entries[$i]->{$key}})) 
+		  { 
+		    die "not defines:".$entries[$i]->{$key}; 
+		  } 
+		  print $reportnbrs{$entries[$i]->{$key}}; 
+		}
+		elsif ($key eq "DOCUMENT_TYPE") { print $doctypes{$entries[$i]->{$key}}; }
+		elsif ($key eq "SPEECH_ID") { print $entries[$i]->{$key}; }
+		else { print "\"".$entries[$i]->{$key}."\""; }
+		$first = 0;
+	}
+	print ");\n";
+}
+
+print "\n";
+
+foreach my $key (keys %places)
+{
+	if ($key eq "NULL") { next; }
+	print "INSERT INTO place (PLACE_ID, VALUE) VALUES (".$places{$key}.", \"$key\");\n";
+}
+
+print "\n";
+
+foreach my $key (keys %sources)
+{
+	if ($key eq "NULL") { next; }
+	print "INSERT INTO source (SOURCE_ID, VALUE) VALUES (".$sources{$key}.", \"$key\");\n";
+}
+
+print "\n";
+
+foreach my $key (keys %authors)
+{
+	if ($key eq "NULL") { next; }
+	print "INSERT INTO author (AUTHOR_ID, VALUE) VALUES (".$authors{$key}.", \"$key\");\n";
+}
+
+print "\n";
+
+foreach my $key (keys %reportnbrs)
+{
+	if ($key eq "NULL") { next; }
+	print "INSERT INTO report_nbr (REPORTNBR_ID, VALUE) VALUES (".$reportnbrs{$key}.", \"$key\");\n";
+}
+
+print "\n";
+
+foreach my $key (keys %doctypes)
+{
+	if ($key eq "NULL") { next; }
+	print "INSERT INTO document_type (DOCTYPE_ID, VALUE) VALUES (".$doctypes{$key}.", \"$key\");\n";
+}
+
+print "\n";
+
+#print "\nCategories:\n";
+#foreach my $key (keys %categories)
+#{
+#	print "$key\n";
+#}
+
+#print "\nNullCategories:\n";
+#foreach my $key (keys %nullCategories)
+#{
+#	print "$key\n";
+#}
+
+
+close(FILES);
