@@ -1,0 +1,26 @@
+#!/usr/bin/perl
+
+use strict;
+
+my @indMat = ();
+my @row = ();
+my $sum = 0;
+
+while (my $line = <STDIN>)
+{
+	@row = split(/ /, $line);
+	$sum = 0;
+	foreach my $cell (@row)
+	{
+		$sum += $cell;
+	}
+	
+	for (my $i = 0; $i < scalar(@row); $i++)
+	{
+		$row[$i] = $row[$i] / $sum;
+	}
+	
+	print join(' ', @row)."\n";
+	
+	
+}

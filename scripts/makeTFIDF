@@ -1,0 +1,51 @@
+#!/usr/bin/perl
+
+use strict;
+
+my @indMat = ();
+my @row = ();
+my $sum = 0;
+my @docsPerTerm = ();
+
+while (my $line = <STDIN>)
+{
+	chomp($line);
+	@row = split(/ /, $line);
+	
+	for (my $i = 0; $i < scalar(@row); $i++)
+	{
+		if ($row[$i] > 0) { $docsPerTerm[$i]++; }		
+	}
+	
+	push(@indMat, $line);
+	#print join(' ', $row)."\n";
+	
+	
+}
+
+my $numDocs = scalar(@indMat);
+
+foreach (my $j = 0; $j < scalar(@indMat); $j++)
+{
+	@row = split(/ /, $indMat[$j]);
+	for (my $i = 0; $i < scalar(@row); $i++)
+	{
+		my $logVal = $docsPerTerm[$i] > 0 ? log($numDocs / $docsPerTerm[$i]) : 0;
+		$row[$i] = $row[$i] * $logVal;
+	}
+
+	$sum = 0;
+	foreach my $cell (@row)
+	{
+		$sum += $cell;
+	}
+
+	if ($sum == 0) { $sum = 1; }
+	for (my $i = 0; $i < scalar(@row); $i++)
+	{	
+		$row[$i] = $row[$i] / $sum;
+	}
+
+	
+	print join(' ', @row)."\n";
+}
