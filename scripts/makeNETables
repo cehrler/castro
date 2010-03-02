@@ -1,0 +1,152 @@
+#!/usr/bin/perl
+
+use strict;
+
+print "USE castro_db;\n";
+print "drop table spech_NE;\n";
+print "drop table NE_class;\n";
+print "drop table NE;\n";
+
+print "CREATE TABLE speech_NE (SPEECH_ID INT NOT NULL, NE_ID INT NOT NULL, COUNT INT NOT NULL);\n";
+print "CREATE TABLE NE_class (NE_CLASS_ID INT NOT NULL PRIMARY KEY, TYPE VARCHAR(20) NOT NULL, VALUE VARCHAR(100) NOT NULL, INDEX_COL INT NOT NULL);\n";
+print "CREATE TABLE NE (NE_ID INT NOT NULL PRIMARY KEY, NE_CLASS_ID INT NOT NULL, VALUE VARCHAR(100) NOT NULL);\n\n";
+
+sub checkParanthesis {
+	my $s = shift;
+	$s =~ s/([^\\])"/\1\\"/g;
+	$s =~ s/^"/\\"/g;
+	return $s;
+}
+
+my $CorRes = $ARGV[0];
+my $fileList = $ARGV[1];
+
+open(FILE, "<$CorRes") || die "Can't open cor-res file $CorRes";
+
+my %neClass = ();
+my %ne = ();
+
+my $currNEClass = "";
+my $currNEClassID = 0;
+my $currNEID = 0;
+my $currNEType = "";
+
+my %currIndexCol = ();
+
+while (my $line = <FILE>)
+{
+	chomp($line);
+	$line = checkParanthesis($line);
+
+	if ($line eq "<PERSONS>")
+	{
+		$currNEType = "PERSONS";        
+	}
+	elsif ($line eq "<LOCATIONS>")
+	{
+		$currNEType = "LOCATIONS";	
+	}
+	elsif ($line eq "<ORGANIZATIONS>")
+	{
+		$currNEType = "ORGANIZATIONS";
+	}
+	elsif ($line eq "<TEXT>")
+	{
+		$currNEType = "";
+	}
+	elsif (substr($line, 0, 2) eq "</")
+	{
+		next;
+	}	
+	elsif ($line =~ m/^##(.*)$/)
+	{
+		$currNEClass = $1;
+		$currNEClassID++;
+		$currIndexCol{$currNEType}++;
+		$neClass{"$currNEType,$currNEClass"}->{"ID"} = $currNEClassID;
+		$neClass{"$currNEType,$currNEClass"}->{"Type"} = $currNEType;
+		$neClass{"$currNEType,$currNEClass"}->{"Value"} = $currNEClass;
+		
+		print "INSERT INTO NE_class (NE_CLASS_ID, TYPE, VALUE, INDEX_COL) VALUES ($currNEClassID, \"$currNEType\", \"$currNEClass\", ".$currIndexCol{$currNEType}.");\n";
+	}
+	elsif ($line ne "")
+	{
+		$currNEID++;
+		$ne{"$currNEType,$line"}->{"ID"} = $currNEID;
+		$ne{"$currNEType,$line"}->{"ClassID"} = $currNEClassID;
+		$ne{"$currNEType,$line"}->{"Value"} = $line;
+			
+		print "INSERT INTO NE (NE_ID, NE_CLASS_ID, VALUE) VALUES ($currNEID, $currNEClassID, \"$line\");\n";
+	}
+
+}
+
+
+open(FILELIST, "<$fileList") || die "Can't open filelist $fileList";
+
+my $neName;
+my $neCount;
+my $file;
+my $currSpeechID;
+
+$currNEType = "";
+
+
+while (my $radek = <FILELIST>)
+{
+	chomp($radek);
+	
+	if ($radek =~ m/^([0-9]+) (.*)$/)
+	{
+		$file = $2;
+		$currSpeechID = $1;
+	} 
+	else
+	{
+		die "FILELIST: line $radek doesn't match!";
+	}
+	
+	open(FILE, "<$file") || die "Can't open file: $file";
+	
+	while (my $line = <FILE>)
+	{
+		chomp($line);
+		$line = checkParanthesis($line);
+		
+		if ($line eq "<TEXT>")
+		{
+			$currNEType = "";
+		}
+		elsif ($line =~ m/^<([^\/].+)>$/ && ($line eq "<PERSONS>" || $line eq "<LOCATIONS>" || $line eq "<ORGANIZATIONS>"))
+		{
+			$currNEType = $1;
+		}		
+		elsif (substr($line, 0, 2) eq "</")
+		{
+			next;
+		}
+		elsif ($currNEType ne "")
+		{
+			if ($line =~ m/^(.*) ([0-9]+)$/)
+			{
+				$neName = $1;
+				$neCount = $2;
+				
+				if (!defined($ne{"$currNEType,$neName"}))
+				{
+					die "Undefined NE:$currNEType,$neName!!!";
+				}
+				
+				print "INSERT INTO speech_NE (SPEECH_ID, NE_ID, COUNT) VALUES ($currSpeechID, ".$ne{"$currNEType,$neName"}->{"ID"}.", $neCount);\n";
+			}
+			else
+			{
+				die "Line $line doesn't match fileName = $file";
+			}
+			
+		}
+	}
+	close(FILE);
+}
+
+
