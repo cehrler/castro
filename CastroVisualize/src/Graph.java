@@ -12,6 +12,11 @@ public class Graph {
 		edges = new ArrayList<Edge>();
 	}
 	
+	public Graph(List<Node> ln, List<Edge> le) {
+		nodes = ln;
+		edges = le;
+	}
+	
 	public List<Node> getNodes() {
 		return nodes;
 	}
@@ -20,7 +25,7 @@ public class Graph {
 		return edges;
 	}
 	
-	public Node addNode(Integer id) {
+	/*public Node addNode(Integer id) {
 		Node node = new Node(id);
 		nodes.add(node);
 		return node;
@@ -37,5 +42,5 @@ public class Graph {
 		v.addEdge(u, strength);
 		
 		return edge;
-	}
+	}*/
 }
