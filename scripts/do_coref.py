@@ -14,7 +14,7 @@ THRESHOLD = 1
 SPECTRUM = 2
 
 def main():
-	ner_files =  os.popen("ls ../data/1959*.nerd").readlines()
+	ner_files =  os.popen("ls ../data/*.nerd").readlines()
 	
 	persons = []
 	locations = []
