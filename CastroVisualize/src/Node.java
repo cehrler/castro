@@ -106,6 +106,10 @@ class Node implements Comparable<Object> {
 	public String getSpeech_text() {
 		return speech_text;
 	}
+	
+	public Integer getSpeech_id() {
+		return id;
+	}
 
 	public int compareTo(Object obj) {
 		if(obj == null) {
