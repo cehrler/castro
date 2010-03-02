@@ -1,0 +1,92 @@
+#!/usr/bin/perl
+
+use strict;
+
+my @files = split(/\n/, `find ../data -name *\.nerd`);
+
+my %persons = ();
+my %locations = ();
+my %organizations = ();
+
+my $neName;
+my $neCount;
+
+my $state = 0;
+
+foreach my $file (@files)
+{
+	open(FILE, "<$file") || die "Can't open file: $file";
+	
+	while (my $line = <FILE>)
+	{
+		chomp($line);
+		
+		if ($line eq "<PERSONS>")
+		{
+			$state = 1;
+		}
+		elsif ($line eq "<LOCATIONS>")
+		{
+			$state = 2;
+		}
+		elsif ($line eq "<ORGANIZATIONS>")
+		{
+			$state = 3;
+		}
+		elsif ($line eq "<TEXT>")
+		{
+			$state = 0;
+		}
+		elsif (substr($line, 0, 2) eq "</")
+		{
+			next;
+		}
+		elsif ($state > 0)
+		{
+			if ($line =~ m/^(.*) ([0-9]+)$/)
+			{
+				$neName = $1;
+				$neCount = $2;
+			}
+			else
+			{
+				die "Line $line doesn't match";
+			}
+			
+			if ($state == 1)
+			{
+				$persons{$neName} = 1; #dummy value, not important
+			}
+			elsif ($state == 2)
+			{
+				$locations{$neName} = 1;
+			}
+			elsif ($state == 3)
+			{
+				$organizations{$neName} = 1;
+			}
+		}
+	}
+}
+
+print "<PERSONS>\n";
+foreach my $key (sort keys %persons)
+{
+	print "##$key\n$key\n";
+}
+print "</PERSONS>\n";
+
+print "<LOCATIONS>\n";
+foreach my $key (sort keys %locations)
+{
+	print "##$key\n$key\n";
+}
+print "</LOCATIONS>\n";
+
+print "<ORGANIZATIONS>\n";
+foreach my $key (sort keys %organizations)
+{
+	print "##$key\n$key\n";
+}
+print "</ORGANIZATIONS>";
+
