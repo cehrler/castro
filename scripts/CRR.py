@@ -10,7 +10,6 @@ Generates a dictionary of named entities and the form(s) in which they may appea
 '''
 
 import os, sys, re
-import nltk
 
 # dictionary of all named entities in corpus
 entities = {}
@@ -75,7 +74,7 @@ class CRRFile:
                     entity = self.namedEnts[entType][typeDictKeys[i]]
                     match = typeDictKeys[i]
                     entity.addSimilarityScore(match, score)
-                    print typeDictKeys[i], "|", typeDictKeys[j], score
+                    print score, typeDictKeys[i], "|", typeDictKeys[j] 
 
     '''
     Checks presence of named entity in dictionary-- if in dictionary, increase count by 1. If not, add it to dictionary beforehand
