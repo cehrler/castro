@@ -4,7 +4,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.List;
 import java.util.ArrayList;
-
+import java.util.HashMap;
 
 
 class Node implements Comparable<Object> {
@@ -27,7 +27,7 @@ class Node implements Comparable<Object> {
 	private Map<String, Integer> ne_organization;
 	
 	// list of neighbors
-	private Map<Node, Double> neighbors;
+	private Map<Node, Double> neighbors = new HashMap<Node, Double>();
 	
 	public Node(Integer id) {
 		this.id = id;
