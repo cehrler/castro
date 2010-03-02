@@ -4,13 +4,12 @@
 '''
 Created on 27.02.2010
 
-Generates a dictionary of named entities and the form(s) in which they may appear.
+Generates a similarity matrix for each named entity
 
 @author: Todd Shore
 '''
 
 import os, sys, re
-import nltk
 
 # dictionary of all named entities in corpus
 entities = {}
@@ -146,6 +145,9 @@ def normalizeString(string):
     return re.sub("\s+" , " ", string)
         
 if __name__ == '__main__':
+    if len(sys.argv) != 2:
+        echo("Usage: " + sys.argv[0] + " <infile>")
+        exit
     crr = CRRFile()
     crr.readFile(sys.argv[1])
     crr.calculateSimilarities()
