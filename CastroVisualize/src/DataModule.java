@@ -4,6 +4,12 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class DataModule {
+
+	//sample use:
+	//		DataModule.Init();
+	//	    Graph g = DataModule.getGraph("1970-01-01", "1980-01-01", "NULL", "NULL", "interview");
+	//      So far - only Graph.nodes properly initialized
+
 	
 	private static Connection connection;
 	
@@ -19,13 +25,20 @@ public class DataModule {
 	
 	
 	
-	public static Graph getGraph()
+	public static Graph getGraph(String SinceDate, String TillDate, String Place, String Author, String DocType)
 	{
+		if (SinceDate != "NULL") SinceDate = "\"" + SinceDate + "\"";
+		if (TillDate != "NULL") TillDate = "\"" + TillDate + "\"";
+		if (Place != "NULL") Place = "\"" + Place + "\"";
+		if (Author != "NULL") Author = "\"" + Author + "\"";
+		if (DocType != "NULL") DocType = "\"" + DocType + "\"";
+
 		List<Node> ln = new ArrayList<Node>();
 		try {
 			java.sql.Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
-                    ResultSet.CONCUR_READ_ONLY);			
-			ResultSet srs = stmt.executeQuery("CALL getNodes(NULL, NULL);");
+                    ResultSet.CONCUR_READ_ONLY);	
+			System.err.println("CALL getNodes(" + SinceDate + ", " + TillDate + ", " + Place + ", " + Author + ", " + DocType + ");");
+			ResultSet srs = stmt.executeQuery("CALL getNodes(" + SinceDate + ", " + TillDate + ", " + Place + ", " + Author + ", " + DocType + ");");
 			
 			while (srs.next()) 
 			{
