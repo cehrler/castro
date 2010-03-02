@@ -81,6 +81,8 @@ public class DataModule {
 		if (DocType != "NULL") DocType = "\"" + DocType + "\"";
 
 		List<Node> ln = new ArrayList<Node>();
+		//Map<Integer, Node> idToNode = new HashMap<Integer, Node>();
+		List<Edge> le = new ArrayList<Edge>();
 		try {
 			java.sql.Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_READ_ONLY);	
@@ -95,6 +97,7 @@ public class DataModule {
 		        			"", srs.getString("SPEECH_DATE"));
 		        	
 		        	ln.add(nod);
+		        	//idToNode.put(nod.getSpeech_id(), nod);
 			}
 			
 			
@@ -106,8 +109,34 @@ public class DataModule {
 		
 		Map<Integer,Integer> id_aux = new HashMap<Integer, Integer>();
 		
+		for (int i = 0; i < ln.size(); i++)
+		{
+			id_aux.put(ln.get(i).getSpeech_id(), 1);
+		}
 		
-		return new Graph(ln, null);
+		Double distance;
+		
+		for (int i = 0; i < ln.size(); i++)
+		{
+			Node n = ln.get(i);
+			for (int j = 0; j < ln.size(); j++)
+			{
+				if (i == j) continue;
+				distance = distMat.get(i).get(j);
+				
+				if (distance < dist_threshold)
+				{
+					Edge e = new Edge(ln.get(i), ln.get(j), distance);
+					le.add(e);
+					ln.get(i).addEdge(ln.get(j), distance);
+				}
+			}
+			
+		}
+		
+		System.err.println("Number of edges: " + le.size());
+		
+		return new Graph(ln, le);
 		
 	}
 	
