@@ -1,3 +1,16 @@
+//============================================================================
+//Name        : VMindex.java
+//Author      : Michal Richter, Michalisek
+//Version     :
+//Copyright   : This product is licensed under Fidel Castro restricted software license. 
+//              Use of any kind is considered a breach of copyright law. 
+//              You are not allowed to use this for any purpose; neither commercial 
+//              nor non-commercial.
+//Description : Vector model index class - used for sorting of retrieved speeches(Nodes)
+//              and eventually for computing similarity matrix
+//============================================================================
+
+
 package DataModulePackage;
 
 import java.io.BufferedReader;
@@ -21,6 +34,7 @@ public class VMindex {
 	
 	private Map<Integer, Double> sparseMat;
 	private List<Set<Integer> > neCells;
+	
 	//just because there is no standard Pair class in java
 	private Integer dummyMap(int a, int b)
 	{

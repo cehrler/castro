@@ -1,3 +1,16 @@
+//============================================================================
+// Name        : DataModule.java
+// Author      : Michal Richter, Michalisek
+// Version     :
+// Copyright   : This product is licensed under Fidel Castro restricted software license. 
+//               Use of any kind is considered a breach of copyright law. 
+//               You are not allowed to use this for any purpose; neither commercial 
+//               nor non-commercial.
+// Description : Graph data object is constructed from user query here - see getGraph function
+//               Need to be initialized first by Init();
+//============================================================================
+
+
 package DataModulePackage;
 
 import java.sql.*;
@@ -6,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
-import java.io.*;
 
 public class DataModule {
 
@@ -29,7 +41,6 @@ public class DataModule {
 		
 	//In the future this will be extended, now I use only 1 distance matrix
 	
-	private static Integer NumDocs = 0;
 	
 	private static SimMatrix simMatrix;
 	private static String simMatFile = "../DataModuleData/PERSONS.tfidf.sim";
@@ -45,6 +56,8 @@ public class DataModule {
 	private static String personsIndexFile = "../DataModuleData/PERSONS.tfidf.bin";
 	private static String locationsIndexFile = "../DataModuleData/LOCATIONS.tfidf.bin";
 	private static String organizationsIndexFile = "../DataModuleData/ORGANIZATIONS.tfidf.bin";
+	
+	private DataModule() {}
 	
 	public static void Init()
 	{
