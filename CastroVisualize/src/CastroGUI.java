@@ -1,5 +1,6 @@
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 
 import javax.swing.Box;
@@ -30,6 +31,7 @@ public class CastroGUI {
 	private JPanel panel_search;
 	private JComboBox search_year_start;
 	private JComboBox search_year_end;
+	private JComboBox search_type;
 	
 	private JTable table_search;
 	
@@ -77,8 +79,6 @@ public class CastroGUI {
 
 	private void initSearchPanel() {
 		panel_search = new JPanel();
-		panel_search.setLayout(new GridLayout(0,1));
-		
 		String[] years = new String[37];
 		for(int i = 0; i < years.length; ++i) {
 			years[i] = new Integer(1959 + i).toString();
@@ -86,16 +86,26 @@ public class CastroGUI {
 		
 		search_year_start = new JComboBox();
 		search_year_end = new JComboBox();
+		search_type = new JComboBox();
 		
 		for(String s : years) {
 			search_year_start.addItem(s);
 			search_year_end.addItem(s);
 		}
+		Box vertical_box = Box.createVerticalBox();
+		search_type.addItem("All");
+		search_type.addItem("Speech");
+		search_type.addItem("Interview");
+		search_type.addItem("Report");
 		
-		panel_search.add(new JLabel("Select year from:"));
-		panel_search.add(search_year_start);
-		panel_search.add(new JLabel("Select year until:"));
-		panel_search.add(search_year_end);
+		vertical_box.add(new JLabel("Select year from:"));
+		vertical_box.add(search_year_start);
+		vertical_box.add(new JLabel("Select year until:"));
+		vertical_box.add(search_year_end);
+		vertical_box.add(new JLabel("Type:"));
+		vertical_box.add(search_type);
+		
+		panel_search.add(vertical_box, BorderLayout.WEST);
 	}
 	
 	private void initSearchTable() {
