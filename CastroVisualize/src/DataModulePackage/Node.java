@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
-class Node implements Comparable<Object> {
+public class Node implements Comparable<Object> {
 	
 	private Integer id;
 	
@@ -22,6 +22,7 @@ class Node implements Comparable<Object> {
 	private String document_type;
 	private String speech_text;
 	private String speech_date;
+	private Double relevance;
 	
 	// date for named entities
 	private Map<String, Integer> ne_person;
@@ -30,6 +31,16 @@ class Node implements Comparable<Object> {
 	
 	// list of neighbors
 	private Map<Node, Double> neighbors = new HashMap<Node, Double>();
+	
+	public void SetRelevance(Double rel)
+	{
+		relevance = rel;
+	}
+	
+	public Double GetRelevance()
+	{
+		return relevance;
+	}
 	
 	public Node(Integer id) {
 		this.id = id;
@@ -120,7 +131,7 @@ class Node implements Comparable<Object> {
 		if(obj instanceof Node) {
 			Node that = (Node) obj;
 			
-			return this.id.compareTo(that.id);
+			return this.GetRelevance().compareTo(that.GetRelevance());
 		}
 		
 		return -1;

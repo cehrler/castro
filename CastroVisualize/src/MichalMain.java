@@ -1,11 +1,50 @@
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import DataModulePackage.*;
 
 public class MichalMain {
-	
+
+	public static void main(String[] args) {
+		//makeBinIndexes();
+		//makeSimMatrices();
+		DataModule.Init();
+		
+		/*
+		Abraham Lincoln,  Alfonso Barrantes
+		Salvador, Santa Cruz
+		Ministry of Development
+		*/
+		
+		List<String> queryTerms = new ArrayList<String>();
+		List<Double> termWeights = new ArrayList<Double>();
+		
+		
+		
+		queryTerms.add("PRENSA LATINA"); termWeights.add(1.0);
+		queryTerms.add("Conrado Benitez"); termWeights.add(1.0);
+		queryTerms.add("Salvador"); termWeights.add(1.0);
+		queryTerms.add("Chile"); termWeights.add(1.0);
+		queryTerms.add("Manual Ascunce"); termWeights.add(0.0);
+		
+		
+		Graph G = DataModule.getGraph("NULL", "NULL", "NULL", "NULL", "NULL", 0.30, queryTerms, termWeights, 50);
+		
+		List<Node> ln = G.getNodes();
+		
+		for (int i = 0; i < Math.min(10, ln.size()); i++)
+		{
+			Node n = ln.get(i);
+			System.err.println(n.getSpeech_id() + ", " + n.getSpeech_date() + ", " + n.getHeadline() + " --> " + n.GetRelevance());
+		}
+		
+		System.err.println("OK!");
+		
+	}
+
 	private static void makeBinIndexes()
 	{
 		VMindex.ConvertTextToBin("../work/PERSONS.tf", "../DataModuleData/PERSONS.tf.bin");
@@ -38,7 +77,7 @@ public class MichalMain {
 		for (int i = 0; i < sim.getNumDocs(); i++)
 			for (int j = 0; j < sim.getNumDocs(); j++)
 			{
-				System.err.println("(" + i + ", " + j + ") = " + sim.getSimilarity(i, j));				
+				System.err.println("(" + i + ", " + j + ") = " + sim.getSimilarity_byID(i, j));				
 			}
 		
 		sim.SaveToFile("../work/test.tf.sim");
@@ -50,7 +89,7 @@ public class MichalMain {
 		for (int i = 0; i < sim.getNumDocs(); i++)
 			for (int j = 0; j < sim.getNumDocs(); j++)
 			{
-				System.err.println("(" + i + ", " + j + ") = " + sim.getSimilarity(i, j) + " -> " + sim2.getSimilarity(i,j));				
+				System.err.println("(" + i + ", " + j + ") = " + sim.getSimilarity_byID(i, j) + " -> " + sim2.getSimilarity_byID(i,j));				
 			}
 	
 		VMindex persI = new VMindex("../DataModuleData/PERSONS.tfidf.bin");
@@ -89,7 +128,7 @@ public class MichalMain {
 			int a = (int)Math.round(Math.floor(Math.random() * simPers.getNumDocs()));
 			int b = (int)Math.round(Math.floor(Math.random() * simPers.getNumDocs()));
 			
-			System.err.println("sim(" + a + ", " + b + ") = " + simPers.getSimilarity(a, b) + " -> " + simPersLoaded.getSimilarity(a, b));
+			System.err.println("sim(" + a + ", " + b + ") = " + simPers.getSimilarity_byID(a, b) + " -> " + simPersLoaded.getSimilarity_byID(a, b));
 		}
 
 		
@@ -124,13 +163,4 @@ public class MichalMain {
 
 	}
 	
-	public static void main(String[] args) {
-		//makeBinIndexes();
-		//makeSimMatrices();
-		DataModule.Init();
-		DataModule.getGraph("NULL", "NULL", "NULL", "NULL", "NULL", 0.50);
-		
-		//System.err.println("OK!");
-		
-	}
 }

@@ -1,6 +1,7 @@
 package DataModulePackage;
 
 import java.sql.*;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
@@ -33,17 +34,124 @@ public class DataModule {
 	private static SimMatrix simMatrix;
 	private static String simMatFile = "../DataModuleData/PERSONS.tfidf.sim";
 	
+	private static Map<String, Integer> personsMap;
+	private static Map<String, Integer> locationsMap;
+	private static Map<String, Integer> organizationsMap;
+	
+	private static VMindex personsIndex;
+	private static VMindex locationsIndex;
+	private static VMindex organizationsIndex;
+	
+	private static String personsIndexFile = "../DataModuleData/PERSONS.tfidf.bin";
+	private static String locationsIndexFile = "../DataModuleData/LOCATIONS.tfidf.bin";
+	private static String organizationsIndexFile = "../DataModuleData/ORGANIZATIONS.tfidf.bin";
+	
 	public static void Init()
 	{
 		simMatrix = SimMatrixElem.LoadFromFile(simMatFile);
 		
+		personsIndex = new VMindex(personsIndexFile);
+		locationsIndex = new VMindex(locationsIndexFile);
+		organizationsIndex = new VMindex(organizationsIndexFile);
+		
 		connection = MySqlConnectionProvider.getNewConnection(connHost, connDB, connUser, connPasswd);
+
+		personsMap = new HashMap<String, Integer>();
+		locationsMap = new HashMap<String, Integer>();
+		organizationsMap = new HashMap<String, Integer>();
+		
+		try {
+			java.sql.Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_READ_ONLY);	
+			System.err.println("CALL getNE();");
+			ResultSet srs = stmt.executeQuery("CALL getNE();");
+			
+			String pomS;
+			
+			while (srs.next()) 
+			{
+					pomS = srs.getString("NE_TYPE");
+					
+					if (pomS.equals("ORGANIZATIONS"))
+					{
+						organizationsMap.put(srs.getString("NE_NAME"), srs.getInt("NE_INDEX_ID"));
+					}
+					else if (pomS.equals("PERSONS"))
+					{
+						personsMap.put(srs.getString("NE_NAME"), srs.getInt("NE_INDEX_ID"));
+					}
+					else if (pomS.equals("LOCATIONS"))
+					{
+						locationsMap.put(srs.getString("NE_NAME"), srs.getInt("NE_INDEX_ID"));
+					}
+									
+			}
+						
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
 		
 	}
 	
+	private static void similarityUpdate(List<Node> nodes, VMindex currIndex, Integer termCol, Double weight)
+	{
+		for (int i = 0; i < nodes.size(); i++)
+		{
+			nodes.get(i).SetRelevance(nodes.get(i).GetRelevance() + currIndex.GetValue(nodes.get(i).getSpeech_id(), termCol) * weight);
+		}
+	}
 	
+	private static List<Node> sortNodes(List<Node> nodes, List<String> queryTerms , List<Double> termWeights, Integer maxNumNodes)
+	{
+		if (queryTerms == null)
+		{
+			return nodes;
+		}
+				
+		
+		for (int i = 0; i < nodes.size(); i++)
+		{
+			nodes.get(i).SetRelevance(0.0);
+		}
+		
+		
+		for (int i = 0; i < queryTerms.size(); i++)
+		{
+			if (personsMap.containsKey(queryTerms.get(i)))
+			{
+				similarityUpdate(nodes, personsIndex, personsMap.get(queryTerms.get(i)), termWeights.get(i));
+			}
+			
+			if (locationsMap.containsKey(queryTerms.get(i)))
+			{
+				similarityUpdate(nodes, locationsIndex, locationsMap.get(queryTerms.get(i)), termWeights.get(i));
+				
+			}
+
+			if (organizationsMap.containsKey(queryTerms.get(i)))
+			{
+				similarityUpdate(nodes, organizationsIndex, organizationsMap.get(queryTerms.get(i)), termWeights.get(i));
+				
+			}
+			
+		}
+		
+		Collections.sort(nodes);
+		
+		List<Node> sn = new ArrayList<Node>();
+		
+		if (maxNumNodes == null) maxNumNodes = nodes.size();
+		
+		for (int i = nodes.size() - 1; i >= nodes.size() - maxNumNodes; i--)
+		{
+			sn.add(nodes.get(i));
+		}
+		
+		return sn;
+	}
 	
-	public static Graph getGraph(String SinceDate, String TillDate, String Place, String Author, String DocType, Double similarity_threshold)
+	public static Graph getGraph(String SinceDate, String TillDate, String Place, String Author, String DocType, Double similarity_threshold, List<String> queryTerms , List<Double> termWeights, Integer maxNumNodes)
 	{
 		if (SinceDate != "NULL") SinceDate = "\"" + SinceDate + "\"";
 		if (TillDate != "NULL") TillDate = "\"" + TillDate + "\"";
@@ -72,43 +180,38 @@ public class DataModule {
 			}
 			
 			
-			System.err.println(ln.size());
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		
-		Map<Integer,Integer> id_aux = new HashMap<Integer, Integer>();
-		
-		for (int i = 0; i < ln.size(); i++)
-		{
-			id_aux.put(ln.get(i).getSpeech_id(), 1);
-		}
+		List<Node> sn = sortNodes(ln, queryTerms, termWeights, maxNumNodes);
 		
 		Double similarity;
 		
-		for (int i = 0; i < ln.size(); i++)
+		for (int i = 0; i < sn.size(); i++)
 		{
 			//Node n = ln.get(i);
-			for (int j = i + 1; j < ln.size(); j++)
+			for (int j = i + 1; j < sn.size(); j++)
 			{
 				//if (i == j) continue;
-				similarity = simMatrix.getSimilarity(ln.get(i), ln.get(j));
+				similarity = simMatrix.getSimilarity(sn.get(i), sn.get(j));
 								
 				if (similarity.compareTo(similarity_threshold) > 0)
 				{					
-					Edge e = new Edge(ln.get(i), ln.get(j), similarity);
+					Edge e = new Edge(sn.get(i), sn.get(j), similarity);
 					le.add(e);
-					ln.get(i).addEdge(ln.get(j), similarity);
-					ln.get(j).addEdge(ln.get(i), similarity);
+					sn.get(i).addEdge(sn.get(j), similarity);
+					sn.get(j).addEdge(sn.get(i), similarity);
 				}
 			}
 			
 		}
-		
+
+		System.err.println("Number of nodes: " + sn.size());
 		System.err.println("Number of edges: " + le.size());
 		
-		return new Graph(ln, le);
+		return new Graph(sn, le);
 		
 	}
 	
