@@ -1,6 +1,5 @@
 
-import java.io.IOException;
-import java.sql.*;
+import DataModulePackage.*;
 
 public class MichalMain {
 	public static void main(String[] args) {
@@ -9,12 +8,12 @@ public class MichalMain {
 
 
 		
-		
+		VMindex vmindex = new VMindex("../work/ORGANIZATIONS.tfidf.bin");
 		
 		DataModule.Init();
-		DataModule.getGraph("1970-01-01", "1980-01-01", "NULL", "NULL", "interview", 0.5);
+		DataModule.getGraph("NULL", "NULL", "NULL", "NULL", "interview", 0.0);
 		
-		
+		System.err.println("OK!");
 		
 	}
 }

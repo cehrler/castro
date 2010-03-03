@@ -32,9 +32,12 @@ while (my $line = <NELIST>)
 	else
 	{
 		#print "line: $line\n";
-		if ($line =~ m/^##(.*)$/)
+		if ($line =~ m/^([0-9]+) (.*)$/)
 		{
-		  $NE{$neTyp}{$1} = $ind;
+		  $NE{$neTyp}{$2} = $1;
+		  
+		  if ($1 != $ind) { die "$1 is not equal to $ind!"; }
+		  
 		  #print "NE{$neTyp}{$1} = ".$NE{$neTyp}{$1}."\n";
 		  $ind++;
 		}
@@ -57,6 +60,12 @@ while (my $line = <INPFILES>)
 {
 	chomp($line);
 	my $mod = "";
+	
+	if ($line =~ m/^([0-9]+) (.*)/)
+	{
+		if ($1 != $counter + 1) { die "$1 != $counter + 1"; }
+		$line = "../data/".$2.".nerd";
+	}
 	
 	open(FILE, "<$line") || die "Can't open file $line";
 	#print "$line\n";
@@ -116,28 +125,33 @@ foreach my $key (keys %index)
 
   print "creating index: $key.ind\n";
   my @indF = @{$index{$key}};
-  print "number of speeches: ".scalar(@indF)."\n";
+  print INDEXOUT "speeches:".scalar(@indF)."\n";
+  print INDEXOUT "NEs:".$neTypeCounts{$key}."\n";
+  
   for (my $i = 0; $i < scalar(@indF); $i++)
   {
   	if ($indF[$i] == undef)
   	{
+  		#print STDERR "undef line\n";
   		for (my $j = 0; $j < $neTypeCounts{$key}; $j++)
   		{
-  			print INDEXOUT "0 "; 
+  			print INDEXOUT "0\n"; 
   		}
+  		print INDEXOUT "-----\n";
   		next;
   	}
   	my @indOF = @{$indF[$i]};
   	for (my $j = 0; $j < $neTypeCounts{$key}; $j++)
   	{
   	  my $val = $indOF[$j];
-  	  if ($val eq "") { print INDEXOUT "0 "; }
+  	  if ($val eq "") { print INDEXOUT "0\n"; }
   	  else
   	  {
-  	    print INDEXOUT "$val "; 
+  	  	if (! $val =~ m/^[0-9]+$/ ) { die "strange value: $val"; }
+  	    print INDEXOUT "$val\n"; 
   	  }
   	}
-  	print INDEXOUT "\n";
+  	print INDEXOUT "-----\n";
   }
 
   close(INDEXOUT);

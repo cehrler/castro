@@ -6,21 +6,60 @@ my @indMat = ();
 my @row = ();
 my $sum = 0;
 
-while (my $line = <STDIN>)
+my $numSpeeches;
+my $numNEs;
+
+my $line = <STDIN>;
+chomp($line);
+
+if ($line =~ m/^speeches:(.*)$/ )
 {
-	@row = split(/ /, $line);
-	$sum = 0;
-	foreach my $cell (@row)
+	print $line."\n";
+	$numSpeeches = $1;
+	
+	$line = <STDIN>;
+	chomp($line);
+	
+	print $line."\n";
+	if ($line =~ m/^NEs:(.*)$/ )
 	{
-		$sum += $cell;
+		$numNEs = $1;
 	}
-	
-	for (my $i = 0; $i < scalar(@row); $i++)
-	{
-		$row[$i] = $row[$i] / $sum;
-	}
-	
-	print join(' ', @row)."\n";
-	
-	
+	else { die "Second line $line has incorrect format"; }
 }
+else { die "First line $line has incorrect format"; }
+
+my $sum;
+
+for (my $i = 0; $i < $numSpeeches; $i++)
+{
+	my @row = ();
+	$sum = 0;
+	
+	for (my $j = 0; $j < $numNEs; $j++)
+	{
+		$line = <STDIN>;
+		chomp($line);
+		if ($line eq "-----") { die "inconsistent data! Shouldn't be -----"; }
+		
+		push(@row, $line);
+		$sum += $line;
+	}
+	
+	
+	for (my $j = 0; $j < $numNEs; $j++)
+	{
+		if ($sum == 0) { $row[$j] = 1 / $numNEs; }
+		else { $row[$j] = $row[$j] / $sum; }
+		print $row[$j]."\n";
+	}
+	
+	print "-----\n";
+	
+	$line = <STDIN>;
+	chomp($line);
+	
+	if ($line ne "-----") { die "inconsistent data! Should be -----, but it's $line"; }
+}
+
+if (!eof(STDIN)) { die "stdin not closed!";}

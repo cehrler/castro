@@ -5,47 +5,100 @@ use strict;
 my @indMat = ();
 my @row = ();
 my $sum = 0;
-my @docsPerTerm = ();
 
-while (my $line = <STDIN>)
+my $numSpeeches;
+my $numNEs;
+
+my %docsPerNE = ();
+
+my $line = <STDIN>;
+chomp($line);
+
+if ($line =~ m/^speeches:(.*)$/ )
 {
+	print $line."\n";
+	$numSpeeches = $1;
+	
+	$line = <STDIN>;
 	chomp($line);
-	@row = split(/ /, $line);
 	
-	for (my $i = 0; $i < scalar(@row); $i++)
+	print $line."\n";
+	if ($line =~ m/^NEs:(.*)$/ )
 	{
-		if ($row[$i] > 0) { $docsPerTerm[$i]++; }		
+		$numNEs = $1;
 	}
-	
-	push(@indMat, $line);
-	#print join(' ', $row)."\n";
-	
-	
+	else { die "Second line $line has incorrect format"; }
 }
+else { die "First line $line has incorrect format"; }
 
-my $numDocs = scalar(@indMat);
+my $sum;
 
-foreach (my $j = 0; $j < scalar(@indMat); $j++)
+my @matrix = ();
+
+my @row;
+
+for (my $i = 0; $i < $numSpeeches; $i++)
 {
-	@row = split(/ /, $indMat[$j]);
-	for (my $i = 0; $i < scalar(@row); $i++)
-	{
-		my $logVal = $docsPerTerm[$i] > 0 ? log($numDocs / $docsPerTerm[$i]) : 0;
-		$row[$i] = $row[$i] * $logVal;
-	}
-
+	@row = ();
 	$sum = 0;
-	foreach my $cell (@row)
-	{
-		$sum += $cell;
-	}
-
-	if ($sum == 0) { $sum = 1; }
-	for (my $i = 0; $i < scalar(@row); $i++)
-	{	
-		$row[$i] = $row[$i] / $sum;
-	}
-
 	
-	print join(' ', @row)."\n";
+	for (my $j = 0; $j < $numNEs; $j++)
+	{
+		$line = <STDIN>;
+		chomp($line);
+		if ($line eq "-----") { die "inconsistent data! Shouldn't be -----"; }
+		
+		if ($line > 0) { $docsPerNE{$j}++; }
+		
+		push(@row, $line);
+		
+	}
+		
+	$line = <STDIN>;
+	chomp($line);
+	
+	if ($line ne "-----") { die "inconsistent data! Should be -----, but it's $line"; }
+	
+	push(@matrix, join(' ', @row));
 }
+
+my $logTerm;
+
+for (my $i = 0; $i < $numSpeeches; $i++)
+{
+	@row = split(/ /, $matrix[$i]);
+
+	for (my $j = 0; $j < $numNEs; $j++)
+	{
+		if ($docsPerNE{$j} > 0)
+		{
+			$logTerm = log($numSpeeches / $docsPerNE{$j});
+		}
+		else
+		{
+			die "This is weird!\n";
+			$logTerm = 1;
+		}
+		
+		$row[$j] = $row[$j] * $logTerm;
+		$sum += $row[$j];
+	}
+	
+	for (my $j = 0; $j < $numNEs; $j++)
+	{
+		if ($sum > 0)
+		{
+			$row[$j] = $row[$j] / $sum;
+		}
+		else
+		{
+			$row[$j] = 1 / $numNEs;
+		}
+		
+		print $row[$j]."\n";
+	}
+	
+	print "-----\n";
+}
+
+if (!eof(STDIN)) { die "stdin not closed!";}
