@@ -32,6 +32,10 @@ my $currNEType = "";
 
 my %currIndexCol = ();
 
+$currIndexCol{"PERSONS"} = -1;
+$currIndexCol{"LOCATIONS"} = -1;
+$currIndexCol{"ORGANIZATIONS"} = -1;
+
 while (my $line = <FILE>)
 {
 	chomp($line);
