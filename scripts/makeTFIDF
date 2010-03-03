@@ -67,12 +67,20 @@ my $logTerm;
 for (my $i = 0; $i < $numSpeeches; $i++)
 {
 	@row = split(/ /, $matrix[$i]);
-
+	$sum = 0;
+	
 	for (my $j = 0; $j < $numNEs; $j++)
 	{
 		if ($docsPerNE{$j} > 0)
 		{
-			$logTerm = log($numSpeeches / $docsPerNE{$j});
+			if ($docsPerNE{$j} <= 3)
+			{
+				$logTerm = 1;
+			}
+			else
+			{
+				$logTerm = log($numSpeeches / $docsPerNE{$j});
+			}
 		}
 		else
 		{
@@ -92,7 +100,7 @@ for (my $i = 0; $i < $numSpeeches; $i++)
 		}
 		else
 		{
-			$row[$j] = 1 / $numNEs;
+			$row[$j] = 0;
 		}
 		
 		print $row[$j]."\n";

@@ -49,7 +49,7 @@ for (my $i = 0; $i < $numSpeeches; $i++)
 	
 	for (my $j = 0; $j < $numNEs; $j++)
 	{
-		if ($sum == 0) { $row[$j] = 1 / $numNEs; }
+		if ($sum == 0) { $row[$j] = 0; }
 		else { $row[$j] = $row[$j] / $sum; }
 		print $row[$j]."\n";
 	}

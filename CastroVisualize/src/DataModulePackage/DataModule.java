@@ -25,18 +25,13 @@ public class DataModule {
 	private static String connDB = "castro_db";
 	private static String connUser = "root";
 	private static String connPasswd = "root";
-	
-	private static String DataDir = "../DataModuleData/";
-	
+		
 	//In the future this will be extended, now I use only 1 distance matrix
-	private static String distMatFile = DataDir + "PERSONS.tfidf.dist";
-	
-	private static List<List<Double> > distMat;
 	
 	private static Integer NumDocs = 0;
 	
 	private static SimMatrix simMatrix;
-	private static String simMatFile = "../DataModuleData/PERSONS.sim.bin";
+	private static String simMatFile = "../DataModuleData/PERSONS.tfidf.sim";
 	
 	public static void Init()
 	{
@@ -95,18 +90,17 @@ public class DataModule {
 		for (int i = 0; i < ln.size(); i++)
 		{
 			//Node n = ln.get(i);
-			for (int j = 0; j < ln.size(); j++)
+			for (int j = i + 1; j < ln.size(); j++)
 			{
 				//if (i == j) continue;
 				similarity = simMatrix.getSimilarity(i, j);
-				
-				if (similarity.compareTo(0.1) > 0) System.err.println(similarity);
-				
+								
 				if (similarity.compareTo(similarity_threshold) > 0)
-				{
+				{					
 					Edge e = new Edge(ln.get(i), ln.get(j), similarity);
 					le.add(e);
 					ln.get(i).addEdge(ln.get(j), similarity);
+					ln.get(j).addEdge(ln.get(i), similarity);
 				}
 			}
 			

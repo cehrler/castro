@@ -106,10 +106,10 @@ public class SimMatrixElem extends SimMatrix {
 		
 		for (int i = 0; i < simMat.numSpeeches; i++)
 		{
-			if (i % 5 == 0) System.out.println("i = " + i);
+			if (i % 20 == 0) System.out.println("i = " + i);
 
 			Set<Integer> nonzeroI = index.GetNonzeroCells(i);
-			for (int j = i; j < simMat.numSpeeches; j++)
+			for (int j = i + 1; j < simMat.numSpeeches; j++)
 			{
 				//Set<Integer> nonzeroJ = index.GetNonzeroCells(j);
 				sum = 0.0;
@@ -119,10 +119,12 @@ public class SimMatrixElem extends SimMatrix {
 					pomInt = it.next();					
 					sum += Math.min(index.GetValue(i, pomInt), index.GetValue(j, pomInt));
 				}
-				
+								
 				simMat.setSim(i, j, sum);
 				simMat.setSim(j, i, sum);
 			}
+			
+			simMat.setSim(i, i, 0.99999999);
 		}
 		return simMat;
 	}
