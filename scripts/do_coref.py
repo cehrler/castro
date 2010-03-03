@@ -52,15 +52,15 @@ def main():
 			
 			if STATE == "PERSONS":
 				tokens = line.rsplit(" ", 1)
-				persons.append((tokens[0].lower().replace(" ", ""), filename, tokens[0]))
+				persons.append((tokens[0].lower().replace(" ", ""), filename, tokens[0], int(tokens[1])))
 			
 			if STATE == "LOCATIONS":
 				tokens = line.rsplit(" ", 1)
-				locations.append((tokens[0].lower().replace(" ", ""), filename, tokens[0]))
+				locations.append((tokens[0].lower().replace(" ", ""), filename, tokens[0], int(tokens[1])))
 			
 			if STATE == "ORGANIZATIONS":
 				tokens = line.rsplit(" ", 1)
-				organizations.append((tokens[0].lower().replace(" ", ""), filename, tokens[0]))  
+				organizations.append((tokens[0].lower().replace(" ", ""), filename, tokens[0], int(tokens[1])))  
 	
 	per_corefs = analyzeEntities(persons)
 	org_corefs = analyzeEntities(organizations)
