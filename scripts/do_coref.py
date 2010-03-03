@@ -14,7 +14,7 @@ THRESHOLD = 1
 SPECTRUM = 2
 
 def main():
-	ner_files =  os.popen("ls ../data/*.nerd").readlines()
+	ner_files =  os.popen("ls ../data/1959*.nerd").readlines()
 	
 	persons = []
 	locations = []
@@ -94,17 +94,17 @@ class CoRef(object):
 	
 	def __str__(self):
 		string = self.name + "\n"
-		for (n,f,o) in self.entities:
-			string += "\t%s (%s)\n" % (o,f)
+		for (n,f,o, num) in self.entities:
+			string += "\t%d %s (%s)\n" % (num, o,f)
 		return string
 	
-	def addEntity(self, name, filename, original):
-		self.entities.append((name, filename, original))
+	def addEntity(self, name, filename, original, num):
+		self.entities.append((name, filename, original, num))
 	
 	def computeSimilarity(self, method, name2):
 		similarity = []
 		
-		for (name, _, _) in self.entities:
+		for (name, _, _, _) in self.entities:
 			similarity.append(self.similarity(name, name2))
 		
 		if method == "AVERAGE":
@@ -169,7 +169,7 @@ def analyzeEntities(entities):
 	
 	for i in range(len(entities)):
 		print i/float(len(entities))
-		(name, file_id, original) = entities[i]
+		(name, file_id, original, num) = entities[i]
 		max_sim = 0
 		max_cor = None
 		for coref in corefs:
@@ -183,10 +183,10 @@ def analyzeEntities(entities):
 		
 		if max_cor == None or max_sim < THRESHOLD:
 			coref = CoRef(name, spectrumKernel)
-			coref.addEntity(name, file_id, original)
+			coref.addEntity(name, file_id, original, num)
 			corefs.append(coref)
 		else:
-			max_cor.addEntity(name, file_id, original)
+			max_cor.addEntity(name, file_id, original, num)
 	
 	return corefs
 
