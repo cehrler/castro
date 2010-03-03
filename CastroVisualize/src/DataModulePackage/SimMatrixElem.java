@@ -21,7 +21,8 @@ public class SimMatrixElem extends SimMatrix {
 		matrix.get(a).set(b, val);
 	}
 	
-	public Double getSimilarity(Integer a, Integer b)
+	@Override
+	public Double getSimilarity_byID(Integer a, Integer b)
 	{
 		try 
 		{
@@ -35,6 +36,15 @@ public class SimMatrixElem extends SimMatrix {
 			e.printStackTrace();
 		}
 		return matrix.get(a).get(b);
+		
+	}
+	
+	@Override
+	public Double getSimilarity(Node a, Node b)
+	{
+		Integer aID = a.getSpeech_id();
+		Integer bID = b.getSpeech_id();
+		return getSimilarity_byID(aID, bID);
 	}
 	
 

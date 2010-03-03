@@ -22,13 +22,13 @@ $doctypes{"NULL"} = "NULL";
 
 my %categories = ();
 my %nullCategories = ();
-my $placeIndex = 1;
-my $sourceIndex = 1;
-my $authorIndex = 1;
-my $reportnbrIndex = 1;
-my $doctypeIndex = 1;
+my $placeIndex = 0;
+my $sourceIndex = 0;
+my $authorIndex = 0;
+my $reportnbrIndex = 0;
+my $doctypeIndex = 0;
 
-my $speech_id_counter = 0;
+my $speech_id_counter = -1;
 
 sub formatDate {
 	my $date = shift;
@@ -120,7 +120,7 @@ sub parseFile {
 	push(@entries, $entry);
 }
 
-print "DROP DATABASE castro_db;\n";
+print "DROP DATABASE IF EXISTS castro_db;\n";
 print "CREATE DATABASE castro_db;\n";
 print "use castro_db;\n\n";
 print "CREATE TABLE speech (\

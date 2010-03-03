@@ -3,8 +3,8 @@
 use strict;
 
 print "USE castro_db;\n";
-print "drop table spech_NE;\n";
-print "drop table NE;\n";
+print "drop table IF EXISTS spech_NE;\n";
+print "drop table IF EXISTS NE;\n";
 
 print "CREATE TABLE speech_NE (SPEECH_ID INT NOT NULL, NE_ID INT NOT NULL, COUNT INT NOT NULL);\n";
 #print "CREATE TABLE NE_class (NE_CLASS_ID INT NOT NULL PRIMARY KEY, TYPE VARCHAR(20) NOT NULL, VALUE VARCHAR(100) NOT NULL, INDEX_COL INT NOT NULL);\n";
@@ -26,8 +26,8 @@ my %neClass = ();
 my %ne = ();
 
 my $currNEClass = "";
-my $currNEClassID = 0;
-my $currNEID = 0;
+my $currNEClassID = -1;
+my $currNEID = -1;
 my $currNEType = "";
 
 my %currIndexCol = ();

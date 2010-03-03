@@ -93,7 +93,7 @@ public class DataModule {
 			for (int j = i + 1; j < ln.size(); j++)
 			{
 				//if (i == j) continue;
-				similarity = simMatrix.getSimilarity(i, j);
+				similarity = simMatrix.getSimilarity(ln.get(i), ln.get(j));
 								
 				if (similarity.compareTo(similarity_threshold) > 0)
 				{					
