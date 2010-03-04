@@ -1,13 +1,18 @@
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.LinkedList;
+
 import javax.swing.AbstractButton;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -16,6 +21,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JSlider;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+
+import Visualizer.Visualize;
+
+import edu.uci.ics.jung.graph.Graph;
+
+import Functionality.DataModule;
+import Functionality.IndexTypeEnum;
+import Functionality.SimMatrixEnum;
 
 public class CastroGUI {
 	
@@ -68,7 +81,7 @@ public class CastroGUI {
 	private void init() {
 		
 		frame = new JFrame("CastroGUI");
-		
+		Functionality.DataModule.Init(IndexTypeEnum.TF);
 		menu = new JMenuBar();
 		
 		menu_file = new JMenu("File");
@@ -208,12 +221,24 @@ public class CastroGUI {
 		search_button.setHorizontalTextPosition(AbstractButton.CENTER);
 		search_button.setMnemonic(KeyEvent.VK_S);
 		search_button.addActionListener(new ActionListener(){
-
 			public void actionPerformed(ActionEvent arg0) {
-				JFrame button_press = new JFrame();
-				button_press.getContentPane().add(new JLabel("MySQL database search function"), BorderLayout.CENTER);
-				button_press.pack();
-				button_press.setVisible(true);
+				String SinceDate = (String)search_year_start.getSelectedItem() + "-01-01";
+				String TillDate = (String)search_year_end.getSelectedItem() + "-12-31";
+				String Author = "NULL";
+				String DocType = (String)search_type.getSelectedItem();
+				String Place = "NULL";
+				List<String> queryTerms = new ArrayList<String>();
+				List<Double> termWeights = new ArrayList<Double>();
+				
+				int maxNumNodes = 50;
+				
+				double similarity_threshold = 0.3;
+				
+				Functionality.Graph G = DataModule.getGraph(SinceDate, TillDate, Place, Author, DocType, queryTerms, termWeights, maxNumNodes, SimMatrixEnum.AllWeightedEqually, similarity_threshold);
+				
+				Visualize visu = new Visualize(G);
+				JComponent graph = visu.drawGraph();
+				content.add(graph, BorderLayout.CENTER);
 			}
 			
 		});

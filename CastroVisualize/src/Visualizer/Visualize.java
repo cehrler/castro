@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.awt.Dimension;
 
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -47,7 +48,7 @@ public class Visualize {
 		
 	}
 	
-	public void drawGraph() {
+	public JComponent drawGraph() {
 		// System.out.println("The graph qt"+qt.toString()); // DEBUG
 		
 		Layout<Functionality.Node, Functionality.Edge> layout = new SpringLayout2(this.qt);
@@ -73,11 +74,7 @@ public class Visualize {
 		vv.setGraphMouse(gm);
 		
 		
-		JFrame mainFrame = new JFrame("Castro Documents Visualizer");
-		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		mainFrame.getContentPane().add(vv);
-		mainFrame.pack();
-		mainFrame.setVisible(true);
+		return vv;
 	}
 	
 	
