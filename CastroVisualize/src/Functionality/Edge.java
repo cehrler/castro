@@ -1,9 +1,8 @@
-package DataModulePackage;
+package Functionality;
 
 public class Edge implements Comparable<Object> {
 	private Node node1;
 	private Node node2;
-	
 	private Double strength;
 	
 	public Edge(Node u, Node v, Double strength) {
@@ -30,13 +29,13 @@ public class Edge implements Comparable<Object> {
 		}
 		if(obj instanceof Edge) {
 			Edge that = (Edge)obj;
-			
-			int result = this.node1.compareTo(that.node1);
-			
-			if(result == 0) {
-				return this.node2.compareTo(that.node2);
-			}
+			return that.strength.compareTo(this.strength);
 		}
 		return -1;
+	}
+
+	@Override
+	public String toString() {
+		return "" + this.strength;
 	}
 }

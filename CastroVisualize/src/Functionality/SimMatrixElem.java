@@ -10,7 +10,7 @@
 //              functions - LoadFromFile, CountFromVMIndex
 //============================================================================
 
-package DataModulePackage;
+package Functionality;
 
 
 import java.io.DataInputStream;

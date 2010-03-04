@@ -10,7 +10,7 @@
 //============================================================================
 
 
-package DataModulePackage;
+package Functionality;
 
 
 public abstract class SimMatrix {

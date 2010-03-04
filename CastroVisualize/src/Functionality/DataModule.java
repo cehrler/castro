@@ -11,7 +11,7 @@
 //============================================================================
 
 
-package DataModulePackage;
+package Functionality;
 
 import java.sql.*;
 import java.util.Collections;
