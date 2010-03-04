@@ -15,6 +15,7 @@ import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.KKLayout;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.algorithms.layout.SpringLayout2;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseMultigraph;
@@ -49,7 +50,7 @@ public class Visualize {
 	public void drawGraph() {
 		// System.out.println("The graph qt"+qt.toString()); // DEBUG
 		
-		Layout<Functionality.Node, Functionality.Edge> layout = new CircleLayout(this.qt);
+		Layout<Functionality.Node, Functionality.Edge> layout = new SpringLayout2(this.qt);
 		//Layout<Node, Edge> layout = new StaticLayout(this.qt);
 		layout.setSize(new Dimension(400,400));
 		VisualizationViewer<Functionality.Node,Functionality.Edge> vv = new VisualizationViewer<Functionality.Node,Functionality.Edge>(layout);
