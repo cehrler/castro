@@ -1,4 +1,4 @@
-package DataModulePackage;
+package Functionality;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

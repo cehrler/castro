@@ -1,12 +1,23 @@
-package DataModulePackage;
+//============================================================================
+//Name        : SimMatrixElem.java
+//Author      : Michal Richter, Michalisek
+//Version     :
+//Copyright   : This product is licensed under Fidel Castro restricted software license. 
+//              Use of any kind is considered a breach of copyright law. 
+//              You are not allowed to use this for any purpose; neither commercial 
+//              nor non-commercial.
+//Description : Similarity matrix implementation - initialized by factory
+//              functions - LoadFromFile, CountFromVMIndex
+//============================================================================
+
+package Functionality;
+
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Set;
@@ -16,6 +27,8 @@ public class SimMatrixElem extends SimMatrix {
 	private List<List<Double> > matrix;
 	
 
+	private SimMatrixElem() {}
+	
 	private void setSim(Integer a, Integer b, Double val)
 	{
 		matrix.get(a).set(b, val);

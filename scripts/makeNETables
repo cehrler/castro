@@ -17,72 +17,54 @@ sub checkParanthesis {
 	return $s;
 }
 
-my $CorRes = $ARGV[0];
+my $NeFile = $ARGV[0];
 my $fileList = $ARGV[1];
 
-open(FILE, "<$CorRes") || die "Can't open cor-res file $CorRes";
+open(FILE, "<$NeFile") || die "Can't open cor-res file $NeFile";
 
-my %neClass = ();
 my %ne = ();
 
 my $currNEClass = "";
 my $currNEClassID = -1;
 my $currNEID = -1;
 my $currNEType = "";
+my $currNE;
 
-my %currIndexCol = ();
+my $currNE_INDEX_ID;
 
-$currIndexCol{"PERSONS"} = -1;
-$currIndexCol{"LOCATIONS"} = -1;
-$currIndexCol{"ORGANIZATIONS"} = -1;
+print "INSERT INTO NE (NE_ID, NE_NAME, NE_TYPE, NE_INDEX_ID) VALUES\n";
 
 while (my $line = <FILE>)
 {
 	chomp($line);
 	$line = checkParanthesis($line);
 
-	if ($line eq "<PERSONS>")
+	if ($line =~ m/^<([^\/].*)>/ && ($line eq "<LOCATIONS>" || $line eq "<PERSONS>" || $line eq "<ORGANIZATIONS>"))
 	{
-		$currNEType = "PERSONS";        
+		$currNEType = $1;        
 	}
-	elsif ($line eq "<LOCATIONS>")
-	{
-		$currNEType = "LOCATIONS";	
-	}
-	elsif ($line eq "<ORGANIZATIONS>")
-	{
-		$currNEType = "ORGANIZATIONS";
-	}
-	elsif ($line eq "<TEXT>")
+	elsif ($line eq "<TEXT>" || substr($line, 0, 2) eq "</")
 	{
 		$currNEType = "";
 	}
-	elsif (substr($line, 0, 2) eq "</")
+	elsif ($line =~ m/^([0-9]+) (.*)$/ && $currNEType ne "")
 	{
-		next;
-	}	
-	elsif ($line =~ m/^##(.*)$/)
-	{
-		$currNEClass = $1;
-		$currNEClassID++;
-		$currIndexCol{$currNEType}++;
-		$neClass{"$currNEType,$currNEClass"}->{"ID"} = $currNEClassID;
-		$neClass{"$currNEType,$currNEClass"}->{"Type"} = $currNEType;
-		$neClass{"$currNEType,$currNEClass"}->{"Value"} = $currNEClass;
+		$currNE_INDEX_ID = $1;
+		$currNE = $2;
+		$currNEID++;		
+		$ne{"$currNEType,$currNE"}->{"ID"} = $currNEID;
+		$ne{"$currNEType,$currNE"}->{"Type"} = $currNEType;
+		$ne{"$currNEType,$currNE"}->{"Value"} = $currNE;
+		$ne{"$currNEType,$currNE"}->{"INDEX_ID"} = $currNE_INDEX_ID;
 		
-		#print "INSERT INTO NE_class (NE_CLASS_ID, TYPE, VALUE, INDEX_COL) VALUES ($currNEClassID, \"$currNEType\", \"$currNEClass\", ".$currIndexCol{$currNEType}.");\n";
-	}
-	elsif ($line ne "")
-	{
-		$currNEID++;
-		$ne{"$currNEType,$line"}->{"ID"} = $currNEID;
-		$ne{"$currNEType,$line"}->{"ClassID"} = $currNEClassID;
-		$ne{"$currNEType,$line"}->{"Value"} = $line;
-			
-		print "INSERT INTO NE (NE_ID, NE_NAME, NE_TYPE, NE_INDEX_ID) VALUES ($currNEID, \"$line\", \"$currNEType\", ".$currIndexCol{$currNEType}.");\n";
+		if ($currNEID != 0) { print ",\n"; }
+
+		print "($currNEID, \"$currNE\", \"$currNEType\", $currNE_INDEX_ID)";
 	}
 
 }
+
+print ";\n\n";
 
 
 open(FILELIST, "<$fileList") || die "Can't open filelist $fileList";
@@ -94,6 +76,9 @@ my $currSpeechID;
 
 $currNEType = "";
 
+print "INSERT INTO speech_NE (SPEECH_ID, NE_ID, COUNT) VALUES\n";
+
+my $first = 1;
 
 while (my $radek = <FILELIST>)
 {
@@ -109,7 +94,7 @@ while (my $radek = <FILELIST>)
 		die "FILELIST: line $radek doesn't match!";
 	}
 	
-	open(FILE, "<$file") || die "Can't open file: $file";
+	open(FILE, "<../data/$file.nerd") || die "Can't open file: ../data/$file.nerd";
 	
 	while (my $line = <FILE>)
 	{
@@ -126,6 +111,7 @@ while (my $radek = <FILELIST>)
 		}		
 		elsif (substr($line, 0, 2) eq "</")
 		{
+			$currNEType = "";
 			next;
 		}
 		elsif ($currNEType ne "")
@@ -140,7 +126,10 @@ while (my $radek = <FILELIST>)
 					die "Undefined NE:$currNEType,$neName!!!";
 				}
 				
-				print "INSERT INTO speech_NE (SPEECH_ID, NE_ID, COUNT) VALUES ($currSpeechID, ".$ne{"$currNEType,$neName"}->{"ID"}.", $neCount);\n";
+				if ($first == 1) { $first = 0; }
+				else { print ",\n"; }
+				
+				print "($currSpeechID, ".$ne{"$currNEType,$neName"}->{"ID"}.", $neCount)";
 			}
 			else
 			{
@@ -149,7 +138,10 @@ while (my $radek = <FILELIST>)
 			
 		}
 	}
+	
+	
 	close(FILE);
 }
 
+print ";";
 

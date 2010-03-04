@@ -1,11 +1,7 @@
-package DataModulePackage;
+package Functionality;
 
-import java.util.Date;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
-import java.util.List;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -28,6 +24,9 @@ public class Node implements Comparable<Object> {
 	private Map<String, Integer> ne_person;
 	private Map<String, Integer> ne_location;
 	private Map<String, Integer> ne_organization;
+
+	//context informtion
+	private boolean marked; 
 	
 	// list of neighbors
 	private Map<Node, Double> neighbors = new HashMap<Node, Double>();
@@ -47,6 +46,7 @@ public class Node implements Comparable<Object> {
 		this.ne_person = null;//new TreeMap<String, Integer>();
 		this.ne_location = null; //new TreeMap<String, Integer>();
 		this.ne_organization = null; //new TreeMap<String, Integer>();
+		this.marked = false;        //assumes new node is unmarked 
 	}
 	
 	public Node(Integer _id, String _author, String _headline, String _report_date,
@@ -124,6 +124,14 @@ public class Node implements Comparable<Object> {
 		return id;
 	}
 
+	public boolean getMarked() {
+		return this.marked;
+	}
+	
+	public void setMarked(boolean marked) {
+		this.marked = marked;
+	}
+	
 	public int compareTo(Object obj) {
 		if(obj == null) {
 			return -1;
@@ -149,53 +157,11 @@ public class Node implements Comparable<Object> {
 		assert this.neighbors.containsKey(v);
 		return this.neighbors.get(v);
 	}
+
+	@Override
+	public String toString() {
+		return "" + this.id;
+	}
+
 }
 
-
-/*public void setAuthor(String author) {
-this.author = author;
-}
-
-public void setHeadline(String headline) {
-this.headline = headline;
-}
-
-public void setHeader(String header) {
-this.header = header;
-}
-
-public void setReport_nbr(String reportNbr) {
-report_nbr = reportNbr;
-}
-
-public void setReport_date(String reportDate) {
-report_date = reportDate;
-}
-
-public void setSource(String source) {
-this.source = source;
-}
-
-public void setPlace(String place) {
-this.place = place;
-}
-
-public void setDcument_type(String dcumentType) {
-dcument_type = dcumentType;
-}
-
-public void setData(Date data) {
-this.data = data;
-}*/
-
-/*public void addNamedEntityPerson(String ne, int count) {
-this.ne_person.put(ne, new Integer(count));
-}
-
-public void addNamedEntityLocation(String ne, int count) {
-this.ne_location.put(ne, new Integer(count));
-}
-
-public void addNamedEntityOrganization(String ne, int count) {
-this.ne_organization.put(ne, new Integer(count));
-}*/
