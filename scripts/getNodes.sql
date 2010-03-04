@@ -2,7 +2,7 @@ USE castro_db;
 DROP PROCEDURE IF EXISTS getNodes;
 
 CREATE PROCEDURE getNodes(_SINCE VARCHAR(15), _TILL VARCHAR(15), _PLACE VARCHAR(100), _AUTHOR VARCHAR(30), _DOCTYPE VARCHAR(25))
-SELECT speech.SPEECH_ID, speech.SPEECH_DATE, speech.HEADLINE, speech.REPORT_DATE, author.AUTHOR_NAME, document_type.DOCTYPE_NAME, place.PLACE_NAME, report_nbr.REPORTNBR_NAME, source.SOURCE_NAME 
+SELECT speech.SPEECH_ID, speech.SPEECH_DATE, speech.HEADLINE, speech.SPEECH_TEXT, speech.REPORT_DATE, author.AUTHOR_NAME, document_type.DOCTYPE_NAME, place.PLACE_NAME, report_nbr.REPORTNBR_NAME, source.SOURCE_NAME 
 FROM speech LEFT OUTER JOIN author ON (speech.AUTHOR_ID = author.AUTHOR_ID)
             LEFT OUTER JOIN document_type ON (speech.DOCUMENT_TYPE_ID = document_type.DOCTYPE_ID)
             LEFT OUTER JOIN place ON (place.PLACE_ID = speech.PLACE_ID)
