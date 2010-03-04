@@ -5,7 +5,7 @@ use File::Basename;
 
 my $idFile = $ARGV[0];
 
-open(IDFILE, ">$idFile") || die "Can't open IDFILE $idFile";
+open(IDFILE, "<$idFile") || die "Can't open IDFILE $idFile";
 
 my @entries = ();
 my %places = ();
@@ -22,13 +22,11 @@ $doctypes{"NULL"} = "NULL";
 
 my %categories = ();
 my %nullCategories = ();
-my $placeIndex = 1;
-my $sourceIndex = 1;
-my $authorIndex = 1;
-my $reportnbrIndex = 1;
-my $doctypeIndex = 1;
-
-my $speech_id_counter = 0;
+my $placeIndex = 0;
+my $sourceIndex = 0;
+my $authorIndex = 0;
+my $reportnbrIndex = 0;
+my $doctypeIndex = 0;
 
 sub formatDate {
 	my $date = shift;
@@ -44,6 +42,7 @@ sub checkParanthesis {
 
 sub parseFile {
 	my $fileName = shift;
+	my $fileID = shift;
 	my $entry;
 	
 	my $category;
@@ -112,15 +111,15 @@ sub parseFile {
 	
 	my $text = `cat ../data/$fileName.text`;
 	$text = checkParanthesis($text);
+	$text =~ s/\n/<br>/g;
 	if ($text eq "") { die "Empty content of ../data/$fileName.text ???"; }
 	$entry->{"SPEECH_TEXT"} = $text;
 	$entry->{"FILENAME"} = $fileName;
-	$speech_id_counter++;
-	$entry->{"SPEECH_ID"} = $speech_id_counter;
+	$entry->{"SPEECH_ID"} = $fileID;
 	push(@entries, $entry);
 }
 
-print "DROP DATABASE castro_db;\n";
+print "DROP DATABASE IF EXISTS castro_db;\n";
 print "CREATE DATABASE castro_db;\n";
 print "use castro_db;\n\n";
 print "CREATE TABLE speech (\
@@ -143,23 +142,22 @@ print "CREATE TABLE author (AUTHOR_ID INT NOT NULL PRIMARY KEY, AUTHOR_NAME VARC
 print "CREATE TABLE report_nbr (REPORTNBR_ID INT NOT NULL PRIMARY KEY, REPORTNBR_NAME VARCHAR(20) NOT NULL); \n\n";
 
 
-open(FILES, ">./filelist.txt") || die "Can't open >./filelist.txt";
+my $currFileID;
 
-my $files_s = `find ../data -name *\.meta`;
-
-my @files = sort split(/\n/, $files_s);
-
-for (my $i = 0; $i < scalar(@files); $i++)
+while (my $line = <IDFILE>)
 {
-	print FILES basename($files[$i])."\n";
+	chomp($line);
 	
-	my $withoutSuff = substr(basename($files[$i]), 0, index(basename($files[$i]), '.'));
+	if ($line =~ m/^([0-9]+) (.*)$/)
+	{
+		
 	
-	parseFile($withoutSuff);
+		my $withoutSuff = $2;
+		my $currFileID = $1;
 	
-	my $pomFileName = $files[$i];
-	$pomFileName =~ s/meta$/nerd/;
-	print IDFILE $speech_id_counter." ".$pomFileName."\n";
+		parseFile($withoutSuff, $currFileID);
+	
+	}
 	
 }
 

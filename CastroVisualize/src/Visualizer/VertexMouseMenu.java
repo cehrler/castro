@@ -1,6 +1,10 @@
 package Visualizer;
 /**
+<<<<<<< HEAD:CastroVisualize/src/Visualizer/VertexMouseMenu.java
  * 
+=======
+ * @Author: Yevgeni Barzak
+>>>>>>> 068510fb0545aba8a0654fc8011d3f2f7fec39f6:CastroVisualize/src/Visualizer/VertexMouseMenu.java
  * Adapted from http://www.grotto-networking.com/JUNG/JUNG2-Tutorial.pdf
  * Original author: Dr. Greg M. Bernstein
  */
@@ -21,7 +25,10 @@ public class VertexMouseMenu<V, E> extends AbstractPopupGraphMousePlugin {
 
 	public VertexMouseMenu() {
 		this(MouseEvent.BUTTON3_MASK);
+<<<<<<< HEAD:CastroVisualize/src/Visualizer/VertexMouseMenu.java
 		
+=======
+>>>>>>> 068510fb0545aba8a0654fc8011d3f2f7fec39f6:CastroVisualize/src/Visualizer/VertexMouseMenu.java
 	}
 
 	/**

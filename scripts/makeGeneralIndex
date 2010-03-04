@@ -1,0 +1,213 @@
+#!/usr/bin/perl
+
+use strict;
+
+my %NONBREAKING_PREFIX = ();
+my $language = "en";
+
+# this function is token from Moses-SMT project
+# written by Josh Schroeder, based on code by Philipp Koehn
+sub tokenize {
+	my($text) = @_;
+	chomp($text);
+	$text = " $text ";
+	
+	# seperate out all "other" special characters
+	$text =~ s/([^\p{IsAlnum}\s\.\'\`\,\-])/ $1 /g;
+	
+	#multi-dots stay together
+	$text =~ s/\.([\.]+)/ DOTMULTI$1/g;
+	while($text =~ /DOTMULTI\./) {
+		$text =~ s/DOTMULTI\.([^\.])/DOTDOTMULTI $1/g;
+		$text =~ s/DOTMULTI\./DOTDOTMULTI/g;
+	}
+
+	# seperate out "," except if within numbers (5,300)
+	$text =~ s/([^\p{IsN}])[,]([^\p{IsN}])/$1 , $2/g;
+	# separate , pre and post number
+	$text =~ s/([\p{IsN}])[,]([^\p{IsN}])/$1 , $2/g;
+	$text =~ s/([^\p{IsN}])[,]([\p{IsN}])/$1 , $2/g;
+	      
+	# turn `into '
+	$text =~ s/\`/\'/g;
+	
+	#turn '' into "
+	$text =~ s/\'\'/ \" /g;
+
+	if ($language eq "en") {
+		#split contractions right
+		$text =~ s/([^\p{IsAlpha}])[']([^\p{IsAlpha}])/$1 ' $2/g;
+		$text =~ s/([^\p{IsAlpha}\p{IsN}])[']([\p{IsAlpha}])/$1 ' $2/g;
+		$text =~ s/([\p{IsAlpha}])[']([^\p{IsAlpha}])/$1 ' $2/g;
+		$text =~ s/([\p{IsAlpha}])[']([\p{IsAlpha}])/$1 '$2/g;
+		#special case for "1990's"
+		$text =~ s/([\p{IsN}])[']([s])/$1 '$2/g;
+	} elsif (($language eq "fr") or ($language eq "it")) {
+		#split contractions left	
+		$text =~ s/([^\p{IsAlpha}])[']([^\p{IsAlpha}])/$1 ' $2/g;
+		$text =~ s/([^\p{IsAlpha}])[']([\p{IsAlpha}])/$1 ' $2/g;
+		$text =~ s/([\p{IsAlpha}])[']([^\p{IsAlpha}])/$1 ' $2/g;
+		$text =~ s/([\p{IsAlpha}])[']([\p{IsAlpha}])/$1' $2/g;
+	} else {
+		$text =~ s/\'/ \' /g;
+	}
+	
+	#word token method
+	my @words = split(/\s/,$text);
+	$text = "";
+	for (my $i=0;$i<(scalar(@words));$i++) {
+		my $word = $words[$i];
+		if ( $word =~ /^(\S+)\.$/) {
+			my $pre = $1;
+			if (($pre =~ /\./ && $pre =~ /\p{IsAlpha}/) || ($NONBREAKING_PREFIX{$pre} && $NONBREAKING_PREFIX{$pre}==1) || ($i<scalar(@words)-1 && ($words[$i+1] =~ /^[\p{IsLower}]/))) {
+				#no change
+			} elsif (($NONBREAKING_PREFIX{$pre} && $NONBREAKING_PREFIX{$pre}==2) && ($i<scalar(@words)-1 && ($words[$i+1] =~ /^[0-9]+/))) {
+				#no change
+			} else {
+				$word = $pre." .";
+			}
+		}
+		$text .= $word." ";
+	}		
+
+	# clean up extraneous spaces
+	$text =~ s/ +/ /g;
+	$text =~ s/^ //g;
+	$text =~ s/ $//g;
+
+	#restore multi-dots
+	while($text =~ /DOTDOTMULTI/) {
+		$text =~ s/DOTDOTMULTI/DOTMULTI./g;
+	}
+	$text =~ s/DOTMULTI/./g;
+	
+	#ensure final line break
+	$text .= "\n" unless $text =~ /\n$/;
+
+	return $text;
+}
+
+my $fileListFile = $ARGV[0];
+my $neFile = $ARGV[1];
+my $dictionaryOut = $ARGV[2];
+my $indexOut = $ARGV[3];
+
+my @fileList = ();
+my %neList = ();
+
+open(FILELISTFILE, "<$fileListFile") || die "Can't open $fileListFile";
+
+while (my $radek = <FILELISTFILE>)
+{
+	chomp($radek);
+	if ($radek =~ m/^([0-9]+) ([0-9]+)$/)
+	{
+	  push(@fileList, $2);		
+	}
+	else
+	{
+	  die "Substitution failed: $radek";
+	}
+}
+
+print STDERR "numSpeeches: ".scalar(@fileList)."\n";
+
+close(FILELISTFILE);
+
+open(NEFILE, "<$neFile");
+
+while (my $radek = <NEFILE>)
+{
+	chomp($radek);
+	if ($radek =~ m/^<.*>$/) { next; }
+	elsif ($radek =~ m/^[0-9]+ (.*)$/)
+	{
+		$neList{lc($1)} = 1;	
+	}
+	else
+	{
+		die "Line doesn't match: $radek";
+	}
+}
+
+close(NEFILE);
+
+my $toks;
+my @tokList = ();
+
+my %dictionary = ();
+my $dicIndex = -1;
+
+my %index = ();
+
+for (my $docID = 0; $docID < scalar(@fileList); $docID++)
+{
+	open(FILE, "<./data/".$fileList[$docID].".text") || die "Can't open file: ./data/".$fileList[$docID].".text";
+	
+	print STDERR $fileList[$docID]."\n";
+	
+	while (my $radek = <FILE>)
+	{
+		chomp($radek);
+		$toks = tokenize($radek);
+		
+		$toks =~ s/\n/ /g;
+		$toks =~ s/[0-9]/ /g;
+		$toks =~ s/[\.,\[\]\;\&]/ /g;
+		$toks =~ s/-/ /g;
+		$toks =~ s/ +/ /g;
+		
+		
+		@tokList = split(/ /, $toks);
+		
+		foreach my $tok (@tokList)
+		{			
+			$tok = lc($tok);			
+			if (! $tok =~ m/^[a-z]+$/ ) { next; }
+			if (defined($neList{$tok})) { next; }	
+			
+			if ($tok eq "") { next; }
+				
+			if (!defined($dictionary{$tok}))
+			{
+				$dicIndex++;
+				$dictionary{$tok} = $dicIndex;
+			}
+			
+			$index{"$docID,".$dictionary{$tok}}++;
+		}
+	}
+}
+
+open(DICOUT, ">$dictionaryOut");
+
+foreach my $key (sort { $dictionary{$a} <=> $dictionary{$b} } keys %dictionary )
+{
+	print DICOUT $dictionary{$key}." $key\n";
+}
+
+close(DICOUT);
+
+open(INDOUT, ">$indexOut");
+
+print INDOUT "speeches:".scalar(@fileList)."\n";
+print INDOUT "NEs:".($dicIndex + 1)."\n";
+
+foreach my $key (keys %index)
+{
+	print INDOUT "($key)=".$index{$key}."\n";
+}
+
+close(INDOUT);
+
+
+
+
+
+
+
+
+
+
+
+

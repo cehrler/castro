@@ -68,25 +68,33 @@ foreach my $file (@files)
 		}
 	}
 }
+my $ind = 0;
 
 print "<PERSONS>\n";
 foreach my $key (sort keys %persons)
 {
-	print "##$key\n$key\n";
+	print "$ind $key\n";
+	$ind++;
 }
 print "</PERSONS>\n";
+
+$ind = 0;                
 
 print "<LOCATIONS>\n";
 foreach my $key (sort keys %locations)
 {
-	print "##$key\n$key\n";
+	print "$ind $key\n";
+	$ind++;
 }
 print "</LOCATIONS>\n";
+
+$ind = 0;             
 
 print "<ORGANIZATIONS>\n";
 foreach my $key (sort keys %organizations)
 {
-	print "##$key\n$key\n";
+	print "$ind $key\n";
+	$ind++;
 }
 print "</ORGANIZATIONS>";
 

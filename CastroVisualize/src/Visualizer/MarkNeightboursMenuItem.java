@@ -74,12 +74,20 @@ public class MarkNeightboursMenuItem<V> extends JMenuItem implements VertexListe
 					public Paint transform(Functionality.Node i) {
 						if (i.getMarked()){
 
+<<<<<<< HEAD:CastroVisualize/src/Visualizer/MarkNeightboursMenuItem.java
 							return Color.YELLOW;
 						}
 						//if (i.getSpeech_id() == ((Functionality.Node) vertex).getSpeech_id()){
 						//	return Color.GREEN;
 						//} 
 						else  {
+=======
+							return Color.GREEN;
+						}
+						if (i.getSpeech_id() == ((Functionality.Node) vertex).getSpeech_id()){
+							return Color.YELLOW;
+						} else  {
+>>>>>>> 068510fb0545aba8a0654fc8011d3f2f7fec39f6:CastroVisualize/src/Visualizer/MarkNeightboursMenuItem.java
 							return Color.RED;
 						}
 					}
@@ -102,7 +110,11 @@ public class MarkNeightboursMenuItem<V> extends JMenuItem implements VertexListe
 	public void setVertexAndView(V v, VisualizationViewer visComp) {
 		this.vertex = v;
 		this.visComp = visComp;
+<<<<<<< HEAD:CastroVisualize/src/Visualizer/MarkNeightboursMenuItem.java
 		this.setText("Mark Neightbours");
+=======
+		this.setText("Mark Neightbours " + v.toString());
+>>>>>>> 068510fb0545aba8a0654fc8011d3f2f7fec39f6:CastroVisualize/src/Visualizer/MarkNeightboursMenuItem.java
 	}
 
 }

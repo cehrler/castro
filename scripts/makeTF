@@ -2,25 +2,59 @@
 
 use strict;
 
-my @indMat = ();
+my %indMat = ();
 my @row = ();
 my $sum = 0;
 
-while (my $line = <STDIN>)
+my $numSpeeches;
+my $numNEs;
+
+my $line = <STDIN>;
+chomp($line);
+
+if ($line =~ m/^speeches:(.*)$/ )
 {
-	@row = split(/ /, $line);
-	$sum = 0;
-	foreach my $cell (@row)
+	print $line."\n";
+	$numSpeeches = $1;
+	
+	$line = <STDIN>;
+	chomp($line);
+	
+	print $line."\n";
+	if ($line =~ m/^NEs:(.*)$/ )
 	{
-		$sum += $cell;
+		$numNEs = $1;
 	}
-	
-	for (my $i = 0; $i < scalar(@row); $i++)
+	else { die "Second line $line has incorrect format"; }
+}
+else { die "First line $line has incorrect format"; }
+
+my @sum = ();
+
+for (my $i = 0; $i < $numSpeeches; $i++)
+{
+	$sum[$i] = 0;
+}
+
+while ($line = <STDIN>)
+{
+	chomp($line);
+	if ($line =~ m/^\(([0-9]+),([0-9]+)\)=([0-9]+)$/)
 	{
-		$row[$i] = $row[$i] / $sum;
+		$sum[$1] += $3;
+		$indMat{"$1,$2"} = $3;
 	}
-	
-	print join(' ', @row)."\n";
-	
-	
+	else
+	{
+		die "Line doesn't match: $line";
+	}
+}
+
+foreach my $key (keys %indMat)
+{
+	if ($key =~ m/^([0-9]+),([0-9]+)/)
+	{
+		print "($key)=".($indMat{$key} / $sum[$1])."\n";		
+	}
+	else { die "key doesn't match: $key"; }
 }

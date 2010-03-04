@@ -11,9 +11,13 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
+<<<<<<< HEAD:CastroVisualize/src/Visualizer/Visualize.java
 import edu.uci.ics.jung.algorithms.layout.BalloonLayout;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.KKLayout;
+=======
+import edu.uci.ics.jung.algorithms.layout.CircleLayout;
+>>>>>>> 068510fb0545aba8a0654fc8011d3f2f7fec39f6:CastroVisualize/src/Visualizer/Visualize.java
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.Graph;
@@ -98,16 +102,22 @@ public class Visualize {
 		Functionality.Node n2 = new Functionality.Node(2);
 		Functionality.Node n3 = new Functionality.Node(3);
 		Functionality.Node n4 = new Functionality.Node(4);
+<<<<<<< HEAD:CastroVisualize/src/Visualizer/Visualize.java
 		Functionality.Node n5 = new Functionality.Node(5);
 		Functionality.Node n6 = new Functionality.Node(6);
+=======
+>>>>>>> 068510fb0545aba8a0654fc8011d3f2f7fec39f6:CastroVisualize/src/Visualizer/Visualize.java
 		List ns = new ArrayList(4); //change to getVertices()
 		ns.add(n1);
 		ns.add(n2);
 		ns.add(n3);
 		ns.add(n4);
+<<<<<<< HEAD:CastroVisualize/src/Visualizer/Visualize.java
 		ns.add(n5);
 		ns.add(n6);
 		
+=======
+>>>>>>> 068510fb0545aba8a0654fc8011d3f2f7fec39f6:CastroVisualize/src/Visualizer/Visualize.java
 		
 		List es = new ArrayList(5); //change to getVertices()
 		es.add(new Functionality.Edge(n1,n2,1.0));
@@ -115,7 +125,10 @@ public class Visualize {
 		es.add(new Functionality.Edge(n3,n4,0.5));
 		es.add(new Functionality.Edge(n4,n1,8.0));
 		es.add(new Functionality.Edge(n4,n2,0.5463));
+<<<<<<< HEAD:CastroVisualize/src/Visualizer/Visualize.java
 		es.add(new Functionality.Edge(n5,n6,0.7));
+=======
+>>>>>>> 068510fb0545aba8a0654fc8011d3f2f7fec39f6:CastroVisualize/src/Visualizer/Visualize.java
 		
 		Functionality.Graph g =new Functionality.Graph(ns,es);
 		Visualize visu = new Visualize(g);

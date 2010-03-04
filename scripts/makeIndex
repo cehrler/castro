@@ -11,7 +11,7 @@ open(INPFILES, "<$inpFilesList") || die "Can't open $inpFilesList";
 my %neTypeCounts = ();
 my %NE = ();
 my $neTyp = "";
-my $ind = 1;
+my $ind = 0;
 my %index = ();
 
 while (my $line = <NELIST>)
@@ -19,24 +19,21 @@ while (my $line = <NELIST>)
 	chomp($line);
 	if ($line =~ m/^<(.*)>$/)
 	{
-	   if ($neTyp ne "")
-	   {
-	   	 $neTypeCounts{$neTyp} = $ind - 1;
-	   	 
-	   }
 	   $neTyp = $1;
-	   $NE{$neTyp} = {};
-	   print "neTyp = $neTyp\n";
-	   $ind = 1;
+	   $ind = 0;
 	}
 	else
 	{
 		#print "line: $line\n";
-		if ($line =~ m/^##(.*)$/)
+		if ($line =~ m/^([0-9]+) (.*)$/)
 		{
-		  $NE{$neTyp}{$1} = $ind;
+		  $NE{"$neTyp,$2"} = $1;
+		  
+		  if ($1 != $ind) { die "$1 is not equal to ".$ind."!"; }
+		  
 		  #print "NE{$neTyp}{$1} = ".$NE{$neTyp}{$1}."\n";
 		  $ind++;
+		  $neTypeCounts{$neTyp} = $ind;
 		}
 		else
 		{
@@ -58,6 +55,12 @@ while (my $line = <INPFILES>)
 	chomp($line);
 	my $mod = "";
 	
+	if ($line =~ m/^([0-9]+) (.*)/)
+	{
+		if ($1 != $counter) { die "$1 != ".$counter; }
+		$line = "../data/".$2.".nerd";
+	}
+	
 	open(FILE, "<$line") || die "Can't open file $line";
 	#print "$line\n";
 	while (my $radek = <FILE>)
@@ -66,19 +69,13 @@ while (my $line = <INPFILES>)
 	    #print "processing: $radek\n";
 		if ($radek =~ m/^<(.*)>$/)
 		{
+			$mod = "";
 			if ($1 ne "PERSONS" && $1 ne "LOCATIONS" && $1 ne "ORGANIZATIONS")
 			{
 				next;
 			}
-			if (defined($NE{$1}))
-			{
-				$mod = $1;
-			}
-			else
-			{
-				print "Undefined NE: $1\n";				
-				$mod = "";
-			}
+			
+			$mod = $1;
 		}
 		elsif ($mod ne "")
 		{
@@ -86,13 +83,13 @@ while (my $line = <INPFILES>)
 			{
 			  $neName = $1;
 			  $neCount = $2;
-			  if (!(defined($NE{$mod}{$neName})))
+			  if (!(defined($NE{"$mod,$neName"})))
 			  {
 			  	die "Undefined named entity: $mod->$neName";
 			  }
 			  
 			 
-			  $index{$mod}[$counter][$NE{$mod}{$neName} - 1] = $neCount;
+			  $index{"$mod,$counter,".$NE{"$mod,$neName"}} = $neCount;
 			  #print "{$mod}[$counter][".$NE{$mod}{$neName}." - 1] = ".$index{$mod}[$counter][$NE{$mod}{$neName} - 1]."\n";
 			}
 			else
@@ -110,37 +107,20 @@ while (my $line = <INPFILES>)
 
 close(INPFILES);
 
-foreach my $key (keys %index)
+foreach my $indType ("PERSONS", "ORGANIZATIONS", "LOCATIONS")
 {
-  open(INDEXOUT, ">$key.ind");
+  open(INDEXOUT, ">$indType.ind");
+  print INDEXOUT "speeches:".$counter."\n";
+  print INDEXOUT "NEs:".$neTypeCounts{$indType}."\n";
 
-  print "creating index: $key.ind\n";
-  my @indF = @{$index{$key}};
-  print "number of speeches: ".scalar(@indF)."\n";
-  for (my $i = 0; $i < scalar(@indF); $i++)
+  foreach my $key (sort keys %index)
   {
-  	if ($indF[$i] == undef)
+  	if ($key =~ m/^$indType,([0-9]+),([0-9]+)/)
   	{
-  		for (my $j = 0; $j < $neTypeCounts{$key}; $j++)
-  		{
-  			print INDEXOUT "0 "; 
-  		}
-  		next;
+  		print INDEXOUT "($1,$2)=".$index{$key}."\n";
   	}
-  	my @indOF = @{$indF[$i]};
-  	for (my $j = 0; $j < $neTypeCounts{$key}; $j++)
-  	{
-  	  my $val = $indOF[$j];
-  	  if ($val eq "") { print INDEXOUT "0 "; }
-  	  else
-  	  {
-  	    print INDEXOUT "$val "; 
-  	  }
-  	}
-  	print INDEXOUT "\n";
   }
 
-  close(INDEXOUT);
-  
+  close(INDEXOUT);  
 }
 
