@@ -17,6 +17,8 @@ import javax.swing.JSlider;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
+import DataModulePackage.DataModule;
+
 public class CastroGUI {
 	
 	// the gui components
@@ -195,13 +197,32 @@ public class CastroGUI {
 		checkbox_box.add(locations_button);
 		checkbox_box.add(organizations_button);
 		
+		Box persons_ctrlbox = Box.createHorizontalBox();
+		persons_ctrlbox.add(persons_button);
+		persons_ctrlbox.add(persons_form);
+		Box persons_box = Box.createVerticalBox();
+		persons_box.add(new JLabel("Person(s)", JLabel.CENTER));
+		persons_box.add(persons_ctrlbox);
+		
+		Box locations_ctrlbox = Box.createHorizontalBox();
+		locations_ctrlbox.add(locations_button);
+		locations_ctrlbox.add(locations_form);
+		Box locations_box = Box.createVerticalBox();
+		locations_box.add(new JLabel("Location(s)", JLabel.CENTER));
+		locations_box.add(locations_ctrlbox);
+		
+		Box organizations_ctrlbox = Box.createHorizontalBox();
+		organizations_ctrlbox.add(organizations_button);
+		organizations_ctrlbox.add(organizations_form);
+		Box organizations_box = Box.createVerticalBox();
+		locations_box.add(new JLabel("Organization(s)", JLabel.CENTER));
+		locations_box.add(organizations_ctrlbox);
+		
+		
 		Box form_box = Box.createVerticalBox();
-		form_box.add(new JLabel("Person(s)"));
-		form_box.add(persons_form);
-		form_box.add(new JLabel("Location(s)"));
-		form_box.add(locations_form);
-		form_box.add(new JLabel("Organization(s)"));
-		form_box.add(organizations_form);
+		form_box.add(persons_box);
+		form_box.add(locations_box);
+		form_box.add(organizations_box);
 
 		search_button = new JButton("Search");
 		search_button.setVerticalTextPosition(AbstractButton.BOTTOM);
@@ -212,6 +233,9 @@ public class CastroGUI {
 			public void actionPerformed(ActionEvent arg0) {
 				JFrame button_press = new JFrame();
 				button_press.getContentPane().add(new JLabel("MySQL database search function"), BorderLayout.CENTER);
+				
+				DataModule.getGraph(SinceDate, TillDate, Place, Author, DocType, similarity_threshold, queryTerms, termWeights, maxNumNodes);
+				
 				button_press.pack();
 				button_press.setVisible(true);
 			}
