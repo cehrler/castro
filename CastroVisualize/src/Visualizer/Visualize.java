@@ -16,8 +16,13 @@ import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.KKLayout;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
+<<<<<<< HEAD:CastroVisualize/src/Visualizer/Visualize.java
+import edu.uci.ics.jung.algorithms.layout.SpringLayout;
+=======
+>>>>>>> 7ff644efaefe579016ae0147dbeacee6a6b904f2:CastroVisualize/src/Visualizer/Visualize.java
 import edu.uci.ics.jung.algorithms.layout.SpringLayout2;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
+import edu.uci.ics.jung.algorithms.layout3d.AbstractLayout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseMultigraph;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
@@ -26,6 +31,7 @@ import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.EditingModalGraphMouse;
 import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
 
+import Functionality.*; 
 
 public class Visualize {
 	
@@ -92,7 +98,7 @@ public class Visualize {
 	
 	
 	public static void main(String[] args) {
-		Functionality.Node n1 = new Functionality.Node(1);
+		/*Functionality.Node n1 = new Functionality.Node(1);
 		Functionality.Node n2 = new Functionality.Node(2);
 		Functionality.Node n3 = new Functionality.Node(3);
 		Functionality.Node n4 = new Functionality.Node(4);
@@ -116,8 +122,26 @@ public class Visualize {
 		es.add(new Functionality.Edge(n4,n2,0.5463));
 		es.add(new Functionality.Edge(n5,n6,0.7));
 		
-		Functionality.Graph g =new Functionality.Graph(ns,es);
-		Visualize visu = new Visualize(g);
+		Functionality.Graph g =new Functionality.Graph(ns,es);*/
+		
+		Functionality.DataModule.Init(IndexTypeEnum.TF);
+
+		List<String> queryTerms = new ArrayList<String>();
+		List<Double> termWeights = new ArrayList<Double>();
+		
+		
+		
+		queryTerms.add("PRENSA LATINA"); termWeights.add(1.0);
+		queryTerms.add("Conrado Benitez"); termWeights.add(1.0);
+		queryTerms.add("Salvador"); termWeights.add(1.0);
+		queryTerms.add("Chile"); termWeights.add(1.0);
+		queryTerms.add("Manual Ascunce"); termWeights.add(0.0);
+		
+		
+		Functionality.Graph G = DataModule.getGraph("NULL", "NULL", "NULL", "NULL", "NULL", queryTerms, termWeights, 20, SimMatrixEnum.AllWeightedEqually, 0.3);
+
+		
+		Visualize visu = new Visualize(G);
 		visu.drawGraph();
 	}
 }
