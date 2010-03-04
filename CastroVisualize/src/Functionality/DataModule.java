@@ -232,7 +232,7 @@ public class DataModule {
 		
 		if (maxNumNodes == null) maxNumNodes = nodes.size();
 		
-		for (int i = nodes.size() - 1; i >= nodes.size() - maxNumNodes; i--)
+		for (int i = nodes.size() - 1; i >= Math.max(nodes.size() - maxNumNodes, 0); i--)
 		{
 			sn.add(nodes.get(i));
 		}
