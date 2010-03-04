@@ -276,7 +276,7 @@ public class DataModule {
 		        	Node nod = new Node(srs.getInt("SPEECH_ID"), srs.getString("AUTHOR_NAME"), 
 		        			srs.getString("HEADLINE"), srs.getString("REPORT_DATE"), 
 		        			srs.getString("SOURCE_NAME"), srs.getString("PLACE_NAME"), srs.getString("DOCTYPE_NAME"),
-		        			srs.getString("SPEECH_TEXT"), srs.getString("SPEECH_DATE"));
+		        			srs.getString("SPEECH_TEXT").replace("<br>", "\n"), srs.getString("SPEECH_DATE"));
 		        	
 		        	ln.add(nod);
 		        	//idToNode.put(nod.getSpeech_id(), nod);

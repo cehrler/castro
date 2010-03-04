@@ -16,10 +16,7 @@ import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.KKLayout;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
-<<<<<<< HEAD:CastroVisualize/src/Visualizer/Visualize.java
 import edu.uci.ics.jung.algorithms.layout.SpringLayout;
-=======
->>>>>>> 7ff644efaefe579016ae0147dbeacee6a6b904f2:CastroVisualize/src/Visualizer/Visualize.java
 import edu.uci.ics.jung.algorithms.layout.SpringLayout2;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.algorithms.layout3d.AbstractLayout;
