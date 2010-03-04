@@ -6,7 +6,7 @@
 //               Use of any kind is considered a breach of copyright law. 
 //               You are not allowed to use this for any purpose; neither commercial 
 //               nor non-commercial.
-// Description : My own main.class for my data experiments
+// Description : My main class for data experiments
 //============================================================================
 
 import java.util.ArrayList;
@@ -16,11 +16,14 @@ import java.util.Set;
 
 import DataModulePackage.*;
 
+
 public class MichalMain {
 
 	public static void main(String[] args) {
 		//makeBinIndexes();
 		//makeSimMatrices();
+		
+		
 		DataModule.Init();
 		
 		/*
@@ -41,7 +44,7 @@ public class MichalMain {
 		queryTerms.add("Manual Ascunce"); termWeights.add(0.0);
 		
 		
-		Graph G = DataModule.getGraph("NULL", "NULL", "NULL", "NULL", "NULL", 0.30, queryTerms, termWeights, 50);
+		Graph G = DataModule.getGraph("NULL", "NULL", "NULL", "NULL", "NULL", queryTerms, termWeights, 50, SimMatrixEnum.LocationsOnly, 0.4);
 		
 		List<Node> ln = G.getNodes();
 		

@@ -42,8 +42,19 @@ public class DataModule {
 	//In the future this will be extended, now I use only 1 distance matrix
 	
 	
-	private static SimMatrix simMatrix;
-	private static String simMatFile = "../DataModuleData/PERSONS.tfidf.sim";
+	private static SimMatrix smPersons;
+	private static SimMatrix smLocations;
+	private static SimMatrix smOrganizations;
+	private static SimMatrix smAllWeightedEqually;
+	private static SimMatrix smAllPersonsWeightedDouble;
+	private static SimMatrix smAllLocationsWeightedDouble;
+	private static SimMatrix smAllOrganizationsWeightedDouble;
+	
+	
+	private static String smPersonsFile = "../DataModuleData/PERSONS.tfidf.sim";
+	private static String smLocationsFile = "../DataModuleData/LOCATIONS.tfidf.sim";
+	private static String smOrganizationsFile = "../DataModuleData/ORGANIZATIONS.tfidf.sim";
+	
 	
 	private static Map<String, Integer> personsMap;
 	private static Map<String, Integer> locationsMap;
@@ -61,8 +72,43 @@ public class DataModule {
 	
 	public static void Init()
 	{
-		simMatrix = SimMatrixElem.LoadFromFile(simMatFile);
+		smPersons = SimMatrixElem.LoadFromFile(smPersonsFile);
+		smLocations = SimMatrixElem.LoadFromFile(smLocationsFile);
+		smOrganizations = SimMatrixElem.LoadFromFile(smOrganizationsFile);
 		
+		List<SimMatrix> lsm = new ArrayList<SimMatrix>();
+		lsm.add(smPersons);
+		lsm.add(smLocations);
+		lsm.add(smOrganizations);
+		
+		List<Double> lw1 = new ArrayList<Double>();
+		lw1.add(1.0 / 3.0);
+		lw1.add(1.0 / 3.0);
+		lw1.add(1.0 / 3.0);
+		
+		smAllWeightedEqually = new SimMatrixInterp(lsm, lw1);
+
+		List<Double> lw2 = new ArrayList<Double>();
+		lw2.add(2.0 / 4.0);
+		lw2.add(1.0 / 4.0);
+		lw2.add(1.0 / 4.0);
+		
+		smAllPersonsWeightedDouble = new SimMatrixInterp(lsm, lw2);
+
+		List<Double> lw3 = new ArrayList<Double>();
+		lw3.add(1.0 / 4.0);
+		lw3.add(2.0 / 4.0);
+		lw3.add(1.0 / 4.0);
+		
+		smAllLocationsWeightedDouble = new SimMatrixInterp(lsm, lw2);
+
+		List<Double> lw4 = new ArrayList<Double>();
+		lw4.add(1.0 / 4.0);
+		lw4.add(1.0 / 4.0);
+		lw4.add(2.0 / 4.0);
+		
+		smAllOrganizationsWeightedDouble = new SimMatrixInterp(lsm, lw4);
+	
 		personsIndex = new VMindex(personsIndexFile);
 		locationsIndex = new VMindex(locationsIndexFile);
 		organizationsIndex = new VMindex(organizationsIndexFile);
@@ -164,8 +210,22 @@ public class DataModule {
 		return sn;
 	}
 	
-	public static Graph getGraph(String SinceDate, String TillDate, String Place, String Author, String DocType, Double similarity_threshold, List<String> queryTerms , List<Double> termWeights, Integer maxNumNodes)
+	public static Graph getGraph(String SinceDate, String TillDate, String Place, String Author, String DocType, List<String> queryTerms , List<Double> termWeights, Integer maxNumNodes, SimMatrixEnum sme, Double similarity_threshold)
 	{
+		SimMatrix simMatrix;
+		
+		switch (sme)
+		{
+			case PersonsOnly: simMatrix = smPersons; break;
+			case LocationsOnly: simMatrix = smLocations; break;
+			case OrganizationsOnly: simMatrix = smOrganizations; break;
+			case AllWeightedEqually: simMatrix = smAllWeightedEqually; break;
+			case AllPersonsWeightedDouble: simMatrix = smAllPersonsWeightedDouble; break;
+			case AllLocationsWeightedDouble: simMatrix = smAllLocationsWeightedDouble; break;
+			case AllOrganizationsWeightedDouble: simMatrix = smAllOrganizationsWeightedDouble; break;
+			default: simMatrix = smAllWeightedEqually; break;
+		}
+		
 		if (SinceDate != "NULL") SinceDate = "\"" + SinceDate + "\"";
 		if (TillDate != "NULL") TillDate = "\"" + TillDate + "\"";
 		if (Place != "NULL") Place = "\"" + Place + "\"";

@@ -138,8 +138,7 @@ public class VMindex {
 	public static void ConvertTextToBin(String inputfile, String outputfile)
 	{
 		System.err.println("Converting " + inputfile + " to " + outputfile);
-		Double val;
-		Double eps = 0.0000001;
+
 		try {
 			FileInputStream ios =  new FileInputStream(inputfile);
 		    DataInputStream in = new DataInputStream(ios);
@@ -178,36 +177,49 @@ public class VMindex {
 	        	throw new Exception("invalid second row!");
 	        }
 	        
+	        int pom1, pom2;
+	        int docID, termID;
+	        double pomVal;
+	        
+	        List<Map<Integer, Double>> pomMat = new ArrayList<Map<Integer, Double>>();
 	        
 	        for (int i = 0; i < numSpeeches; i++)
 	        {
-	            Map<Integer, Double> hm = new HashMap<Integer, Double>();
+	        	pomMat.add(new HashMap<Integer, Double>());
+	        }
+	        
+	        while (br.ready())
+	        {
+	        	s = br.readLine();
+	        	
+	        	pom1 = s.indexOf(',', 0);
+	        	docID = Integer.parseInt(s.substring(1, pom1));
+	        	
+	        	pom2 = s.indexOf('=', 0);
+	        	
+	        	termID = Integer.parseInt(s.substring(pom1 + 1, pom2 - 1));
+	        	pomVal = Double.parseDouble(s.substring(pom2 + 1));
+	        	
+	        	pomMat.get(docID).put(termID, pomVal);
+	        	
+	        	//System.err.println(s.substring(1, pom1) + " " + s.substring(pom1 + 1, pom2 - 1) + " " + s.substring(pom2 + 1));
+	        	//System.exit(1);
+	        }
+	        
+	        for (int i = 0; i < numSpeeches; i++)
+	        {
+	            Map<Integer, Double> hm = pomMat.get(i);
 	        	Integer count = 0;
-		        for (int j = 0; j < numNEs; j++)
-		        {
-		          val = Double.parseDouble(br.readLine());
-		          
-		          if (val.compareTo(eps) > 0)
-		          {
-		        	  hm.put(j, val);
-		        	  count++;
-		          }
-		        }
-		        
-		        s = br.readLine();
-		        
-		        if (! s.substring(0,3).equals("---"))
-		        {
-		        	throw new Exception("Wrong input format! -- " + s.substring(0,3));
-		        }
-		        
-		        os.writeInt(count);
-	        	//System.err.println("Integer: " + count);
-		        
-		        Integer count2 = 0;
+
 		        for (Iterator<Integer> it = hm.keySet().iterator(); it.hasNext(); )
 		        {
-		        	count2++;
+		        	count++;
+		        	it.next();
+		        }
+		        os.writeInt(count);
+		        
+		        for (Iterator<Integer> it = hm.keySet().iterator(); it.hasNext(); )
+		        {		        	
 		        	Integer pomInt = it.next();
 		        	Double val2 = hm.get(pomInt);
 		        	os.writeInt(pomInt);
@@ -215,12 +227,6 @@ public class VMindex {
 		        	//System.err.println("Double: " + val2);
 		        }
 		        
-		        //System.out.println(count);
-		        
-		        if (!count.equals(count2))
-		        {
-		        	throw new Exception("count is not equal to count2! " + count.toString() + " != " + count2.toString());
-		        }
 		        
 		        //throw new Exception("That's enough");
 		    }
