@@ -1,0 +1,15 @@
+#!/bin/bash
+
+MYSQL_USER=root
+MYSQL_PASSWD=root
+
+./makeDatabase file_id.txt > castro.sql
+./makeNETables NE_id.txt file_id.txt > NE.sql
+
+run_mysql="mysql -u$MYSQL_USER -p$MYSQL_PASSWD"
+
+$run_mysql --execute="source ./castro.sql;"
+$run_mysql --execute="source ./NE.sql;"
+$run_mysql --execute="source ./getNE.sql;"
+$run_mysql --execute="source ./getNEperSpeech.sql;"
+$run_mysql --execute="source ./getNodes.sql;"

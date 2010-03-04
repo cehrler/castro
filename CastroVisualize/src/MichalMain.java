@@ -24,7 +24,7 @@ public class MichalMain {
 		//makeSimMatrices();
 		
 		
-		DataModule.Init();
+		DataModule.Init(IndexTypeEnum.TF);
 		
 		/*
 		Abraham Lincoln,  Alfonso Barrantes

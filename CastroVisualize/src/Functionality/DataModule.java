@@ -51,9 +51,9 @@ public class DataModule {
 	private static SimMatrix smAllOrganizationsWeightedDouble;
 	
 	
-	private static String smPersonsFile = "../DataModuleData/PERSONS.tfidf.sim";
-	private static String smLocationsFile = "../DataModuleData/LOCATIONS.tfidf.sim";
-	private static String smOrganizationsFile = "../DataModuleData/ORGANIZATIONS.tfidf.sim";
+	private static String smPersonsFile;
+	private static String smLocationsFile;
+	private static String smOrganizationsFile;
 	
 	
 	private static Map<String, Integer> personsMap;
@@ -64,14 +64,42 @@ public class DataModule {
 	private static VMindex locationsIndex;
 	private static VMindex organizationsIndex;
 	
-	private static String personsIndexFile = "../DataModuleData/PERSONS.tfidf.bin";
-	private static String locationsIndexFile = "../DataModuleData/LOCATIONS.tfidf.bin";
-	private static String organizationsIndexFile = "../DataModuleData/ORGANIZATIONS.tfidf.bin";
+	private static String personsIndexFile;
+	private static String locationsIndexFile;
+	private static String organizationsIndexFile;
 	
 	private DataModule() {}
 	
-	public static void Init()
+	
+	public static void Init(IndexTypeEnum indexType)
 	{
+		switch (indexType)
+		{
+			case TF: personsIndexFile = "../DataModuleData/PERSONS.tf.bin";
+					 locationsIndexFile = "../DataModuleData/LOCATIONS.tf.bin";
+					 organizationsIndexFile = "../DataModuleData/ORGANIZATIONS.tf.bin";
+					 smPersonsFile = "../DataModuleData/PERSONS.tf.sim";
+					 smLocationsFile = "../DataModuleData/LOCATIONS.tf.sim";
+					 smOrganizationsFile = "../DataModuleData/ORGANIZATIONS.tf.sim";
+					 break;
+			
+			case TFIDF: personsIndexFile = "../DataModuleData/PERSONS.tfidf.bin";
+			 			locationsIndexFile = "../DataModuleData/LOCATIONS.tfidf.bin";
+			 			organizationsIndexFile = "../DataModuleData/ORGANIZATIONS.tfidf.bin";
+			 			smPersonsFile = "../DataModuleData/PERSONS.tfidf.sim";
+			 			smLocationsFile = "../DataModuleData/LOCATIONS.tfidf.sim";
+			 			smOrganizationsFile = "../DataModuleData/ORGANIZATIONS.tfidf.sim";
+			
+			case NoNormalization: personsIndexFile = "../DataModuleData/PERSONS.nonorm.bin";
+ 								  locationsIndexFile = "../DataModuleData/LOCATIONS.nonorm.bin";
+ 								  organizationsIndexFile = "../DataModuleData/ORGANIZATIONS.nonorm.bin";
+ 								  smPersonsFile = "../DataModuleData/PERSONS.tf.sim";
+ 								  smLocationsFile = "../DataModuleData/LOCATIONS.tf.sim";
+ 								  smOrganizationsFile = "../DataModuleData/ORGANIZATIONS.tf.sim";
+			 break;
+
+		}
+		
 		smPersons = SimMatrixElem.LoadFromFile(smPersonsFile);
 		smLocations = SimMatrixElem.LoadFromFile(smLocationsFile);
 		smOrganizations = SimMatrixElem.LoadFromFile(smOrganizationsFile);
@@ -115,42 +143,44 @@ public class DataModule {
 		
 		connection = MySqlConnectionProvider.getNewConnection(connHost, connDB, connUser, connPasswd);
 
-		personsMap = new HashMap<String, Integer>();
-		locationsMap = new HashMap<String, Integer>();
-		organizationsMap = new HashMap<String, Integer>();
-		
-		try {
-			java.sql.Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
-                    ResultSet.CONCUR_READ_ONLY);	
-			System.err.println("CALL getNE();");
-			ResultSet srs = stmt.executeQuery("CALL getNE();");
+		if (personsMap == null || locationsMap == null || organizationsMap == null)
+		{
+			personsMap = new HashMap<String, Integer>();
+			locationsMap = new HashMap<String, Integer>();
+			organizationsMap = new HashMap<String, Integer>();
 			
-			String pomS;
-			
-			while (srs.next()) 
-			{
-					pomS = srs.getString("NE_TYPE");
-					
-					if (pomS.equals("ORGANIZATIONS"))
-					{
-						organizationsMap.put(srs.getString("NE_NAME"), srs.getInt("NE_INDEX_ID"));
-					}
-					else if (pomS.equals("PERSONS"))
-					{
-						personsMap.put(srs.getString("NE_NAME"), srs.getInt("NE_INDEX_ID"));
-					}
-					else if (pomS.equals("LOCATIONS"))
-					{
-						locationsMap.put(srs.getString("NE_NAME"), srs.getInt("NE_INDEX_ID"));
-					}
-									
-			}
+			try {
+				java.sql.Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+	                    ResultSet.CONCUR_READ_ONLY);	
+				System.err.println("CALL getNE();");
+				ResultSet srs = stmt.executeQuery("CALL getNE();");
+				
+				String pomS;
+				
+				while (srs.next()) 
+				{
+						pomS = srs.getString("NE_TYPE");
 						
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+						if (pomS.equals("ORGANIZATIONS"))
+						{
+							organizationsMap.put(srs.getString("NE_NAME"), srs.getInt("NE_INDEX_ID"));
+						}
+						else if (pomS.equals("PERSONS"))
+						{
+							personsMap.put(srs.getString("NE_NAME"), srs.getInt("NE_INDEX_ID"));
+						}
+						else if (pomS.equals("LOCATIONS"))
+						{
+							locationsMap.put(srs.getString("NE_NAME"), srs.getInt("NE_INDEX_ID"));
+						}
+										
+				}
+							
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 
-		
+		}
 	}
 	
 	private static void similarityUpdate(List<Node> nodes, VMindex currIndex, Integer termCol, Double weight)
