@@ -31,7 +31,7 @@ public class MichalMain {
 		queryTerms.add("Manual Ascunce"); termWeights.add(0.0);
 		
 		
-		Graph G = DataModule.getGraph("NULL", "NULL", "NULL", "NULL", "NULL", 0.30, queryTerms, termWeights, 50);
+		Graph G = DataModule.getGraph("1959-04-04", "NULL", "NULL", "NULL", "NULL", 0.30, queryTerms, termWeights, 50);
 		
 		List<Node> ln = G.getNodes();
 		
