@@ -1,9 +1,5 @@
 package Functionality;
-<<<<<<< HEAD:CastroVisualize/src/Functionality/Node.java
 import java.util.Date;
-=======
-
->>>>>>> 068510fb0545aba8a0654fc8011d3f2f7fec39f6:CastroVisualize/src/Functionality/Node.java
 import java.util.Map;
 import java.util.Set;
 import java.util.HashMap;
@@ -46,7 +42,6 @@ public class Node implements Comparable<Object> {
 	}
 	
 	//context informtion
-	private boolean marked; 
 	
 	public Node(Integer id) {
 		this.id = id;
@@ -165,15 +160,6 @@ public class Node implements Comparable<Object> {
 		assert this.neighbors.containsKey(v);
 		return this.neighbors.get(v);
 	}
-<<<<<<< HEAD:CastroVisualize/src/Functionality/Node.java
-
-	@Override
-	public String toString() {
-		return "" + this.id;
-	}
-}
-=======
->>>>>>> 068510fb0545aba8a0654fc8011d3f2f7fec39f6:CastroVisualize/src/Functionality/Node.java
 
 	@Override
 	public String toString() {

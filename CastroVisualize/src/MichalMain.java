@@ -1,6 +1,3 @@
-<<<<<<< HEAD:CastroVisualize/src/Functionality/MichalMain.java
-package Functionality;
-=======
 //============================================================================
 // Name        : MichalMain.java
 // Author      : Michal Richter, Michalisek
@@ -18,8 +15,6 @@ import java.util.List;
 import java.util.Set;
 
 import Functionality.*;
->>>>>>> 068510fb0545aba8a0654fc8011d3f2f7fec39f6:CastroVisualize/src/MichalMain.java
-
 
 public class MichalMain {
 
