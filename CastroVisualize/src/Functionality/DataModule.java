@@ -1,24 +1,10 @@
-//============================================================================
-// Name        : DataModule.java
-// Author      : Michal Richter, Michalisek
-// Version     :
-// Copyright   : This product is licensed under Fidel Castro restricted software license. 
-//               Use of any kind is considered a breach of copyright law. 
-//               You are not allowed to use this for any purpose; neither commercial 
-//               nor non-commercial.
-// Description : Graph data object is constructed from user query here - see getGraph function
-//               Need to be initialized first by Init();
-//============================================================================
-
-
 package Functionality;
-
 import java.sql.*;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
+import java.io.*;
 
 public class DataModule {
 
@@ -38,224 +24,57 @@ public class DataModule {
 	private static String connDB = "castro_db";
 	private static String connUser = "root";
 	private static String connPasswd = "root";
-		
+	
+	private static String DataDir = "../DataModuleData/";
+	
 	//In the future this will be extended, now I use only 1 distance matrix
+	private static String distMatFile = DataDir + "PERSONS.tfidf.dist";
 	
+	private static List<List<Double> > distMat;
 	
-	private static SimMatrix smPersons;
-	private static SimMatrix smLocations;
-	private static SimMatrix smOrganizations;
-	private static SimMatrix smAllWeightedEqually;
-	private static SimMatrix smAllPersonsWeightedDouble;
-	private static SimMatrix smAllLocationsWeightedDouble;
-	private static SimMatrix smAllOrganizationsWeightedDouble;
+	private static Integer NumDocs = 0;
 	
-	
-	private static String smPersonsFile;
-	private static String smLocationsFile;
-	private static String smOrganizationsFile;
-	
-	
-	private static Map<String, Integer> personsMap;
-	private static Map<String, Integer> locationsMap;
-	private static Map<String, Integer> organizationsMap;
-	
-	private static VMindex personsIndex;
-	private static VMindex locationsIndex;
-	private static VMindex organizationsIndex;
-	
-	private static String personsIndexFile;
-	private static String locationsIndexFile;
-	private static String organizationsIndexFile;
-	
-	private DataModule() {}
-	
-	
-	public static void Init(IndexTypeEnum indexType)
+	public static void Init()
 	{
-		switch (indexType)
-		{
-			case TF: personsIndexFile = "../DataModuleData/PERSONS.tf.bin";
-					 locationsIndexFile = "../DataModuleData/LOCATIONS.tf.bin";
-					 organizationsIndexFile = "../DataModuleData/ORGANIZATIONS.tf.bin";
-					 smPersonsFile = "../DataModuleData/PERSONS.tf.sim";
-					 smLocationsFile = "../DataModuleData/LOCATIONS.tf.sim";
-					 smOrganizationsFile = "../DataModuleData/ORGANIZATIONS.tf.sim";
-					 break;
-			
-			case TFIDF: personsIndexFile = "../DataModuleData/PERSONS.tfidf.bin";
-			 			locationsIndexFile = "../DataModuleData/LOCATIONS.tfidf.bin";
-			 			organizationsIndexFile = "../DataModuleData/ORGANIZATIONS.tfidf.bin";
-			 			smPersonsFile = "../DataModuleData/PERSONS.tfidf.sim";
-			 			smLocationsFile = "../DataModuleData/LOCATIONS.tfidf.sim";
-			 			smOrganizationsFile = "../DataModuleData/ORGANIZATIONS.tfidf.sim";
-			
-			case NoNormalization: personsIndexFile = "../DataModuleData/PERSONS.nonorm.bin";
- 								  locationsIndexFile = "../DataModuleData/LOCATIONS.nonorm.bin";
- 								  organizationsIndexFile = "../DataModuleData/ORGANIZATIONS.nonorm.bin";
- 								  smPersonsFile = "../DataModuleData/PERSONS.tf.sim";
- 								  smLocationsFile = "../DataModuleData/LOCATIONS.tf.sim";
- 								  smOrganizationsFile = "../DataModuleData/ORGANIZATIONS.tf.sim";
-			 break;
-
-		}
-		
-		smPersons = SimMatrixElem.LoadFromFile(smPersonsFile);
-		smLocations = SimMatrixElem.LoadFromFile(smLocationsFile);
-		smOrganizations = SimMatrixElem.LoadFromFile(smOrganizationsFile);
-		
-		List<SimMatrix> lsm = new ArrayList<SimMatrix>();
-		lsm.add(smPersons);
-		lsm.add(smLocations);
-		lsm.add(smOrganizations);
-		
-		List<Double> lw1 = new ArrayList<Double>();
-		lw1.add(1.0 / 3.0);
-		lw1.add(1.0 / 3.0);
-		lw1.add(1.0 / 3.0);
-		
-		smAllWeightedEqually = new SimMatrixInterp(lsm, lw1);
-
-		List<Double> lw2 = new ArrayList<Double>();
-		lw2.add(2.0 / 4.0);
-		lw2.add(1.0 / 4.0);
-		lw2.add(1.0 / 4.0);
-		
-		smAllPersonsWeightedDouble = new SimMatrixInterp(lsm, lw2);
-
-		List<Double> lw3 = new ArrayList<Double>();
-		lw3.add(1.0 / 4.0);
-		lw3.add(2.0 / 4.0);
-		lw3.add(1.0 / 4.0);
-		
-		smAllLocationsWeightedDouble = new SimMatrixInterp(lsm, lw2);
-
-		List<Double> lw4 = new ArrayList<Double>();
-		lw4.add(1.0 / 4.0);
-		lw4.add(1.0 / 4.0);
-		lw4.add(2.0 / 4.0);
-		
-		smAllOrganizationsWeightedDouble = new SimMatrixInterp(lsm, lw4);
-	
-		personsIndex = new VMindex(personsIndexFile);
-		locationsIndex = new VMindex(locationsIndexFile);
-		organizationsIndex = new VMindex(organizationsIndexFile);
-		
 		connection = MySqlConnectionProvider.getNewConnection(connHost, connDB, connUser, connPasswd);
-
-		if (personsMap == null || locationsMap == null || organizationsMap == null)
-		{
-			personsMap = new HashMap<String, Integer>();
-			locationsMap = new HashMap<String, Integer>();
-			organizationsMap = new HashMap<String, Integer>();
+		
+		try {
+			FileInputStream ios =  new FileInputStream(distMatFile);
+		    DataInputStream in = new DataInputStream(ios);
+	        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+	 
 			
-			try {
-				java.sql.Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
-	                    ResultSet.CONCUR_READ_ONLY);	
-				System.err.println("CALL getNE();");
-				ResultSet srs = stmt.executeQuery("CALL getNE();");
-				
-				String pomS;
-				
-				while (srs.next()) 
+			NumDocs = Integer.parseInt(br.readLine());
+			System.err.println("reading distMatFile: numSpeaches = " + NumDocs.toString());
+			
+			distMat = new ArrayList<List<Double> >();
+			
+			for (int i = 0; i < NumDocs; i++ )
+			{
+				distMat.add(new ArrayList<Double>());
+				for (int j = 0; j < NumDocs; j++)
 				{
-						pomS = srs.getString("NE_TYPE");
-						
-						if (pomS.equals("ORGANIZATIONS"))
-						{
-							organizationsMap.put(srs.getString("NE_NAME"), srs.getInt("NE_INDEX_ID"));
-						}
-						else if (pomS.equals("PERSONS"))
-						{
-							personsMap.put(srs.getString("NE_NAME"), srs.getInt("NE_INDEX_ID"));
-						}
-						else if (pomS.equals("LOCATIONS"))
-						{
-							locationsMap.put(srs.getString("NE_NAME"), srs.getInt("NE_INDEX_ID"));
-						}
-										
+					distMat.get(i).add(Double.parseDouble(br.readLine()));
 				}
-							
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-
-		}
-	}
-	
-	private static void similarityUpdate(List<Node> nodes, VMindex currIndex, Integer termCol, Double weight)
-	{
-		for (int i = 0; i < nodes.size(); i++)
-		{
-			nodes.get(i).SetRelevance(nodes.get(i).GetRelevance() + currIndex.GetValue(nodes.get(i).getSpeech_id(), termCol) * weight);
-		}
-	}
-	
-	private static List<Node> sortNodes(List<Node> nodes, List<String> queryTerms , List<Double> termWeights, Integer maxNumNodes)
-	{
-		if (queryTerms == null)
-		{
-			return nodes;
-		}
-				
-		
-		for (int i = 0; i < nodes.size(); i++)
-		{
-			nodes.get(i).SetRelevance(0.0);
-		}
-		
-		
-		for (int i = 0; i < queryTerms.size(); i++)
-		{
-			if (personsMap.containsKey(queryTerms.get(i)))
-			{
-				similarityUpdate(nodes, personsIndex, personsMap.get(queryTerms.get(i)), termWeights.get(i));
 			}
 			
-			if (locationsMap.containsKey(queryTerms.get(i)))
+			if (br.ready())
 			{
-				similarityUpdate(nodes, locationsIndex, locationsMap.get(queryTerms.get(i)), termWeights.get(i));
-				
+				System.err.println("Stream ready after everything read! - error??");
 			}
-
-			if (organizationsMap.containsKey(queryTerms.get(i)))
-			{
-				similarityUpdate(nodes, organizationsIndex, organizationsMap.get(queryTerms.get(i)), termWeights.get(i));
-				
-			}
+			System.err.println("dist 0 <-> 1 is " + distMat.get(0).get(1).toString());
 			
+			
+		} catch (IOException e) {			
+			e.printStackTrace();
 		}
-		
-		Collections.sort(nodes);
-		
-		List<Node> sn = new ArrayList<Node>();
-		
-		if (maxNumNodes == null) maxNumNodes = nodes.size();
-		
-		for (int i = nodes.size() - 1; i >= nodes.size() - maxNumNodes; i--)
-		{
-			sn.add(nodes.get(i));
-		}
-		
-		return sn;
+
 	}
 	
-	public static Graph getGraph(String SinceDate, String TillDate, String Place, String Author, String DocType, List<String> queryTerms , List<Double> termWeights, Integer maxNumNodes, SimMatrixEnum sme, Double similarity_threshold)
+	
+	
+	public static Graph getGraph(String SinceDate, String TillDate, String Place, String Author, String DocType, Double dist_threshold)
 	{
-		SimMatrix simMatrix;
-		
-		switch (sme)
-		{
-			case PersonsOnly: simMatrix = smPersons; break;
-			case LocationsOnly: simMatrix = smLocations; break;
-			case OrganizationsOnly: simMatrix = smOrganizations; break;
-			case AllWeightedEqually: simMatrix = smAllWeightedEqually; break;
-			case AllPersonsWeightedDouble: simMatrix = smAllPersonsWeightedDouble; break;
-			case AllLocationsWeightedDouble: simMatrix = smAllLocationsWeightedDouble; break;
-			case AllOrganizationsWeightedDouble: simMatrix = smAllOrganizationsWeightedDouble; break;
-			default: simMatrix = smAllWeightedEqually; break;
-		}
-		
 		if (SinceDate != "NULL") SinceDate = "\"" + SinceDate + "\"";
 		if (TillDate != "NULL") TillDate = "\"" + TillDate + "\"";
 		if (Place != "NULL") Place = "\"" + Place + "\"";
@@ -263,8 +82,6 @@ public class DataModule {
 		if (DocType != "NULL") DocType = "\"" + DocType + "\"";
 
 		List<Node> ln = new ArrayList<Node>();
-		//Map<Integer, Node> idToNode = new HashMap<Integer, Node>();
-		List<Edge> le = new ArrayList<Edge>();
 		try {
 			java.sql.Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_READ_ONLY);	
@@ -279,42 +96,19 @@ public class DataModule {
 		        			"", srs.getString("SPEECH_DATE"));
 		        	
 		        	ln.add(nod);
-		        	//idToNode.put(nod.getSpeech_id(), nod);
 			}
 			
 			
+			System.err.println(ln.size());
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		
-		List<Node> sn = sortNodes(ln, queryTerms, termWeights, maxNumNodes);
+		Map<Integer,Integer> id_aux = new HashMap<Integer, Integer>();
 		
-		Double similarity;
 		
-		for (int i = 0; i < sn.size(); i++)
-		{
-			//Node n = ln.get(i);
-			for (int j = i + 1; j < sn.size(); j++)
-			{
-				//if (i == j) continue;
-				similarity = simMatrix.getSimilarity(sn.get(i), sn.get(j));
-								
-				if (similarity.compareTo(similarity_threshold) > 0)
-				{					
-					Edge e = new Edge(sn.get(i), sn.get(j), similarity);
-					le.add(e);
-					sn.get(i).addEdge(sn.get(j), similarity);
-					sn.get(j).addEdge(sn.get(i), similarity);
-				}
-			}
-			
-		}
-
-		System.err.println("Number of nodes: " + sn.size());
-		System.err.println("Number of edges: " + le.size());
-		
-		return new Graph(sn, le);
+		return new Graph(ln, null);
 		
 	}
 	

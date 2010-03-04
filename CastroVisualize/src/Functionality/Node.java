@@ -1,8 +1,11 @@
 package Functionality;
-
+import java.util.Date;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashMap;
+import java.util.TreeMap;
+import java.util.List;
+import java.util.ArrayList;
+
 
 
 public class Node implements Comparable<Object> {
@@ -18,28 +21,17 @@ public class Node implements Comparable<Object> {
 	private String document_type;
 	private String speech_text;
 	private String speech_date;
-	private Double relevance;
 	
 	// date for named entities
 	private Map<String, Integer> ne_person;
 	private Map<String, Integer> ne_location;
 	private Map<String, Integer> ne_organization;
-
-	//context informtion
-	private boolean marked; 
 	
 	// list of neighbors
-	private Map<Node, Double> neighbors = new HashMap<Node, Double>();
+	private Map<Node, Double> neighbors;
 	
-	public void SetRelevance(Double rel)
-	{
-		relevance = rel;
-	}
-	
-	public Double GetRelevance()
-	{
-		return relevance;
-	}
+	//context informtion
+	private boolean marked; 
 	
 	public Node(Integer id) {
 		this.id = id;
@@ -61,6 +53,7 @@ public class Node implements Comparable<Object> {
 		document_type = _document_type;
 		speech_text = _speech_text;
 		speech_date = _speech_date;
+		
 		
 	}
 		
@@ -139,7 +132,7 @@ public class Node implements Comparable<Object> {
 		if(obj instanceof Node) {
 			Node that = (Node) obj;
 			
-			return this.GetRelevance().compareTo(that.GetRelevance());
+			return this.id.compareTo(that.id);
 		}
 		
 		return -1;
@@ -162,6 +155,53 @@ public class Node implements Comparable<Object> {
 	public String toString() {
 		return "" + this.id;
 	}
-
 }
 
+
+/*public void setAuthor(String author) {
+this.author = author;
+}
+
+public void setHeadline(String headline) {
+this.headline = headline;
+}
+
+public void setHeader(String header) {
+this.header = header;
+}
+
+public void setReport_nbr(String reportNbr) {
+report_nbr = reportNbr;
+}
+
+public void setReport_date(String reportDate) {
+report_date = reportDate;
+}
+
+public void setSource(String source) {
+this.source = source;
+}
+
+public void setPlace(String place) {
+this.place = place;
+}
+
+public void setDcument_type(String dcumentType) {
+dcument_type = dcumentType;
+}
+
+public void setData(Date data) {
+this.data = data;
+}*/
+
+/*public void addNamedEntityPerson(String ne, int count) {
+this.ne_person.put(ne, new Integer(count));
+}
+
+public void addNamedEntityLocation(String ne, int count) {
+this.ne_location.put(ne, new Integer(count));
+}
+
+public void addNamedEntityOrganization(String ne, int count) {
+this.ne_organization.put(ne, new Integer(count));
+}*/
