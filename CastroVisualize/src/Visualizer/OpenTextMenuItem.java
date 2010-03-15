@@ -1,0 +1,66 @@
+package Visualizer;
+
+import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.picking.PickedState;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Paint;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import org.apache.commons.collections15.Transformer;
+
+
+public class OpenTextMenuItem<V> extends JMenuItem implements VertexListener<V> {
+    private V vertex;
+    private VisualizationViewer visComp;
+    
+    private int width = 400;
+    private int height = 600;
+    
+    /** Creates a new instance of OpenTextMenuItem */
+    public OpenTextMenuItem() {
+        super("Open Text");
+        this.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                visComp.getPickedVertexState().pick(vertex, false);
+
+        		JFrame frame = new JFrame("Node "+ ((Functionality.Node) vertex).getSpeech_id() + ": " + ((Functionality.Node) vertex).getHeadline());
+        		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        		JTextArea ta = new JTextArea(((Functionality.Node) vertex).getSpeech_text(), 20, 20);
+        		JScrollPane sp = new JScrollPane(ta);
+        		
+        		Container content = frame.getContentPane();
+        		content.setLayout(null);
+        		
+        		content.add(sp);
+        		sp.setBounds(10, 10, width - 20, height - 20);
+        		
+        		//frame.pack();
+        		frame.setSize(width, height);
+            	frame.setResizable(false);
+        		frame.setFocusable(true);
+           		frame.setVisible(true);
+                           
+                
+                visComp.repaint();
+            }
+        });
+    }
+
+    /**
+     * Implements the VertexMenuListener interface.
+     * @param v 
+     * @param visComp 
+     */
+    public void setVertexAndView(V v, VisualizationViewer visComp) {
+        this.vertex = v;
+        this.visComp = visComp;
+        this.setText("Open text..");
+    }
+    
+}
