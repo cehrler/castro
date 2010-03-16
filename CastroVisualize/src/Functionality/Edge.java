@@ -36,6 +36,6 @@ public class Edge implements Comparable<Object> {
 
 	@Override
 	public String toString() {
-		return "" + this.strength;
+		return "";// + this.strength;
 	}
 }

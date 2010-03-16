@@ -43,8 +43,8 @@ public class MichalMain {
 		queryTerms.add("Manual Ascunce"); termWeights.add(0.0);
 		
 		
-		Graph G = DataModule.getGraph("NULL", "NULL", "NULL", "NULL", "NULL", queryTerms, termWeights, 50, SimMatrixEnum.LocationsOnly, 0.4);
-		
+		//Graph G = DataModule.getGraph("NULL", "NULL", "NULL", "NULL", "NULL", queryTerms, termWeights, 50, SimMatrixEnum.LocationsOnly, 0.4);
+		Graph G = null;
 		List<Node> ln = G.getNodes();
 		
 		for (int i = 0; i < Math.min(10, ln.size()); i++)

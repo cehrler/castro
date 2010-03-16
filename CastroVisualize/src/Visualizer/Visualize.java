@@ -2,32 +2,85 @@ package Visualizer;
 
 import java.awt.Dimension;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.JComponent;
-import javax.swing.JPopupMenu;
+import java.util.Map;
+import java.util.Set;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Paint;
+import java.awt.Shape;
+import java.awt.Stroke;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.geom.Point2D;
 
-import Functionality.DataModule;
-import Functionality.Edge;
-import Functionality.IndexTypeEnum;
-import Functionality.Node;
-import Functionality.SimMatrixEnum;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.vecmath.Point2d;
+
+import org.apache.commons.collections15.Predicate;
+import org.apache.commons.collections15.Transformer;
+
+import edu.uci.ics.jung.algorithms.layout.BalloonLayout;
+import edu.uci.ics.jung.algorithms.layout.CircleLayout;
+import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
+import edu.uci.ics.jung.algorithms.layout.KKLayout;
+import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.algorithms.layout.RadialTreeLayout;
+import edu.uci.ics.jung.algorithms.layout.SpringLayout;
 import edu.uci.ics.jung.algorithms.layout.SpringLayout2;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseMultigraph;
+import edu.uci.ics.jung.graph.util.Context;
+import edu.uci.ics.jung.visualization.RenderContext;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
+import edu.uci.ics.jung.visualization.control.EditingModalGraphMouse;
+import edu.uci.ics.jung.visualization.decorators.AbstractVertexShapeTransformer;
 import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
+import edu.uci.ics.jung.visualization.picking.PickedState;
 
-public class Visualize {
+import Functionality.*; 
+
+public class Visualize implements ItemListener, MouseListener {
 	
+	VisualizationViewer<Functionality.Node,Functionality.Edge> vv;	
 	Graph<Functionality.Node, Functionality.Edge> qt;
 	
+	private SpringLayout2<Functionality.Node, Functionality.Edge> layout;
+	private Functionality.Graph myGraph;
+	
+	private int layout_width;
+	private int layout_height;
+	private Predicate<Context<Graph<Functionality.Node, Functionality.Edge>, Functionality.Node>> vdp;
+	
+	//public double thick_edge_theshold = 0.0; 
+	//public double normal_edge_threshold = 0.0;
+	
 	@SuppressWarnings("unchecked")
-	public Visualize(Functionality.Graph g) {
+	public Visualize(Functionality.Graph g, int _layout_width, int _layout_height ) {
+		init(g, _layout_width, _layout_height);
+		
+		
+	}
+	
+	public void init(Functionality.Graph g, int _layout_width, int _layout_height ) {
+		myGraph = g;
+		layout_width = _layout_width;
+		layout_height = _layout_height;
 		qt = new SparseMultigraph(); 
 		Iterator<Functionality.Node> nodeIterator = g.getNodes().iterator();
 		while(nodeIterator.hasNext()) {
@@ -40,97 +93,468 @@ public class Visualize {
 			qt.addEdge(currEdge, currEdge.getNode1(), currEdge.getNode2());
 		}
 		
+		vv = null;
+		layout = null;
 		
+		
+	}
+	
+	public JComponent actualizeGraph()
+	{
+		//myGraph = g;
+		
+		Map<Functionality.Node, Point2d> locSet = new HashMap<Functionality.Node, Point2d>();
+		
+		PickedState<Node> psn = vv.getPickedVertexState();
+		
+		List<Functionality.Node> ln = DataModule.displayedGraph.getNodes();
+		for (int i = 0; i < ln.size(); i++)
+		{
+			locSet.put(ln.get(i), new Point2d(layout.getX(ln.get(i)), layout.getY(ln.get(i))) );
+		}
+		
+		init(DataModule.displayedGraph, layout_width, layout_height);
+		drawGraph();
+		
+		for (int i = 0; i < ln.size(); i++)
+		{
+			layout.setLocation(ln.get(i), locSet.get(ln.get(i)).x, locSet.get(ln.get(i)).y);
+		}
+		
+		PickedState<Node> newPsn = vv.getPickedVertexState();
+		
+		for (int i = 0; i < ln.size(); i++)
+		{
+			newPsn.pick(ln.get(i), psn.isPicked(ln.get(i)));
+		}
+		
+		vv.setPickedVertexState(newPsn);
+		
+		return vv;
 	}
 	
 	public JComponent drawGraph() {
 		// System.out.println("The graph qt"+qt.toString()); // DEBUG
+		// ISOMLayout
+		layout = new SpringLayout2<Functionality.Node, Functionality.Edge>(this.qt);
 		
-		Layout<Functionality.Node, Functionality.Edge> layout = new SpringLayout2<Node, Edge>(this.qt);
-		//Layout<Node, Edge> layout = new StaticLayout(this.qt);
-		layout.setSize(new Dimension(400,400));
-		VisualizationViewer<Functionality.Node,Functionality.Edge> vv = new VisualizationViewer<Functionality.Node,Functionality.Edge>(layout);
-		
-		vv.setPreferredSize(new Dimension(450,450));
+		layout.setSize(new Dimension(layout_width, layout_height));		
+		vv = new VisualizationViewer<Functionality.Node,Functionality.Edge>(layout);
+		vv.setBackground(Color.WHITE);
+		vv.setPreferredSize(new Dimension(layout_width, layout_height));
 		// Show vertex and edge labels
 		vv.getRenderContext().setVertexLabelTransformer(new ToStringLabeller());
 		vv.getRenderContext().setEdgeLabelTransformer(new ToStringLabeller());
+		vv.setDoubleBuffered(true);
+		
+		//layout = new SpringLayout2<Functionality.Node, Functionality.Edge>(this.qt);
+		layout.initialize();
+	    layout.step();
+		layout.step();
+		layout.step();
+		layout.step();
+		layout.lock(true);
+		
 		
 		// Create a graph mouse and add it to the visualization component
 		//DefaultModalGraphMouse gm = new DefaultModalGraphMouse();
 		DefaultModalGraphMouse gm = new DefaultModalGraphMouse();
-		gm.setMode(ModalGraphMouse.Mode.TRANSFORMING);
-		
+		gm.setMode(ModalGraphMouse.Mode.PICKING);
+		vv.addMouseListener(this);
 		VertexMouseMenu vMouseMenu = new VertexMouseMenu();
 		JPopupMenu vertexMenu = new MyVertexMenu();
 		vMouseMenu.setVertexPopup(vertexMenu);
 		gm.add(vMouseMenu);
 		
 		vv.setGraphMouse(gm);
-		
-		
+
+		setEdgeWeightStrokeFunction(DataModule.displayedGraph.getNormalEdgeThreshold(), DataModule.displayedGraph.getThickEdgeThreshold());
+	    vv.getRenderContext().setVertexShapeTransformer(new VertexShapeSizeAspect<Functionality.Node, Functionality.Edge>(myGraph) );
+	
 		return vv;
 	}
 	
-	
-	
-	
-/*	private JMenu createMenuBar() {
-			JMenuBar	menuBar = new JMenuBar();
-			JMenu		menuMore = new JMenu("Information");
-			JMenuItem	menuNodeDetails = new JMenuItem("Node Details") ;
-			
-			menuMore.add(menuNodeDetails);
-			
-			
-	}*/
-	
-	
-	public static void main(String[] args) {
-		/*Functionality.Node n1 = new Functionality.Node(1);
-		Functionality.Node n2 = new Functionality.Node(2);
-		Functionality.Node n3 = new Functionality.Node(3);
-		Functionality.Node n4 = new Functionality.Node(4);
-		Functionality.Node n5 = new Functionality.Node(5);
-		Functionality.Node n6 = new Functionality.Node(6);
-
-		List ns = new ArrayList(4); //change to getVertices()
-		ns.add(n1);
-		ns.add(n2);
-		ns.add(n3);
-		ns.add(n4);
-		ns.add(n5);
-		ns.add(n6);
-		
-		
-		List es = new ArrayList(5); //change to getVertices()
-		es.add(new Functionality.Edge(n1,n2,1.0));
-		es.add(new Functionality.Edge(n2,n3,2.0));
-		es.add(new Functionality.Edge(n3,n4,0.5));
-		es.add(new Functionality.Edge(n4,n1,8.0));
-		es.add(new Functionality.Edge(n4,n2,0.5463));
-		es.add(new Functionality.Edge(n5,n6,0.7));
-		
-		Functionality.Graph g =new Functionality.Graph(ns,es);*/
-		
-		Functionality.DataModule.Init(IndexTypeEnum.TF);
-
-		List<String> queryTerms = new ArrayList<String>();
-		List<Double> termWeights = new ArrayList<Double>();
-		
-		
-		
-		queryTerms.add("PRENSA LATINA"); termWeights.add(1.0);
-		queryTerms.add("Conrado Benitez"); termWeights.add(1.0);
-		queryTerms.add("Salvador"); termWeights.add(1.0);
-		queryTerms.add("Chile"); termWeights.add(1.0);
-		queryTerms.add("Manual Ascunce"); termWeights.add(0.0);
-		
-		
-		Functionality.Graph G = DataModule.getGraph("NULL", "NULL", "NULL", "NULL", "NULL", queryTerms, termWeights, 20, SimMatrixEnum.AllWeightedEqually, 0.3);
-
-		
-		Visualize visu = new Visualize(G);
-		visu.drawGraph();
+	public void setEdgeWeightStrokeFunction(double _normalEdgeThreshold, double _thickEdgeThreshold)
+	{
+		EdgeWeightStrokeFunction<Functionality.Edge> ewsf = new EdgeWeightStrokeFunction<Functionality.Edge>(_normalEdgeThreshold, _thickEdgeThreshold);
+		vv.getRenderContext().setEdgeStrokeTransformer(ewsf);
+		vv.repaint();
+		System.err.println("edge stroke fc: " + _normalEdgeThreshold + ", " + _thickEdgeThreshold);
 	}
+	
+	public void setEdgeFilter(boolean dotted, boolean normal, boolean thick)
+	{
+		vv.getRenderContext().setEdgeIncludePredicate(new EdgeIncludePredicate(dotted, normal, thick));
+		vv.repaint();
+	}
+	
+	public void setDistanceFilter(int _depth, VertexDisplayPredicateMode _vdpm)
+	{
+		
+		vdp = new VertexDisplayPredicateDistance(_depth, _vdpm, vv.getPickedVertexState().getPicked());
+		vv.getRenderContext().setVertexIncludePredicate(vdp);
+		
+		//filter_setting_depth = _depth;
+		//filter_setting_filter = _filter;
+		vv.repaint();
+		System.err.println("SetDistanceFilter");
+		
+	}
+	
+	public void setNoneFilter()
+	{
+		vdp = new VertexDisplayPredicateNone();
+		vv.getRenderContext().setVertexIncludePredicate(vdp);
+		vv.repaint();
+	}
+	
+	private static Set<Functionality.Node> getNodesInDistance(Functionality.Node focusNode, int maxDistance)
+	{
+		Set<Functionality.Node> visitedNodes = new HashSet<Functionality.Node>();
+		visitedNodes.add(focusNode);
+
+		Set<Functionality.Node> retNodes = new HashSet<Functionality.Node>();
+		retNodes.add(focusNode);
+		
+		List<Functionality.Node> proceedNodes = new ArrayList<Functionality.Node>();
+		List<Integer> proceedDist = new ArrayList<Integer>();
+		
+		int nodePointer = 0;
+		Node currNode;
+		proceedNodes.add(focusNode);
+		proceedDist.add(0);
+		
+		while (nodePointer < proceedNodes.size() && proceedDist.get(nodePointer) <= maxDistance - 1)
+		{
+			currNode = proceedNodes.get(nodePointer);
+			for (Iterator<Node> it = currNode.getNeighbors().iterator(); it.hasNext(); )
+			{
+				Node neib = it.next();
+				
+				if (visitedNodes.contains(neib) == false)
+				{
+					visitedNodes.add(neib);
+					proceedDist.add(proceedDist.get(nodePointer) + 1);
+					proceedNodes.add(neib);
+				}
+			}
+			nodePointer++;
+		}
+		
+		
+		
+		return visitedNodes;
+		
+	}
+	
+	public void FocusNodes(Set<Functionality.Node> nodes)
+	{
+		PickedState<Functionality.Node> ps = vv.getPickedVertexState();
+		List<Functionality.Node> ln = DataModule.displayedGraph.getNodes(); 
+		for (int i = 0; i < ln.size(); i++)
+		{
+			if (nodes.contains(ln.get(i)))
+			{
+				ps.pick(ln.get(i), true);
+			}
+			else
+			{
+				ps.pick(ln.get(i), false);
+			}
+		}
+		
+		vv.setPickedVertexState(ps);
+		
+		
+		//DataModule.displayedGraph.setCenter(n);
+		
+		if (vdp instanceof VertexDisplayPredicateDistance)
+		{
+			((VertexDisplayPredicateDistance) vdp).setCentralNodes(ps.getPicked());
+		}
+		
+		//vv.repaint();*/
+		//vv.getRenderContext().setVertexFillPaintTransformer(previousTransformer);
+
+	}
+	
+	
+	private final static class VertexDisplayPredicateNone  implements Predicate<Context<Graph<Functionality.Node, Functionality.Edge>, Functionality.Node>>
+	{
+
+		@Override
+		public boolean evaluate(Context<Graph<Functionality.Node,Functionality.Edge>,Functionality.Node> context) {
+			return true;
+		}
+		
+	}
+	
+	private final static class EdgeIncludePredicate implements Predicate<Context<Graph<Functionality.Node, Functionality.Edge>, Functionality.Edge>>
+	{
+
+		private boolean dotted;
+		private boolean normal;
+		private boolean thick;
+		
+		public EdgeIncludePredicate(boolean _dotted, boolean _normal, boolean _thick)
+		{
+			dotted = _dotted;
+			normal = _normal;
+			thick = _thick;
+		}
+		@Override
+		public boolean evaluate(Context<Graph<Functionality.Node, Functionality.Edge>, Functionality.Edge> arg0) 
+		{
+			if (DataModule.displayedGraph.edgeIsDotted(arg0.element.getNode1(), arg0.element.getNode2()))
+			{
+				return dotted;
+			}
+			else if (DataModule.displayedGraph.edgeIsNormal(arg0.element.getNode1(), arg0.element.getNode2()))
+			{
+				return normal;
+			}
+			else if (DataModule.displayedGraph.edgeIsDouble(arg0.element.getNode1(), arg0.element.getNode2()))
+			{
+				return thick;
+			}
+			
+			return false;
+		}
+		
+	}
+	
+    private final static class VertexDisplayPredicateDistance implements Predicate<Context<Graph<Functionality.Node, Functionality.Edge>, Functionality.Node>>
+	{
+	    protected int maxDepth;
+	    
+	    private VertexDisplayPredicateMode vdpm = VertexDisplayPredicateMode.conjunction;
+	    private Set<Functionality.Node> displayedNodes;
+	    
+	    public VertexDisplayPredicateDistance(int _maxDepth, VertexDisplayPredicateMode _vdpm, Set<Functionality.Node> centralNodes)
+	    {
+	        this.maxDepth = _maxDepth;
+	        vdpm = _vdpm;
+	        setCentralNodes(centralNodes);
+	    }
+	    	    
+	    public void setCentralNodes(Set<Functionality.Node> sn)
+	    {
+	    	
+			Functionality.Node n;
+			
+			Set<Functionality.Node> retNodes;
+			
+			if (vdpm == VertexDisplayPredicateMode.disjunction)
+			{
+				retNodes = DataModule.displayedGraph.getNodesSet();
+			}
+			else
+			{
+				retNodes = new HashSet<Functionality.Node>();
+			}
+			
+			for (Iterator<Functionality.Node> it = sn.iterator(); it.hasNext(); )
+			{
+				n = it.next();
+				Set<Functionality.Node> pomS = getNodesInDistance(n, maxDepth);
+				
+				if (vdpm == VertexDisplayPredicateMode.disjunction)
+				{
+					Functionality.Node n2;
+					Set<Functionality.Node> newRet = new HashSet<Functionality.Node>();
+					for (Iterator<Functionality.Node> it2 = pomS.iterator(); it2.hasNext(); )
+					{
+						n2 = it2.next();
+						if (retNodes.contains(n2)) newRet.add(n2);
+					}
+					
+					retNodes = newRet;
+				}
+				else
+				{
+					Functionality.Node n2;
+					for (Iterator<Functionality.Node> it2 = pomS.iterator(); it2.hasNext(); )
+					{
+						n2 = it2.next();
+						if (!retNodes.contains(n2)) retNodes.add(n2);
+					}
+				}
+				
+			}
+			
+			displayedNodes = retNodes;
+
+	    }
+	    
+	    public boolean evaluate(Context<Graph<Functionality.Node,Functionality.Edge>,Functionality.Node> context) {
+	    	Functionality.Node v = context.element;
+	    	
+	    	if (maxDepth > 0)
+	    		return displayedNodes.contains(v);
+	    	else
+	    		return true;
+	    }
+	}
+    
+    private final static class EdgeWeightStrokeFunction<E> implements Transformer<E,Stroke>
+    {
+        protected static final Stroke basic = new BasicStroke((float)1.5);
+        protected static final Stroke heavy = new BasicStroke(3);
+        protected static final Stroke dotted = RenderContext.DOTTED;
+        
+        private double thick_threshold;
+        private double normal_threshold;
+                 
+        public EdgeWeightStrokeFunction(double _normal_threshold, double _thick_threshold)
+        {
+        	thick_threshold = _thick_threshold;
+        	normal_threshold = _normal_threshold;
+        }
+        
+        public Stroke transform(E e)
+        {
+        	if (((Functionality.Edge)e).getStrength() > thick_threshold)
+        	{
+        		return heavy;
+        	}
+        	else if (((Functionality.Edge)e).getStrength() > normal_threshold)
+        	{
+        		return basic;
+        	}
+        	else
+        	{
+        		return dotted;
+        	}
+        }
+        
+        
+    }
+    
+    private final static class VertexShapeSizeAspect<V,E>
+    extends AbstractVertexShapeTransformer <V>
+    implements Transformer<V,Shape>  {
+    	
+        protected boolean scale = true;
+        protected boolean funny_shapes = true;
+        protected Functionality.Graph graph;
+        private double maxRelevance = 0;
+//        protected AffineTransform scaleTransform = new AffineTransform();
+        
+        public VertexShapeSizeAspect(Functionality.Graph graphIn)
+        {
+        	for (int i = 0; i < graphIn.getNodes().size(); i++)
+        	{
+        		if (graphIn.getNodes().get(i).GetRelevance() > maxRelevance) maxRelevance = graphIn.getNodes().get(i).GetRelevance();
+        	}
+        	
+        	this.graph = graphIn;
+            setSizeTransformer(new Transformer<V,Integer>() {
+
+				public Integer transform(V v) {
+		            if (scale)
+		            {
+		            	//return 20;
+		            	int retScale = (int)( (((Functionality.Node)v).GetRelevance() / maxRelevance) * 30) + 20;
+		                return retScale;
+		            }
+		            else
+		                return 20;
+
+				}});
+            setAspectRatioTransformer(new Transformer<V,Float>() {
+
+				public Float transform(V v)
+				{
+		                return 1.0f;
+				}
+			});
+        }
+        
+        public void setScaling(boolean scale)
+        {
+            this.scale = scale;
+        }
+        
+        public void useFunnyShapes(boolean use)
+        {
+            this.funny_shapes = use;
+        }
+        
+        public Shape transform(V v)
+        {
+        	Functionality.Node nod = (Functionality.Node)v;
+        	
+        	if (nod == null) return factory.getEllipse(v);
+        	
+            if (funny_shapes)
+            {
+            	if (nod.getDocument_type() == null)
+            	{
+            		return factory.getEllipse(v);
+            	}
+                if (nod.getDocument_type().equals("SPEECH"))
+                {	
+                	return factory.getRegularStar(v, 5);
+                }
+                else if (nod.getDocument_type().equals("MEETING"))
+                {
+                    return factory.getRegularPolygon(v, 5);
+                }
+                else return factory.getEllipse(v);
+            }
+            else
+            {
+                return factory.getEllipse(v);
+        	}
+        }
+    }
+
+	public void itemStateChanged(ItemEvent arg0) {
+		System.err.println("itemStateChanged");
+		
+	}
+
+	public void mouseClicked(MouseEvent arg0) {
+		System.err.println("Mouse clicked!");
+		PickedState<Functionality.Node> pickedState = vv.getPickedVertexState();
+		System.err.println(pickedState.hashCode());
+		Set<Functionality.Node> ns = pickedState.getPicked();
+		
+		
+		Functionality.Node n;
+		System.err.print("Selected nodes: ");
+		for (Iterator<Node> it = ns.iterator(); it.hasNext(); )
+		{
+			n = it.next();
+			System.err.print(n.getSpeech_id() + " ");
+			//FocusNode(n.getSpeech_id());
+			break;
+		}
+		System.err.println();
+		
+		GUI.CastroGUI.updateTableSelection(ns);
+	}
+
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void mousePressed(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		System.err.println("Mouse released!");
+	}
+
+
+	
 }

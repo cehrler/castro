@@ -31,6 +31,9 @@ public class Node implements Comparable<Object> {
 	// list of neighbors
 	private Map<Node, Double> neighbors = new HashMap<Node, Double>();
 	
+	public int visited = 0;
+	public int depth = 0;
+	
 	public void SetRelevance(Double rel)
 	{
 		relevance = rel;
@@ -156,14 +159,21 @@ public class Node implements Comparable<Object> {
 		return this.neighbors.keySet();
 	}
 	
+	public Map<Node,Double> getNeighborsMap() {
+		return this.neighbors;
+	}
+	
 	public Double getStrength(Node v) {
 		assert this.neighbors.containsKey(v);
 		return this.neighbors.get(v);
 	}
 
+	public void clearNeighborsSet() {
+		this.neighbors = new HashMap<Node, Double>();
+	}
 	@Override
 	public String toString() {
-		return "" + this.id;
+		return "";//+ this.id;
 	}
 
 }

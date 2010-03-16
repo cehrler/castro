@@ -16,9 +16,12 @@ package Functionality;
 import java.sql.*;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
 
 public class DataModule {
 
@@ -68,6 +71,10 @@ public class DataModule {
 	private static String locationsIndexFile;
 	private static String organizationsIndexFile;
 	
+	private static double simEpsilon = 0.000001;
+	
+	public static Graph displayedGraph;
+	
 	private DataModule() {}
 	
 	
@@ -89,6 +96,7 @@ public class DataModule {
 			 			smPersonsFile = "../DataModuleData/PERSONS.tfidf.sim";
 			 			smLocationsFile = "../DataModuleData/LOCATIONS.tfidf.sim";
 			 			smOrganizationsFile = "../DataModuleData/ORGANIZATIONS.tfidf.sim";
+			 			break;
 			
 			case NoNormalization: personsIndexFile = "../DataModuleData/PERSONS.nonorm.bin";
  								  locationsIndexFile = "../DataModuleData/LOCATIONS.nonorm.bin";
@@ -227,20 +235,21 @@ public class DataModule {
 		}
 		
 		Collections.sort(nodes);
-		
+		Collections.reverse(nodes);
 		List<Node> sn = new ArrayList<Node>();
 		
 		if (maxNumNodes == null) maxNumNodes = nodes.size();
 		
-		for (int i = nodes.size() - 1; i >= Math.max(nodes.size() - maxNumNodes, 0); i--)
+		for (int i = 0; i < Math.min(nodes.size(), maxNumNodes); i++)
 		{
+			if (nodes.get(i).GetRelevance() <= simEpsilon) break;
 			sn.add(nodes.get(i));
 		}
 		
 		return sn;
 	}
-	
-	public static Graph getGraph(String SinceDate, String TillDate, String Place, String Author, String DocType, List<String> queryTerms , List<Double> termWeights, Integer maxNumNodes, SimMatrixEnum sme, Double similarity_threshold)
+		
+	public static Graph getGraph(String SinceDate, String TillDate, String Place, String Author, String DocType, List<String> queryTerms , List<Double> termWeights, Integer maxNumNodes, SimMatrixEnum sme, double dottedEdgeThreshold, double normalEdgeThreshold, double thickEdgeThreshold)
 	{
 		SimMatrix simMatrix;
 		
@@ -263,8 +272,7 @@ public class DataModule {
 		if (DocType != "NULL") DocType = "\"" + DocType + "\"";
 
 		List<Node> ln = new ArrayList<Node>();
-		//Map<Integer, Node> idToNode = new HashMap<Integer, Node>();
-		List<Edge> le = new ArrayList<Edge>();
+
 		try {
 			java.sql.Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_READ_ONLY);	
@@ -276,10 +284,9 @@ public class DataModule {
 		        	Node nod = new Node(srs.getInt("SPEECH_ID"), srs.getString("AUTHOR_NAME"), 
 		        			srs.getString("HEADLINE"), srs.getString("REPORT_DATE"), 
 		        			srs.getString("SOURCE_NAME"), srs.getString("PLACE_NAME"), srs.getString("DOCTYPE_NAME"),
-		        			srs.getString("SPEECH_TEXT").replace("<br>", "\n"), srs.getString("SPEECH_DATE"));
+		        			/*srs.getString("SPEECH_TEXT").replace("<br>", "\n")*/"", srs.getString("SPEECH_DATE"));
 		        	
 		        	ln.add(nod);
-		        	//idToNode.put(nod.getSpeech_id(), nod);
 			}
 			
 			
@@ -290,31 +297,8 @@ public class DataModule {
 		
 		List<Node> sn = sortNodes(ln, queryTerms, termWeights, maxNumNodes);
 		
-		Double similarity;
-		
-		for (int i = 0; i < sn.size(); i++)
-		{
-			//Node n = ln.get(i);
-			for (int j = i + 1; j < sn.size(); j++)
-			{
-				//if (i == j) continue;
-				similarity = simMatrix.getSimilarity(sn.get(i), sn.get(j));
-								
-				if (similarity.compareTo(similarity_threshold) > 0)
-				{					
-					Edge e = new Edge(sn.get(i), sn.get(j), similarity);
-					le.add(e);
-					sn.get(i).addEdge(sn.get(j), similarity);
-					sn.get(j).addEdge(sn.get(i), similarity);
-				}
-			}
-			
-		}
-
-		System.err.println("Number of nodes: " + sn.size());
-		System.err.println("Number of edges: " + le.size());
-		
-		return new Graph(sn, le);
+		displayedGraph = new Graph(sn, simMatrix, dottedEdgeThreshold, normalEdgeThreshold, thickEdgeThreshold); 
+		return displayedGraph;
 		
 	}
 	

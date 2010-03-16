@@ -1,3 +1,4 @@
+package Visualizer;
 import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
@@ -54,7 +55,7 @@ public class CastroTableModel extends AbstractTableModel {
 		}
 	}
 	
-	public Object getSpeechIDofSelectedColumn(int row) {
+	public Object getSpeechIDofSelectedRow(int row) {
 		return nodes.get(row).getSpeech_id();
 	}
 }
