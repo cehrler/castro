@@ -1,34 +1,26 @@
 package Visualizer;
 
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.awt.Dimension;
 
 import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import edu.uci.ics.jung.algorithms.layout.BalloonLayout;
-import edu.uci.ics.jung.algorithms.layout.CircleLayout;
-import edu.uci.ics.jung.algorithms.layout.KKLayout;
-import edu.uci.ics.jung.algorithms.layout.CircleLayout;
+
+import Functionality.DataModule;
+import Functionality.Edge;
+import Functionality.IndexTypeEnum;
+import Functionality.Node;
+import Functionality.SimMatrixEnum;
 import edu.uci.ics.jung.algorithms.layout.Layout;
-import edu.uci.ics.jung.algorithms.layout.SpringLayout;
 import edu.uci.ics.jung.algorithms.layout.SpringLayout2;
-import edu.uci.ics.jung.algorithms.layout.StaticLayout;
-import edu.uci.ics.jung.algorithms.layout3d.AbstractLayout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseMultigraph;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
-import edu.uci.ics.jung.visualization.control.EditingModalGraphMouse;
 import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
-
-import Functionality.*; 
 
 public class Visualize {
 	
@@ -54,7 +46,7 @@ public class Visualize {
 	public JComponent drawGraph() {
 		// System.out.println("The graph qt"+qt.toString()); // DEBUG
 		
-		Layout<Functionality.Node, Functionality.Edge> layout = new SpringLayout2(this.qt);
+		Layout<Functionality.Node, Functionality.Edge> layout = new SpringLayout2<Node, Edge>(this.qt);
 		//Layout<Node, Edge> layout = new StaticLayout(this.qt);
 		layout.setSize(new Dimension(400,400));
 		VisualizationViewer<Functionality.Node,Functionality.Edge> vv = new VisualizationViewer<Functionality.Node,Functionality.Edge>(layout);

@@ -53,4 +53,8 @@ public class CastroTableModel extends AbstractTableModel {
 			return "";
 		}
 	}
+	
+	public Object getSpeechIDofSelectedColumn(int row) {
+		return nodes.get(row).getSpeech_id();
+	}
 }
