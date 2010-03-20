@@ -54,6 +54,7 @@ import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 
 import Functionality.*; 
+import GUI.CastroGUI;
 
 public class Visualize implements ItemListener, MouseListener {
 	
@@ -61,12 +62,13 @@ public class Visualize implements ItemListener, MouseListener {
 	
 	Graph<Functionality.Node, Functionality.Edge> qt;
 	
-	private SpringLayout2<Functionality.Node, Functionality.Edge> layout;
+	private SpringLayoutWeighted layout;
 	private Functionality.Graph myGraph;
 	
 	private int layout_width;
 	private int layout_height;
-	private Predicate<Context<Graph<Functionality.Node, Functionality.Edge>, Functionality.Node>> vdp;
+	private Predicate<Context<Graph<Functionality.Node, Functionality.Edge>, Functionality.Node>> vdp = new VertexDisplayPredicateNone();
+	private Predicate<Context<Graph<Functionality.Node, Functionality.Edge>, Functionality.Edge>> eip = new EdgeIncludePredicate(true, true, true);
 	
 	//public double thick_edge_theshold = 0.0; 
 	//public double normal_edge_threshold = 0.0;
@@ -129,6 +131,13 @@ public class Visualize implements ItemListener, MouseListener {
 			newPsn.pick(ln.get(i), psn.isPicked(ln.get(i)));
 		}
 		
+		if (vdp instanceof VertexDisplayPredicateDistance)
+		{
+			((VertexDisplayPredicateDistance)vdp).Actualise();
+		}
+		vv.getRenderContext().setVertexIncludePredicate(vdp);
+		vv.getRenderContext().setEdgeIncludePredicate(eip);
+		
 		vv.setPickedVertexState(newPsn);
 		
 		return vv;
@@ -137,7 +146,7 @@ public class Visualize implements ItemListener, MouseListener {
 	public JComponent drawGraph() {
 		// System.out.println("The graph qt"+qt.toString()); // DEBUG
 		// ISOMLayout
-		layout = new SpringLayout2<Functionality.Node, Functionality.Edge>(this.qt);
+		layout = new SpringLayoutWeighted(this.qt);
 		
 		layout.setSize(new Dimension(layout_width, layout_height));
 		
@@ -145,8 +154,9 @@ public class Visualize implements ItemListener, MouseListener {
 		vv.setBackground(Color.WHITE);
 		vv.setPreferredSize(new Dimension(layout_width, layout_height));
 		// Show vertex and edge labels
-		vv.getRenderContext().setVertexLabelTransformer(new ToStringLabeller());
-		vv.getRenderContext().setEdgeLabelTransformer(new ToStringLabeller());
+		vv.getRenderContext().setVertexLabelTransformer(new DefaultToStringLabeller());
+		
+		//vv.getRenderContext().setEdgeLabelTransformer(new ToStringLabeller());
 		vv.setDoubleBuffered(true);
 		
 		//layout = new SpringLayout2<Functionality.Node, Functionality.Edge>(this.qt);
@@ -170,14 +180,16 @@ public class Visualize implements ItemListener, MouseListener {
 		
 		vv.setGraphMouse(gm);
 
-		setEdgeWeightStrokeFunction(DataModule.displayedGraph.getNormalEdgeThreshold(), DataModule.displayedGraph.getThickEdgeThreshold());
+		setEdgeWeightStrokeFunction();
 	    vv.getRenderContext().setVertexShapeTransformer(new VertexShapeSizeAspect<Functionality.Node, Functionality.Edge>(myGraph) );
 	
 		return vv;
 	}
 	
-	public void setEdgeWeightStrokeFunction(double _normalEdgeThreshold, double _thickEdgeThreshold)
+	public void setEdgeWeightStrokeFunction()
 	{
+		double _normalEdgeThreshold = DataModule.displayedGraph.getNormalEdgeThreshold();
+		double _thickEdgeThreshold = DataModule.displayedGraph.getThickEdgeThreshold();
 		EdgeWeightStrokeFunction<Functionality.Edge> ewsf = new EdgeWeightStrokeFunction<Functionality.Edge>(_normalEdgeThreshold, _thickEdgeThreshold);
 		vv.getRenderContext().setEdgeStrokeTransformer(ewsf);
 		vv.repaint();
@@ -186,14 +198,15 @@ public class Visualize implements ItemListener, MouseListener {
 	
 	public void setEdgeFilter(boolean dotted, boolean normal, boolean thick)
 	{
-		vv.getRenderContext().setEdgeIncludePredicate(new EdgeIncludePredicate(dotted, normal, thick));
+		eip = new EdgeIncludePredicate(dotted, normal, thick);
+		vv.getRenderContext().setEdgeIncludePredicate(eip);
 		vv.repaint();
 	}
 	
-	public void setDistanceFilter(int _depth, VertexDisplayPredicateMode _vdpm)
+	public void setDistanceFilter(int _depth, VertexDisplayPredicateMode _vdpm, EdgeTypeEnum coreEdgeType)
 	{
 		
-		vdp = new VertexDisplayPredicateDistance(_depth, _vdpm, vv.getPickedVertexState().getPicked());
+		vdp = new VertexDisplayPredicateDistance(_depth, _vdpm, vv.getPickedVertexState().getPicked(), coreEdgeType);
 		vv.getRenderContext().setVertexIncludePredicate(vdp);
 		
 		//filter_setting_depth = _depth;
@@ -210,7 +223,7 @@ public class Visualize implements ItemListener, MouseListener {
 		vv.repaint();
 	}
 	
-	private static Set<Functionality.Node> getNodesInDistance(Functionality.Node focusNode, int maxDistance)
+	private static Set<Functionality.Node> getNodesInDistance(Functionality.Node focusNode, int maxDistance, EdgeTypeEnum coreEdgeType)
 	{
 		Set<Functionality.Node> visitedNodes = new HashSet<Functionality.Node>();
 		visitedNodes.add(focusNode);
@@ -233,6 +246,12 @@ public class Visualize implements ItemListener, MouseListener {
 			{
 				Node neib = it.next();
 				
+				if (coreEdgeType == EdgeTypeEnum.normal && DataModule.displayedGraph.edgeIsDotted(currNode, neib) ||
+					coreEdgeType == EdgeTypeEnum.thick && (DataModule.displayedGraph.edgeIsDotted(currNode, neib) || DataModule.displayedGraph.edgeIsNormal(currNode, neib)))
+				{
+					continue;
+				}
+				
 				if (visitedNodes.contains(neib) == false)
 				{
 					visitedNodes.add(neib);
@@ -252,18 +271,22 @@ public class Visualize implements ItemListener, MouseListener {
 	public void FocusNodes(Set<Functionality.Node> nodes)
 	{
 		PickedState<Functionality.Node> ps = vv.getPickedVertexState();
-		List<Functionality.Node> ln = DataModule.displayedGraph.getNodes(); 
+		List<Functionality.Node> ln = DataModule.displayedGraph.getNodes();
+		List<Functionality.Node> pickedList = new ArrayList<Functionality.Node>();
 		for (int i = 0; i < ln.size(); i++)
 		{
 			if (nodes.contains(ln.get(i)))
 			{
 				ps.pick(ln.get(i), true);
+				pickedList.add(ln.get(i));
 			}
 			else
 			{
 				ps.pick(ln.get(i), false);
 			}
 		}
+		
+		CastroGUI.setSelectedNodesDetail(pickedList);
 		
 		vv.setPickedVertexState(ps);
 		
@@ -331,17 +354,26 @@ public class Visualize implements ItemListener, MouseListener {
 	    
 	    private VertexDisplayPredicateMode vdpm = VertexDisplayPredicateMode.conjunction;
 	    private Set<Functionality.Node> displayedNodes;
+	    private Set<Functionality.Node> centralNodes;
 	    
-	    public VertexDisplayPredicateDistance(int _maxDepth, VertexDisplayPredicateMode _vdpm, Set<Functionality.Node> centralNodes)
+	    private EdgeTypeEnum coreEdgeType = EdgeTypeEnum.dotted;
+	    
+	    public VertexDisplayPredicateDistance(int _maxDepth, VertexDisplayPredicateMode _vdpm, Set<Functionality.Node> centralNodes, EdgeTypeEnum _ete)
 	    {
 	        this.maxDepth = _maxDepth;
 	        vdpm = _vdpm;
+	        coreEdgeType = _ete;
 	        setCentralNodes(centralNodes);
 	    }
-	    	    
+	    
+	    public void Actualise()
+	    {
+	    	setCentralNodes(centralNodes);
+	    }
+	    
 	    public void setCentralNodes(Set<Functionality.Node> sn)
 	    {
-	    	
+	    	centralNodes = sn;
 			Functionality.Node n;
 			
 			Set<Functionality.Node> retNodes;
@@ -358,7 +390,7 @@ public class Visualize implements ItemListener, MouseListener {
 			for (Iterator<Functionality.Node> it = sn.iterator(); it.hasNext(); )
 			{
 				n = it.next();
-				Set<Functionality.Node> pomS = getNodesInDistance(n, maxDepth);
+				Set<Functionality.Node> pomS = getNodesInDistance(n, maxDepth, coreEdgeType);
 				
 				if (vdpm == VertexDisplayPredicateMode.disjunction)
 				{
@@ -400,8 +432,8 @@ public class Visualize implements ItemListener, MouseListener {
     
     private final static class EdgeWeightStrokeFunction<E> implements Transformer<E,Stroke>
     {
-        protected static final Stroke basic = new BasicStroke((float)1.5);
-        protected static final Stroke heavy = new BasicStroke(3);
+        protected static final Stroke basic = new BasicStroke((float)1);
+        protected static final Stroke heavy = new BasicStroke(2);
         protected static final Stroke dotted = RenderContext.DOTTED;
         
         private double thick_threshold;
@@ -511,50 +543,36 @@ public class Visualize implements ItemListener, MouseListener {
         }
     }
 
-	public void itemStateChanged(ItemEvent arg0) {
-		System.err.println("itemStateChanged");
-		
+	public void itemStateChanged(ItemEvent arg0) 
+	{
 	}
 
 	public void mouseClicked(MouseEvent arg0) {
-		System.err.println("Mouse clicked!");
 		PickedState<Functionality.Node> pickedState = vv.getPickedVertexState();
-		System.err.println(pickedState.hashCode());
 		Set<Functionality.Node> ns = pickedState.getPicked();
 		
 		
 		Functionality.Node n;
-		System.err.print("Selected nodes: ");
 		for (Iterator<Node> it = ns.iterator(); it.hasNext(); )
 		{
 			n = it.next();
-			System.err.print(n.getSpeech_id() + " ");
 			//FocusNode(n.getSpeech_id());
 			break;
 		}
-		System.err.println();
 		
 		GUI.CastroGUI.updateTableSelection(ns);
 	}
 
 	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void mousePressed(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void mouseReleased(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		System.err.println("Mouse released!");
 	}
 
 

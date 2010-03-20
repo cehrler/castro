@@ -1,5 +1,6 @@
 package Functionality;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashMap;
@@ -16,14 +17,14 @@ public class Node implements Comparable<Object> {
 	private String source;
 	private String place;
 	private String document_type;
-	private String speech_text;
+	private String speech_text = null;
 	private String speech_date;
 	private Double relevance;
 	
 	// date for named entities
-	private Map<String, Integer> ne_person;
-	private Map<String, Integer> ne_location;
-	private Map<String, Integer> ne_organization;
+	private Set<NamedEntity> ne_persons;
+	private Set<NamedEntity> ne_locations;
+	private Set<NamedEntity> ne_organizations;
 
 	//context informtion
 	private boolean marked; 
@@ -48,14 +49,14 @@ public class Node implements Comparable<Object> {
 	
 	public Node(Integer id) {
 		this.id = id;
-		this.ne_person = null;//new TreeMap<String, Integer>();
-		this.ne_location = null; //new TreeMap<String, Integer>();
-		this.ne_organization = null; //new TreeMap<String, Integer>();
+		this.ne_persons = null;//new TreeMap<String, Integer>();
+		this.ne_locations = null; //new TreeMap<String, Integer>();
+		this.ne_organizations = null; //new TreeMap<String, Integer>();
 		this.marked = false;        //assumes new node is unmarked 
 	}
 	
 	public Node(Integer _id, String _author, String _headline, String _report_date,
-			    String _source, String _place, String _document_type, String _speech_text, String _speech_date)
+			    String _source, String _place, String _document_type, String _speech_date)
 	{
 		id = _id;
 		author = _author;
@@ -64,35 +65,38 @@ public class Node implements Comparable<Object> {
 		source = _source;
 		place = _place;
 		document_type = _document_type;
-		speech_text = _speech_text;
 		speech_date = _speech_date;
 		
 		
 	}
 		
-	public Set<String> getNamedEntitiesPerson() {
-		return this.ne_person.keySet();
+	public Set<NamedEntity> getNamedEntitiesPerson() {
+		if (ne_persons == null)
+		{
+			ne_persons = DataModule.getPersonsInDocument(this);
+		}
+		return ne_persons;
 	}
 	
-	public Set<String> getNamedEntitiesLocation() {
-		return this.ne_location.keySet();
+
+	public Set<NamedEntity> getNamedEntitiesLocations() {
+		if (ne_locations == null)
+		{
+			ne_locations = DataModule.getLocationsInDocument(this);
+		}
+		
+		return ne_locations;
 	}
-	
-	public Set<String> getNamedEntitiesOrganization() {
-		return this.ne_organization.keySet();
+
+	public Set<NamedEntity> getNamedEntitiesOrganizations() {
+		if (ne_organizations == null)
+		{
+			ne_organizations = DataModule.getOrganizationsInDocument(this);
+		}
+		
+		return ne_organizations;
 	}
-	
-	public Integer getCountPerson(String ne) {
-		return this.ne_person.get(ne);
-	}
-	
-	public Integer getCountLocation(String ne) {
-		return this.ne_location.get(ne);
-	}
-	
-	public Integer getCountOrganization(String ne) {
-		return this.ne_organization.get(ne);
-	}
+
 
 	public String getAuthor() {
 		return author;
@@ -122,7 +126,13 @@ public class Node implements Comparable<Object> {
 		return speech_date;
 	}
 
-	public String getSpeech_text() {
+	public String getSpeech_text() 
+	{
+		if (speech_text == null)
+		{
+			speech_text = DataModule.getSpeechText(id);
+		}
+		
 		return speech_text;
 	}
 	

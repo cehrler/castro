@@ -1,4 +1,5 @@
 package Functionality;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -40,7 +41,7 @@ public class Graph {
 		normalEdgeThreshold = _normalEdgeThreshold;
 		thickEdgeThreshold = _thickEdgeThreshold;
 		simMatrix = _simMatrix;
-		createEdges();
+		createEdgesThreshold();
 	}
 	
 	public void SetNormalEdgeThreshold(double _normalEdgeThreshold)
@@ -51,7 +52,7 @@ public class Graph {
 	public void SetDottedEdgeThreshold(double _dottedEdgeThreshold)
 	{
 		dottedEdgeThreshold = _dottedEdgeThreshold;
-		createEdges();
+		createEdgesThreshold();
 	}
 	
 	public void SetThickEdgeThreshold(double _thickEdgeThreshold)
@@ -61,12 +62,65 @@ public class Graph {
 	
 	private Map<Integer,Node> nodeMap;
 	
-	public Graph() {
+	private Graph() {
 		nodes = new ArrayList<Node>();
 		nodeMap = new HashMap<Integer,Node>();
 	}
 
-	private void createEdges()
+	private void createEdgesDensity(int numEdges)
+	{
+		Double similarity;
+		List<Edge> edgesBle = new ArrayList<Edge>();
+		edges = new ArrayList<Edge>();
+		edgeMap = new HashMap<Node, Map<Node, Edge> >();
+		
+		for (int i = 0; i < nodes.size(); i++)
+		{
+			edgeMap.put(nodes.get(i), new HashMap<Node, Edge>());
+		}
+		
+		for (int i = 0; i < nodes.size(); i++)
+		{
+			nodes.get(i).clearNeighborsSet();
+		}
+		
+		for (int i = 0; i < nodes.size(); i++)
+		{
+			//Node n = ln.get(i);
+			for (int j = i + 1; j < nodes.size(); j++)
+			{
+				//if (i == j) continue;
+				similarity = simMatrix.getSimilarity(nodes.get(i), nodes.get(j));
+													
+					Edge e = new Edge(nodes.get(i), nodes.get(j), similarity);
+					edgesBle.add(e);
+					//nodes.get(i).addEdge(nodes.get(j), similarity);
+					//nodes.get(j).addEdge(nodes.get(i), similarity);
+					//edgeMap.get(nodes.get(i)).put(nodes.get(j), e);
+					//edgeMap.get(nodes.get(j)).put(nodes.get(i), e);
+			}
+			
+		}
+		
+		Collections.sort(edgesBle);
+		
+		for (int i = 0; i < Math.min(edgesBle.size(), numEdges); i++)
+		{
+			Edge e = edgesBle.get(i);
+			System.err.println("edge " + i + ": " + e.getStrength());
+			edges.add(e);
+			e.getNode1().addEdge(e.getNode2(), e.getStrength());
+			e.getNode2().addEdge(e.getNode1(), e.getStrength());
+			edgeMap.get(e.getNode1()).put(e.getNode2(), e);
+			edgeMap.get(e.getNode2()).put(e.getNode1(), e);
+		}
+		
+		Collections.reverse(edges);
+		
+		
+	}
+	
+	private void createEdgesThreshold()
 	{
 		Double similarity;
 		edges = new ArrayList<Edge>();
@@ -105,22 +159,102 @@ public class Graph {
 
 	}
 	
-	public Graph(List<Node> ln, SimMatrix _simMatrix, double _dottedEdgeThreshold, double _normalEdgeThreshold, double _thickEdgeThreshold) {
-		
-		nodes = ln;
-		
-		nodeMap = new HashMap<Integer,Node>();
-		for (int i = 0; i < nodes.size(); i++)
+	public static Graph createGraphThreshold(List<Node> ln, SimMatrix _simMatrix, double _dottedEdgeThreshold, double _normalEdgeThreshold, double _thickEdgeThreshold)
+	{
+		Graph gr = new Graph();
+		gr.nodes = ln;
+				
+		gr.nodeMap = new HashMap<Integer,Node>();
+		for (int i = 0; i < gr.nodes.size(); i++)
 		{
-			nodeMap.put(nodes.get(i).getSpeech_id(), nodes.get(i));
+			gr.nodeMap.put(gr.nodes.get(i).getSpeech_id(), gr.nodes.get(i));
 		}
 		
-		dottedEdgeThreshold = _dottedEdgeThreshold;
-		normalEdgeThreshold = _normalEdgeThreshold;
-		thickEdgeThreshold = _thickEdgeThreshold;
-		simMatrix = _simMatrix;
-		createEdges();
+		gr.dottedEdgeThreshold = _dottedEdgeThreshold;
+		gr.normalEdgeThreshold = _normalEdgeThreshold;
+		gr.thickEdgeThreshold = _thickEdgeThreshold;
 		
+		gr.simMatrix = _simMatrix;
+		gr.createEdgesThreshold();
+		
+		return gr;
+		
+	}
+	
+	public void ChangeEdgeDensities(double _dottedEdgeDensity, double _normalEdgeDensity, double _thickEdgeDensity)
+	{
+		System.err.println("dotted: " + _dottedEdgeDensity + ", normal: " + _normalEdgeDensity + ", thick: " + _thickEdgeDensity);
+		int numEdges = (int)Math.round( nodes.size() * (_dottedEdgeDensity + _normalEdgeDensity + _thickEdgeDensity) );
+		
+		int normalEdgeIndex = (int)Math.round( nodes.size() * _dottedEdgeDensity);
+		int thickEdgeIndex = (int)Math.round( nodes.size() * (_normalEdgeDensity + _dottedEdgeDensity));
+		
+		createEdgesDensity(numEdges);
+		
+		if (numEdges == 0)
+		{
+			dottedEdgeThreshold = 0.4;
+			normalEdgeThreshold = 0.5;
+			thickEdgeThreshold = 0.6;
+		}
+		else
+		{
+			dottedEdgeThreshold = edges.get(0).getStrength();
+			if (normalEdgeIndex < numEdges)
+			{
+				if (normalEdgeIndex > 0)
+				{
+					normalEdgeThreshold = (edges.get(normalEdgeIndex - 1).getStrength() + edges.get(normalEdgeIndex).getStrength()) / 2;
+				}
+				else
+				{
+					normalEdgeThreshold = edges.get(normalEdgeIndex).getStrength();
+				}
+				
+				if (thickEdgeIndex < numEdges)
+				{
+					if (thickEdgeIndex > 0)
+					{
+						thickEdgeThreshold = (edges.get(thickEdgeIndex - 1).getStrength() + edges.get(thickEdgeIndex).getStrength()) / 2;
+					}
+					else
+					{
+						thickEdgeThreshold = edges.get(thickEdgeIndex).getStrength();
+					}
+				}
+				else
+				{
+					thickEdgeThreshold = 1;
+				}
+			}
+			else
+			{
+				normalEdgeThreshold = 1;
+			}
+		}
+		
+	}
+	
+	public static Graph createGraphDensity(List<Node> ln, SimMatrix _simMatrix, double _dottedEdgeDensity, double _normalEdgeDensity, double _thickEdgeDensity) {
+		
+		Graph gr = new Graph();
+		gr.nodes = ln;
+		
+		gr.nodeMap = new HashMap<Integer,Node>();
+		for (int i = 0; i < gr.nodes.size(); i++)
+		{
+			gr.nodeMap.put(gr.nodes.get(i).getSpeech_id(), gr.nodes.get(i));
+		}
+
+		gr.simMatrix = _simMatrix;
+		gr.ChangeEdgeDensities(_dottedEdgeDensity, _normalEdgeDensity, _thickEdgeDensity);
+		
+		System.err.println("dottedEdgeThreshold: " + gr.dottedEdgeThreshold);
+		System.err.println("normalEdgeThreshold: " + gr.normalEdgeThreshold);
+		System.err.println("thickEdgeThreshold: " + gr.thickEdgeThreshold);
+		
+		
+		return gr;
 	}
 	
 	public List<Node> getNodes() {

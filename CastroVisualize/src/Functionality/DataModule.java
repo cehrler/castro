@@ -63,6 +63,10 @@ public class DataModule {
 	private static Map<String, Integer> locationsMap;
 	private static Map<String, Integer> organizationsMap;
 	
+	private static List<String> personsList;
+	private static List<String> organizationsList;
+	private static List<String> locationsList;
+	
 	private static VMindex personsIndex;
 	private static VMindex locationsIndex;
 	private static VMindex organizationsIndex;
@@ -71,12 +75,30 @@ public class DataModule {
 	private static String locationsIndexFile;
 	private static String organizationsIndexFile;
 	
+	private static double edgeDensityDotted = 2;
+	private static double edgeDensityNormal = 1;
+	private static double edgeDensityThick = 1;
+	
 	private static double simEpsilon = 0.000001;
 	
 	public static Graph displayedGraph;
 	
 	private DataModule() {}
 	
+	public String getPersonString(int index)
+	{
+		return personsList.get(index);
+	}
+	
+	public String getLocationString(int index)
+	{
+		return locationsList.get(index);
+	}
+	
+	public String getOrganizationString(int index)
+	{
+		return organizationsList.get(index);
+	}
 	
 	public static void Init(IndexTypeEnum indexType)
 	{
@@ -157,6 +179,10 @@ public class DataModule {
 			locationsMap = new HashMap<String, Integer>();
 			organizationsMap = new HashMap<String, Integer>();
 			
+			personsList = new ArrayList<String>();
+			locationsList = new ArrayList<String>();
+			organizationsList = new ArrayList<String>();
+			
 			try {
 				java.sql.Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
 	                    ResultSet.CONCUR_READ_ONLY);	
@@ -172,18 +198,41 @@ public class DataModule {
 						if (pomS.equals("ORGANIZATIONS"))
 						{
 							organizationsMap.put(srs.getString("NE_NAME"), srs.getInt("NE_INDEX_ID"));
+							organizationsList.add("");
 						}
 						else if (pomS.equals("PERSONS"))
 						{
 							personsMap.put(srs.getString("NE_NAME"), srs.getInt("NE_INDEX_ID"));
+							personsList.add("");
 						}
 						else if (pomS.equals("LOCATIONS"))
 						{
 							locationsMap.put(srs.getString("NE_NAME"), srs.getInt("NE_INDEX_ID"));
+							locationsList.add("");
 						}
 										
 				}
-							
+				
+				String key;
+				for (Iterator<String> it = organizationsMap.keySet().iterator(); it.hasNext(); )
+				{
+					key = it.next();
+					organizationsList.set(organizationsMap.get(key), key);
+				}
+
+				for (Iterator<String> it = locationsMap.keySet().iterator(); it.hasNext(); )
+				{
+					key = it.next();
+					locationsList.set(locationsMap.get(key), key);
+				}
+
+				for (Iterator<String> it = personsMap.keySet().iterator(); it.hasNext(); )
+				{
+					key = it.next();
+					personsList.set(personsMap.get(key), key);
+				}
+
+				
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -248,10 +297,39 @@ public class DataModule {
 		
 		return sn;
 	}
+	
+	public static String getSpeechText(int SpeechID)
+	{
+		try 
+		{
+			java.sql.Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);	
+			ResultSet srs = stmt.executeQuery("CALL getSpeechText(" + SpeechID + ");");
+			
+			if (srs.next())
+			{
+				return srs.getString("SPEECH_TEXT");
+			}
+			else
+			{
+				return "";
+			}
+		}
+		catch (Exception e)
+		{
+			e.getStackTrace();
+			System.exit(1);
+		}
 		
-	public static Graph getGraph(String SinceDate, String TillDate, String Place, String Author, String DocType, List<String> queryTerms , List<Double> termWeights, Integer maxNumNodes, SimMatrixEnum sme, double dottedEdgeThreshold, double normalEdgeThreshold, double thickEdgeThreshold)
+		return "";
+	}
+		
+	public static Graph getGraph(String SinceDate, String TillDate, String Place, String Author, String DocType, List<String> queryTerms , List<Double> termWeights, Integer maxNumNodes, SimMatrixEnum sme, double dottedEdgeDensity, double normalEdgeDensity, double thickEdgeDensity)
 	{
 		SimMatrix simMatrix;
+		
+		edgeDensityDotted = dottedEdgeDensity;
+		edgeDensityNormal = normalEdgeDensity;
+		edgeDensityThick = thickEdgeDensity;
 		
 		switch (sme)
 		{
@@ -284,7 +362,7 @@ public class DataModule {
 		        	Node nod = new Node(srs.getInt("SPEECH_ID"), srs.getString("AUTHOR_NAME"), 
 		        			srs.getString("HEADLINE"), srs.getString("REPORT_DATE"), 
 		        			srs.getString("SOURCE_NAME"), srs.getString("PLACE_NAME"), srs.getString("DOCTYPE_NAME"),
-		        			/*srs.getString("SPEECH_TEXT").replace("<br>", "\n")*/"", srs.getString("SPEECH_DATE"));
+		        			srs.getString("SPEECH_DATE"));
 		        	
 		        	ln.add(nod);
 			}
@@ -297,10 +375,58 @@ public class DataModule {
 		
 		List<Node> sn = sortNodes(ln, queryTerms, termWeights, maxNumNodes);
 		
-		displayedGraph = new Graph(sn, simMatrix, dottedEdgeThreshold, normalEdgeThreshold, thickEdgeThreshold); 
+		displayedGraph = Graph.createGraphDensity(sn, simMatrix, edgeDensityDotted, edgeDensityNormal, edgeDensityThick); 
 		return displayedGraph;
 		
 	}
 	
+	public static Set<NamedEntity> getPersonsInDocument(Node n)
+	{
+		Set<NamedEntity> ret = new HashSet<NamedEntity>();
+		Integer speechID = n.getSpeech_id();
+		Set<Integer> neCells = personsIndex.GetNonzeroCells(speechID);
+		
+		Integer col;
+		for (Iterator<Integer> it = neCells.iterator(); it.hasNext(); )
+		{
+			col = it.next();
+			ret.add(new NamedEntity(col, personsList.get(col), NamedEntityEnum.persons, personsIndex.GetValue(speechID, col), false));
+		}
+		
+		return ret;
+	}
+	
+	public static Set<NamedEntity> getLocationsInDocument(Node n)
+	{
+		Set<NamedEntity> ret = new HashSet<NamedEntity>();
+		Integer speechID = n.getSpeech_id();
+		Set<Integer> neCells = locationsIndex.GetNonzeroCells(speechID);
+		
+		Integer col;
+		for (Iterator<Integer> it = neCells.iterator(); it.hasNext(); )
+		{
+			col = it.next();
+			ret.add(new NamedEntity(col, locationsList.get(col), NamedEntityEnum.locations, locationsIndex.GetValue(speechID, col), false));
+		}
+		
+		return ret;
+	}
+	
+	public static Set<NamedEntity> getOrganizationsInDocument(Node n)
+	{
+		Set<NamedEntity> ret = new HashSet<NamedEntity>();
+		Integer speechID = n.getSpeech_id();
+		Set<Integer> neCells = organizationsIndex.GetNonzeroCells(speechID);
+		
+		Integer col;
+		for (Iterator<Integer> it = neCells.iterator(); it.hasNext(); )
+		{
+			col = it.next();
+			ret.add(new NamedEntity(col, organizationsList.get(col), NamedEntityEnum.organizations, organizationsIndex.GetValue(speechID, col), false));
+		}
+		
+		return ret;
+	}
+
 	
 }

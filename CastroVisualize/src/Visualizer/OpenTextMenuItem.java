@@ -7,6 +7,8 @@ import java.awt.Container;
 import java.awt.Paint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -31,14 +33,31 @@ public class OpenTextMenuItem<V> extends JMenuItem implements VertexListener<V> 
 
         		JFrame frame = new JFrame("Node "+ ((Functionality.Node) vertex).getSpeech_id() + ": " + ((Functionality.Node) vertex).getHeadline());
         		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        		JTextArea ta = new JTextArea(((Functionality.Node) vertex).getSpeech_text(), 20, 20);
+        		JEditorPane ta = new JEditorPane();
+        		ta.setContentType("text/html");
+        		
+        		String text = ((Functionality.Node) vertex).getSpeech_text(); 
+        		
+        		text = text.replaceAll("<PERSONS>", "<span style=\"color:" + neTypeColors.getPersonsString() + "\"><b>");
+        		text = text.replaceAll("</PERSONS>", "</span></b>");
+        		
+        		text = text.replaceAll("<LOCATIONS>", "<span style=\"color:" + neTypeColors.getLocationsString() + "\"><b>");
+        		text = text.replaceAll("</LOCATIONS>", "</span></b>");
+        		
+        		text = text.replaceAll("<ORGANIZATIONS>", "<span style=\"color:" + neTypeColors.getOrganizationsString() + "\"><b>");
+        		text = text.replaceAll("</ORGANIZATIONS>", "</span></b>");
+        		
+        		
+        		System.err.println(text);
+        		
+        		ta.setText(text);
         		JScrollPane sp = new JScrollPane(ta);
         		
         		Container content = frame.getContentPane();
         		content.setLayout(null);
         		
         		content.add(sp);
-        		sp.setBounds(10, 10, width - 20, height - 20);
+        		sp.setBounds(10, 10, width - 20, height - 35);
         		
         		//frame.pack();
         		frame.setSize(width, height);
