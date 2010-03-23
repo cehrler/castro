@@ -22,7 +22,9 @@ import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Set;
-
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 public class DataModule {
 
 	//sample use:
@@ -83,7 +85,9 @@ public class DataModule {
 	
 	public static Graph displayedGraph;
 	
-	private DataModule() {}
+	private DataModule() 
+	{
+	}
 	
 	public String getPersonString(int index)
 	{
@@ -98,6 +102,57 @@ public class DataModule {
 	public String getOrganizationString(int index)
 	{
 		return organizationsList.get(index);
+	}
+	
+	public static void InitConfiguration()
+	{
+		try
+		{
+			FileInputStream fio = new FileInputStream("castro.conf");
+			InputStreamReader isr = new InputStreamReader(fio, "UTF-8");
+			BufferedReader br = new BufferedReader(isr);
+			
+			String s;
+			System.err.println("file content:");
+			while ((s = br.readLine()) != null)
+			{
+				System.err.println(s);
+				
+				if (s.substring(0, 4).equals("host"))
+				{
+					connHost = s.substring(5);
+					System.err.println("-->host=" + connHost);
+				}
+				
+				if (s.substring(0, 8).equals("database"))
+				{
+					connDB = s.substring(9);
+					System.err.println("-->database=" + connDB);
+				}
+				
+				if (s.substring(0, 4).equals("user"))
+				{
+					connUser = s.substring(5);
+					System.err.println("-->user=" + connUser);
+					
+				}
+
+				if (s.substring(0, 8).equals("password"))
+				{
+					connPasswd = s.substring(9);
+					System.err.println("-->password=" + connPasswd);
+					
+				}
+
+			}
+			System.err.println("-------");
+			
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			System.exit(1);
+		}
 	}
 	
 	public static void Init(IndexTypeEnum indexType)

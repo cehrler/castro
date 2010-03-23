@@ -307,7 +307,6 @@ public class Visualize implements ItemListener, MouseListener {
 	private final static class VertexDisplayPredicateNone  implements Predicate<Context<Graph<Functionality.Node, Functionality.Edge>, Functionality.Node>>
 	{
 
-		@Override
 		public boolean evaluate(Context<Graph<Functionality.Node,Functionality.Edge>,Functionality.Node> context) {
 			return true;
 		}
@@ -327,7 +326,7 @@ public class Visualize implements ItemListener, MouseListener {
 			normal = _normal;
 			thick = _thick;
 		}
-		@Override
+
 		public boolean evaluate(Context<Graph<Functionality.Node, Functionality.Edge>, Functionality.Edge> arg0) 
 		{
 			if (DataModule.displayedGraph.edgeIsDotted(arg0.element.getNode1(), arg0.element.getNode2()))

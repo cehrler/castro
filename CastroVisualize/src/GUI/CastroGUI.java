@@ -228,7 +228,7 @@ public class CastroGUI implements ActionListener, ChangeListener {
 		frame = new JFrame("CastroGUI");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-
+		Functionality.DataModule.InitConfiguration();
 		Functionality.DataModule.Init(IndexTypeEnum.TF);
 				
 		content = frame.getContentPane();
@@ -806,7 +806,7 @@ public class CastroGUI implements ActionListener, ChangeListener {
 		return terms;
 	}
 
-	@Override
+	
 	public void stateChanged(ChangeEvent arg0) {
 		
 		if (arg0.getSource() == distanceSlider)

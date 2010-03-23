@@ -13,3 +13,6 @@ $run_mysql --execute="source ./NE.sql;"
 $run_mysql --execute="source ./getNE.sql;"
 $run_mysql --execute="source ./getNEperSpeech.sql;"
 $run_mysql --execute="source ./getNodes.sql;"
+$run_mysql --execute="source ./getSpeechText.sql;"
+
+echo "Hi Comrade, If you didn't see any error message so far, you probably created database succesfully:) Keep the revolution!" 
