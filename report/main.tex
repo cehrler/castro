@@ -4,7 +4,7 @@
 %  Created by Carsten Ehrler on 2010-03-06.
 %  Copyright (c) 2010 __MyCompanyName__. All rights reserved.
 %
-\documentclass[11pt]{article}
+\documentclass[12pt]{article}
 
 % Use utf-8 encoding for foreign characters
 \usepackage[utf8]{inputenc}
@@ -79,105 +79,35 @@
 \label{sec:introduction}
 \input{introduction}
 
-	\subsection{General Description}
-	\note a system for powerful search and navigation through a collection of historical documents.
-	
-	\subsection{Subtasks}
- 	\note processing steps and system components
-
-	\subsection {NLP Motivation}
-	\note application of existing tools and development of new tools and techniques for processing historical data.
-	
-	\subsection{Historic Motivation}
-		\subsubsection{Working with Collections of Historic Documents}
- 		\note what is difficult about it, why existing tools are limited 
- 					why our approach is useful:
- 					relevance of metadata, NE's, graphical representation, etc for finding documents that suit the interest of the 
- 					historian.
-		\subsubsection{Case Study: Fidel Castro}
- 		\note Introduction, importance and particularities of Castro's speeches
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Background} % (fold)
 \label{sec:background}
 \input{background}
 
-\subsection {Background and Previous Work in NLP}
-\subsection {Background and Previous Work in Historical Research}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Main Part} % (fold)
+\section{Main Part}
 \label{sec:main_part}
 \input{mainpart}
-	\subsection {Data}
-		\subsubsection{Description of the Castro Archive}
-		\note technical details on the database, statistics, typical structure of a document
-		\subsubsection{Reading and Storing the Data}
-		\note reading the data, creating MySQL database, creating data model
-		
-	\subsection {Named Entity Recognition}
-	\note task description
-  	\subsubsection{The Stanford Named Entity Recognizer}
-		\note details on the tool
-		\subsubsection{Recognizing Named Entities in the Castro Archive} 
-		\note identifying names, locations and organizations in the Castro documents, input/output examples, evaluation??
-			
-	\subsection {Representing Documents in Vector Space}
-		\subsubsection{General Indexing Approach}
-		\note description of the 4 different representations, tf/tfidf with motivation and interpretation for each, examples
-  	\subsubsection {Non Contextual Co-reference Resolution with String Kernels}
-  	\note motivation, description of the algorithm to create similarity matrixes between NE's, smoothing document
-          representations with Kernel matrix as co-reference resolution
-  		
-	\subsection {Information Retrieval}
-		\subsubsection{Keyword Search}
-		\note description of the functionality, use of string kernels for query expansion 
-		\subsubsection{Metadata Search}
-		\note general description of the functionality
-		
-	\subsection {Computing Similarity between Documents}
-  \note calculating similarity matrices
-	
-	\subsection {Graphical Representation}
-	\note general idea, what information if provided	
-	
-	\subsection {Combining It All: User Interface}
-	\note detailed description of all the features 
-		\subsubsection {Querying Functionalities}
-		\subsubsection {Presenting Results}
-		\subsubsection {Navigating through Results}
-% section main_part (end)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Evaluation} % (fold)
+\section{Evaluation}
 \label{sec:evaluation}
 \input{evaluation}
-	\subsection {Named Entity Recognition}
-	\subsection {String Kernels and Co-reference Resolution}
-	\subsection {Document Similarity}
-	\subsection {Information Retrieval}
-	\subsection {GUI Performance}
-% section evaluation (end)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Conclusion} % (fold)
+\section{Conclusion}
 \label{sec:conclusion}
 \input{conclusion}
 
-	\subsection {Summary}
-	\subsection {Future Work}
-% section conclusion (end)
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Appendix} % (fold)
+\section{Appendix}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{plain}
-\bibliography{}
+\bibliography{bib.bib}
 \end{document}
