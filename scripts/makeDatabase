@@ -244,7 +244,7 @@ print "\n";
 
 print "CREATE TABLE dictionary (WORD_ID INT NOT NULL PRIMARY KEY, WORDFORM VARCHAR(50) NOT NULL); \n";
 
-open(DICTIONARY, "<../work/dictionary.out") || die "Can't open dictionary.out! Did you run makeAllIndexes before?";
+open(DICTIONARY, "<dictionary.out") || die "Can't open dictionary.out! Did you run makeAllIndexes before?";
 
 my $wordID;
 my $wordForm;
