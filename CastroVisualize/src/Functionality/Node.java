@@ -21,11 +21,6 @@ public class Node implements Comparable<Object> {
 	private String speech_date;
 	private Double relevance;
 	
-	// date for named entities
-	private Set<NamedEntity> ne_persons;
-	private Set<NamedEntity> ne_locations;
-	private Set<NamedEntity> ne_organizations;
-
 	//context informtion
 	private boolean marked; 
 	
@@ -49,9 +44,6 @@ public class Node implements Comparable<Object> {
 	
 	public Node(Integer id) {
 		this.id = id;
-		this.ne_persons = null;//new TreeMap<String, Integer>();
-		this.ne_locations = null; //new TreeMap<String, Integer>();
-		this.ne_organizations = null; //new TreeMap<String, Integer>();
 		this.marked = false;        //assumes new node is unmarked 
 	}
 	
@@ -70,31 +62,20 @@ public class Node implements Comparable<Object> {
 		
 	}
 		
-	public Set<NamedEntity> getNamedEntitiesPerson() {
-		if (ne_persons == null)
-		{
-			ne_persons = DataModule.getPersonsInDocument(this);
-		}
-		return ne_persons;
+	public Set<NamedEntity> getNamedEntitiesPerson() 
+	{
+		return DataModule.getPersonsInDocument(this);
 	}
 	
 
-	public Set<NamedEntity> getNamedEntitiesLocations() {
-		if (ne_locations == null)
-		{
-			ne_locations = DataModule.getLocationsInDocument(this);
-		}
-		
-		return ne_locations;
+	public Set<NamedEntity> getNamedEntitiesLocations()
+	{
+		return DataModule.getLocationsInDocument(this);
 	}
 
-	public Set<NamedEntity> getNamedEntitiesOrganizations() {
-		if (ne_organizations == null)
-		{
-			ne_organizations = DataModule.getOrganizationsInDocument(this);
-		}
-		
-		return ne_organizations;
+	public Set<NamedEntity> getNamedEntitiesOrganizations() 
+	{
+		return DataModule.getOrganizationsInDocument(this);
 	}
 
 

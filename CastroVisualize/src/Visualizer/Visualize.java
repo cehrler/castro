@@ -102,7 +102,7 @@ public class Visualize implements ItemListener, MouseListener {
 		
 	}
 	
-	public JComponent actualizeGraph()
+	public JComponent actualizeGraph(boolean lockLayout)
 	{
 		//myGraph = g;
 		
@@ -140,7 +140,20 @@ public class Visualize implements ItemListener, MouseListener {
 		
 		vv.setPickedVertexState(newPsn);
 		
+		layout.lock(lockLayout);
+		
 		return vv;
+	}
+	
+	public void LayoutStart()
+	{
+		layout.lock(false);
+
+	}
+	
+	public void LayoutStop()
+	{
+		layout.lock(true);
 	}
 	
 	public JComponent drawGraph() {

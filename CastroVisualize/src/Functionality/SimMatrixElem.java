@@ -66,6 +66,9 @@ public class SimMatrixElem extends SimMatrix {
 	{
 		Double pomDouble;
 		SimMatrixElem simMat = new SimMatrixElem();
+		
+		System.err.println("SimMatrixElem: LoadFromFile(" + filename + ")");
+		
 		try {
 	        DataInputStream is = new DataInputStream(new FileInputStream(filename));
 			
@@ -129,7 +132,7 @@ public class SimMatrixElem extends SimMatrix {
 		
 		for (int i = 0; i < simMat.numSpeeches; i++)
 		{
-			if (i % 20 == 0) System.out.println("i = " + i);
+			//if (i % 20 == 0) System.out.println("i = " + i);
 
 			Set<Integer> nonzeroI = index.GetNonzeroCells(i);
 			for (int j = i + 1; j < simMat.numSpeeches; j++)

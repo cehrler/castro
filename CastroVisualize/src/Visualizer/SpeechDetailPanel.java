@@ -15,7 +15,7 @@ public class SpeechDetailPanel
 {
 	JEditorPane editor;
 	
-	private Set<String> getNEText(Set<NamedEntity> sne)
+	/*private Set<String> getNEText(Set<NamedEntity> sne)
 	{
 		NamedEntity ne;
 		Set<String> ret = new HashSet<String>();
@@ -26,14 +26,23 @@ public class SpeechDetailPanel
 			
 		}
 		return ret;
-	}
+	}*/
 	
-	private String makeStringForSetOfStrings(Set<String> sneID, String color)
+	private String makeStringForSetOfNEs(Set<NamedEntity> sneID, String color)
 	{
 		String text = "";
-		for (Iterator<String> it = sneID.iterator(); it.hasNext(); )
+		NamedEntity ne;
+		for (Iterator<NamedEntity> it = sneID.iterator(); it.hasNext(); )
 		{
-			text += "<span style=\"color:" + color + "\">" + it.next() + "</span><br/>";
+			ne = it.next();
+			if (ne.getExpanded())
+			{
+				text += "<span style=\"color:" + color + "\">" + ne.getText() + "</span><br/>";
+			}
+			else
+			{
+				text += "<span style=\"color:" + color + "\"><b>" + ne.getText() + "</b></span><br/>";				
+			}
 		}
 		return text;
 	}
@@ -56,51 +65,51 @@ public class SpeechDetailPanel
 			
 			text += "<i>persons:</i><br/>";
 			Set<NamedEntity> sp = n.getNamedEntitiesPerson();
-			text += makeStringForSetOfStrings(getNEText(sp), neTypeColors.getPersonsString());
+			text += makeStringForSetOfNEs(sp, neTypeColors.getPersonsString());
 			
 			text += "<br/><i>organizations:</i><br/>";
 			Set<NamedEntity> so = n.getNamedEntitiesOrganizations();
-			text += makeStringForSetOfStrings(getNEText(so), neTypeColors.getOrganizationsString());
+			text += makeStringForSetOfNEs(so, neTypeColors.getOrganizationsString());
 			
 			text += "<br/><i>locations:</i><br/>";
 			Set<NamedEntity> sl = n.getNamedEntitiesLocations();
-			text += makeStringForSetOfStrings(getNEText(sl), neTypeColors.getLocationsString());
+			text += makeStringForSetOfNEs(sl, neTypeColors.getLocationsString());
 			
 			editor.setText(text);
 		}
 		else
 		{
 			Node n = nodes.get(0);
-			List<Set<String>> ls = new ArrayList<Set<String>>(); 
-			ls.add(getNEText(n.getNamedEntitiesPerson()));
-			ls.add(getNEText(n.getNamedEntitiesOrganizations()));
-			ls.add(getNEText(n.getNamedEntitiesLocations()));
+			List<Set<NamedEntity>> ls = new ArrayList<Set<NamedEntity>>(); 
+			ls.add(n.getNamedEntitiesPerson());
+			ls.add(n.getNamedEntitiesOrganizations());
+			ls.add(n.getNamedEntitiesLocations());
 			
-			List<Set<String>> aktLS;
-			List<Set<String>> newLS;
+			List<Set<NamedEntity>> aktLS;
+			List<Set<NamedEntity>> newLS;
 			
 			for (int i = 1; i < nodes.size(); i++)
 			{
 				n = nodes.get(i);
-				aktLS = new ArrayList<Set<String>>();
-				aktLS.add(getNEText(n.getNamedEntitiesPerson()));
-				aktLS.add(getNEText(n.getNamedEntitiesOrganizations()));
-				aktLS.add(getNEText(n.getNamedEntitiesLocations()));
+				aktLS = new ArrayList<Set<NamedEntity>>();
+				aktLS.add(n.getNamedEntitiesPerson());
+				aktLS.add(n.getNamedEntitiesOrganizations());
+				aktLS.add(n.getNamedEntitiesLocations());
 
-				newLS = new ArrayList<Set<String>>();
+				newLS = new ArrayList<Set<NamedEntity>>();
 				
-				String neString;
+				NamedEntity ne;
 				for (int j = 0; j < 3; j++)
 				{
-					newLS.add(new HashSet<String>());
+					newLS.add(new HashSet<NamedEntity>());
 					
-					for (Iterator<String> it = aktLS.get(j).iterator(); it.hasNext(); )
+					for (Iterator<NamedEntity> it = aktLS.get(j).iterator(); it.hasNext(); )
 					{
-						neString = it.next();
+						ne = it.next();
 						
-						if (ls.get(j).contains(neString))
+						if (ls.get(j).contains(ne))
 						{
-							newLS.get(j).add(neString);
+							newLS.get(j).add(ne);
 						}
 					}
 					
@@ -118,11 +127,11 @@ public class SpeechDetailPanel
 			text += "<br/><br/><b>Common named entities:</b><br/>";
 			
 			text += "<i>persons:</i><br/>";
-			text += makeStringForSetOfStrings(ls.get(0), neTypeColors.getPersonsString());
+			text += makeStringForSetOfNEs(ls.get(0), neTypeColors.getPersonsString());
 			text += "<br/><i>organizations:</i><br/>";
-			text += makeStringForSetOfStrings(ls.get(1), neTypeColors.getOrganizationsString());
+			text += makeStringForSetOfNEs(ls.get(1), neTypeColors.getOrganizationsString());
 			text += "<br/><i>locations:</i><br/>";
-			text += makeStringForSetOfStrings(ls.get(2), neTypeColors.getLocationsString());
+			text += makeStringForSetOfNEs(ls.get(2), neTypeColors.getLocationsString());
 			editor.setText(text);
 		}
 		

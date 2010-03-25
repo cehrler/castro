@@ -19,11 +19,11 @@ import Functionality.*;
 public class MichalMain {
 
 	public static void main(String[] args) {
-		//makeBinIndexes();
-		//makeSimMatrices();
+		makeBinIndexes();
+		makeSimMatrices();
 		
 		
-		DataModule.Init(IndexTypeEnum.TF);
+		//DataModule.Init(IndexTypeEnum.TF);
 		
 		/*
 		Abraham Lincoln,  Alfonso Barrantes
@@ -31,10 +31,8 @@ public class MichalMain {
 		Ministry of Development
 		*/
 		
-		List<String> queryTerms = new ArrayList<String>();
+		/*List<String> queryTerms = new ArrayList<String>();
 		List<Double> termWeights = new ArrayList<Double>();
-		
-		
 		
 		queryTerms.add("PRENSA LATINA"); termWeights.add(1.0);
 		queryTerms.add("Conrado Benitez"); termWeights.add(1.0);
@@ -53,7 +51,7 @@ public class MichalMain {
 			System.err.println(n.getSpeech_id() + ", " + n.getSpeech_date() + ", " + n.getHeadline() + " --> " + n.GetRelevance());
 		}
 		
-		System.err.println("OK!");
+		System.err.println("OK!");*/
 		
 	}
 
@@ -62,11 +60,21 @@ public class MichalMain {
 		VMindex.ConvertTextToBin("../work/PERSONS.tf", "../DataModuleData/PERSONS.tf.bin");
 		VMindex.ConvertTextToBin("../work/LOCATIONS.tf", "../DataModuleData/LOCATIONS.tf.bin");
 		VMindex.ConvertTextToBin("../work/ORGANIZATIONS.tf", "../DataModuleData/ORGANIZATIONS.tf.bin");
+		VMindex.ConvertTextToBin("../work/GENERAL.tf", "../DataModuleData/GENERAL.tf.bin");
 
 		VMindex.ConvertTextToBin("../work/PERSONS.tfidf", "../DataModuleData/PERSONS.tfidf.bin");
 		VMindex.ConvertTextToBin("../work/LOCATIONS.tfidf", "../DataModuleData/LOCATIONS.tfidf.bin");
 		VMindex.ConvertTextToBin("../work/ORGANIZATIONS.tfidf", "../DataModuleData/ORGANIZATIONS.tfidf.bin");
-		
+		VMindex.ConvertTextToBin("../work/GENERAL.tfidf", "../DataModuleData/GENERAL.tfidf.bin");
+
+		VMindex.ConvertTextToBin("../work/PERSONS-smooth.tf", "../DataModuleData/PERSONS-smooth.tf.bin");
+		VMindex.ConvertTextToBin("../work/LOCATIONS-smooth.tf", "../DataModuleData/LOCATIONS-smooth.tf.bin");
+		VMindex.ConvertTextToBin("../work/ORGANIZATIONS-smooth.tf", "../DataModuleData/ORGANIZATIONS-smooth.tf.bin");
+
+		VMindex.ConvertTextToBin("../work/PERSONS-smooth.tfidf", "../DataModuleData/PERSONS-smooth.tfidf.bin");
+		VMindex.ConvertTextToBin("../work/LOCATIONS-smooth.tfidf", "../DataModuleData/LOCATIONS-smooth.tfidf.bin");
+		VMindex.ConvertTextToBin("../work/ORGANIZATIONS-smooth.tfidf", "../DataModuleData/ORGANIZATIONS-smooth.tfidf.bin");
+
 	}
 
 	private static void RunTest()
@@ -173,6 +181,37 @@ public class MichalMain {
 		sim = SimMatrixElem.CountFromVMindex(ind);
 		sim.SaveToFile("../DataModuleData/ORGANIZATIONS.tfidf.sim");
 
+		ind = new VMindex("../DataModuleData/PERSONS-smooth.tf.bin");
+		sim = SimMatrixElem.CountFromVMindex(ind);
+		sim.SaveToFile("../DataModuleData/PERSONS-smooth.tf.sim");
+
+		ind = new VMindex("../DataModuleData/PERSONS-smooth.tfidf.bin");
+		sim = SimMatrixElem.CountFromVMindex(ind);
+		sim.SaveToFile("../DataModuleData/PERSONS-smooth.tfidf.sim");
+		
+		ind = new VMindex("../DataModuleData/LOCATIONS-smooth.tf.bin");
+		sim = SimMatrixElem.CountFromVMindex(ind);
+		sim.SaveToFile("../DataModuleData/LOCATIONS-smooth.tf.sim");
+
+		ind = new VMindex("../DataModuleData/LOCATIONS-smooth.tfidf.bin");
+		sim = SimMatrixElem.CountFromVMindex(ind);
+		sim.SaveToFile("../DataModuleData/LOCATIONS-smooth.tfidf.sim");
+
+		ind = new VMindex("../DataModuleData/ORGANIZATIONS-smooth.tf.bin");
+		sim = SimMatrixElem.CountFromVMindex(ind);
+		sim.SaveToFile("../DataModuleData/ORGANIZATIONS-smooth.tf.sim");
+
+		ind = new VMindex("../DataModuleData/ORGANIZATIONS-smooth.tfidf.bin");
+		sim = SimMatrixElem.CountFromVMindex(ind);
+		sim.SaveToFile("../DataModuleData/ORGANIZATIONS-smooth.tfidf.sim");
+
+		ind = new VMindex("../DataModuleData/GENERAL.tf.bin");
+		sim = SimMatrixElem.CountFromVMindex(ind);
+		sim.SaveToFile("../DataModuleData/GENERAL.tf.sim");
+
+		ind = new VMindex("../DataModuleData/GENERAL.tfidf.bin");
+		sim = SimMatrixElem.CountFromVMindex(ind);
+		sim.SaveToFile("../DataModuleData/GENERAL.tfidf.sim");
 	}
 	
 }

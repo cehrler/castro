@@ -44,7 +44,7 @@ for (my $i = 0; $i < $numNEs; $i++)
 while ($line = <STDIN>)
 {
 	chomp($line);
-	if ($line =~ m/^\(([0-9]+),([0-9]+)\)=([0-9]+)$/)
+	if ($line =~ m/^\(([0-9]+),([0-9]+)\)=([\.0-9]+)$/)
 	{
 		$numDocsPerNE[$2]++;
 		$indMat{"$1,$2"} = $3;

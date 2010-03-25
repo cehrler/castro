@@ -242,6 +242,37 @@ foreach my $key (keys %doctypes)
 
 print "\n";
 
+print "CREATE TABLE dictionary (WORD_ID INT NOT NULL PRIMARY KEY, WORDFORM VARCHAR(50) NOT NULL); \n";
+
+open(DICTIONARY, "<../work/dictionary.out") || die "Can't open dictionary.out! Did you run makeAllIndexes before?";
+
+my $wordID;
+my $wordForm;
+
+while (my $radek = <DICTIONARY>)
+{
+	chomp($radek);
+	
+	if ($radek =~ m/^([0-9]+) (.*)$/)
+	{
+		$wordID = $1;
+		$wordForm = $2;
+		
+		if ($wordForm ne "\"" && $wordForm ne "\\")
+		{
+			print "INSERT INTO dictionary (WORD_ID, WORDFORM) VALUES ($wordID, \"$wordForm\");\n";
+		}
+		else
+		{
+			print STDERR "non-alphanumeric lexical item: $wordForm\n";
+		}
+	}
+	else
+	{
+		die "Dictionary: line doesn't match: $radek";
+	}
+}
+
 #print "\nCategories:\n";
 #foreach my $key (keys %categories)
 #{

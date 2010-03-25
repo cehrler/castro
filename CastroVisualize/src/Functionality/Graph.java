@@ -159,7 +159,7 @@ public class Graph {
 
 	}
 	
-	public static Graph createGraphThreshold(List<Node> ln, SimMatrix _simMatrix, double _dottedEdgeThreshold, double _normalEdgeThreshold, double _thickEdgeThreshold)
+	public static Graph createGraphThreshold(List<Node> ln, SimMatrix _simMatrix, double _normalEdgeThreshold, double _dottedEdgeAbsoluteMultiplier, double _thickEdgeAbsoluteMultiplier)
 	{
 		Graph gr = new Graph();
 		gr.nodes = ln;
@@ -170,9 +170,9 @@ public class Graph {
 			gr.nodeMap.put(gr.nodes.get(i).getSpeech_id(), gr.nodes.get(i));
 		}
 		
-		gr.dottedEdgeThreshold = _dottedEdgeThreshold;
+		gr.dottedEdgeThreshold = _normalEdgeThreshold * _dottedEdgeAbsoluteMultiplier;
 		gr.normalEdgeThreshold = _normalEdgeThreshold;
-		gr.thickEdgeThreshold = _thickEdgeThreshold;
+		gr.thickEdgeThreshold = _normalEdgeThreshold * _thickEdgeAbsoluteMultiplier;
 		
 		gr.simMatrix = _simMatrix;
 		gr.createEdgesThreshold();
@@ -181,61 +181,49 @@ public class Graph {
 		
 	}
 	
-	public void ChangeEdgeDensities(double _dottedEdgeDensity, double _normalEdgeDensity, double _thickEdgeDensity)
+	public void ChangeEdgeThresholds(double _normalEdgeThreshold, double _dottedEdgeAbsoluteMultiplier, double _thickEdgeAbsoluteMultiplier)
 	{
-		System.err.println("dotted: " + _dottedEdgeDensity + ", normal: " + _normalEdgeDensity + ", thick: " + _thickEdgeDensity);
-		int numEdges = (int)Math.round( nodes.size() * (_dottedEdgeDensity + _normalEdgeDensity + _thickEdgeDensity) );
+		dottedEdgeThreshold = _normalEdgeThreshold * _dottedEdgeAbsoluteMultiplier;
+		normalEdgeThreshold = _normalEdgeThreshold;
+		thickEdgeThreshold = _normalEdgeThreshold * _thickEdgeAbsoluteMultiplier;
 		
-		int normalEdgeIndex = (int)Math.round( nodes.size() * _dottedEdgeDensity);
-		int thickEdgeIndex = (int)Math.round( nodes.size() * (_normalEdgeDensity + _dottedEdgeDensity));
-		
-		createEdgesDensity(numEdges);
-		
-		if (numEdges == 0)
-		{
-			dottedEdgeThreshold = 0.4;
-			normalEdgeThreshold = 0.5;
-			thickEdgeThreshold = 0.6;
-		}
-		else
-		{
-			dottedEdgeThreshold = edges.get(0).getStrength();
-			if (normalEdgeIndex < numEdges)
-			{
-				if (normalEdgeIndex > 0)
-				{
-					normalEdgeThreshold = (edges.get(normalEdgeIndex - 1).getStrength() + edges.get(normalEdgeIndex).getStrength()) / 2;
-				}
-				else
-				{
-					normalEdgeThreshold = edges.get(normalEdgeIndex).getStrength();
-				}
-				
-				if (thickEdgeIndex < numEdges)
-				{
-					if (thickEdgeIndex > 0)
-					{
-						thickEdgeThreshold = (edges.get(thickEdgeIndex - 1).getStrength() + edges.get(thickEdgeIndex).getStrength()) / 2;
-					}
-					else
-					{
-						thickEdgeThreshold = edges.get(thickEdgeIndex).getStrength();
-					}
-				}
-				else
-				{
-					thickEdgeThreshold = 1;
-				}
-			}
-			else
-			{
-				normalEdgeThreshold = 1;
-			}
-		}
+		createEdgesThreshold();
 		
 	}
 	
-	public static Graph createGraphDensity(List<Node> ln, SimMatrix _simMatrix, double _dottedEdgeDensity, double _normalEdgeDensity, double _thickEdgeDensity) {
+	public void ChangeEdgeDensities(double _edgeDensity, double _normalEdgeRelativeMultiplier, double _thickEdgeRelativeMultiplier)
+	{
+		System.err.println("edge density: " + _edgeDensity);
+		int numEdges = (int)Math.round( nodes.size() * _edgeDensity );
+			
+		createEdgesDensity(numEdges);
+		
+		double sumStrength = 0;
+		for (int i = 0; i < edges.size(); i++)
+		{
+			sumStrength += edges.get(i).getStrength();
+		}
+		
+		double avgStrength = sumStrength / edges.size();
+		
+		if (numEdges > 0)
+		{
+			dottedEdgeThreshold = edges.get(0).getStrength();
+			normalEdgeThreshold = avgStrength * _normalEdgeRelativeMultiplier;
+			thickEdgeThreshold = avgStrength * _thickEdgeRelativeMultiplier;
+		}
+		else
+		{
+			dottedEdgeThreshold = 0.4;
+			normalEdgeThreshold = 0.5;
+			thickEdgeThreshold = 0.6;			
+		}
+		
+		System.err.println("---dottedEdge: " + dottedEdgeThreshold + ", normalEdge: " + normalEdgeThreshold + ", thickEdge: " + thickEdgeThreshold);
+		
+	}
+	
+	public static Graph createGraphDensity(List<Node> ln, SimMatrix _simMatrix, double _edgeDensity, double _normalEdgeRelativeMultiplier, double _thickEdgeRelativeMultiplier) {
 		
 		Graph gr = new Graph();
 		gr.nodes = ln;
@@ -247,7 +235,7 @@ public class Graph {
 		}
 
 		gr.simMatrix = _simMatrix;
-		gr.ChangeEdgeDensities(_dottedEdgeDensity, _normalEdgeDensity, _thickEdgeDensity);
+		gr.ChangeEdgeDensities(_edgeDensity, _normalEdgeRelativeMultiplier, _thickEdgeRelativeMultiplier);
 		
 		System.err.println("dottedEdgeThreshold: " + gr.dottedEdgeThreshold);
 		System.err.println("normalEdgeThreshold: " + gr.normalEdgeThreshold);

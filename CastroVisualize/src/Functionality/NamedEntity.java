@@ -1,6 +1,6 @@
 package Functionality;
 
-public class NamedEntity {
+public class NamedEntity implements Comparable<NamedEntity> {
 	private boolean expanded;
 	private double weight;
 	private String text;
@@ -39,5 +39,14 @@ public class NamedEntity {
 		weight = _weight;
 		expanded = _expanded;
 		ID = _ID;
+	}
+
+	public int compareTo(NamedEntity arg0) {
+		if (this.ID == arg0.ID)
+			return 0;
+		else if (this.ID > arg0.ID)
+			return -1;
+		else
+			return 1;
 	}
 }

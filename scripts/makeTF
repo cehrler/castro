@@ -39,7 +39,7 @@ for (my $i = 0; $i < $numSpeeches; $i++)
 while ($line = <STDIN>)
 {
 	chomp($line);
-	if ($line =~ m/^\(([0-9]+),([0-9]+)\)=([0-9]+)$/)
+	if ($line =~ m/^\(([0-9]+),([0-9]+)\)=([\.0-9]+)$/)
 	{
 		$sum[$1] += $3;
 		$indMat{"$1,$2"} = $3;
