@@ -11,6 +11,8 @@ import java.awt.Insets;
 import java.util.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Dictionary;
@@ -63,7 +65,7 @@ import Functionality.SimMatrixEnum;
 import Functionality.VertexDisplayPredicateMode;
 import Visualizer.CastroTableModel;
 
-public class CastroGUI implements ActionListener, ChangeListener {
+public class CastroGUI implements ActionListener, ChangeListener, ComponentListener {
 	
 	private static JFrame frame;
 	private Container content;
@@ -146,25 +148,7 @@ public class CastroGUI implements ActionListener, ChangeListener {
 	 * @param args
 	 */
 	public static void main(String[] args) {	
-		String str1 = "ble";
-		String str2 = "bleble";
-		
-		str1 += "ble";
-		
-		/*if (str1.equals(str2))
-		{
-			System.err.println("Same!");
-		}*/
-		
-		Set<String> s1 = new HashSet<String>();
-		Set<String> s2 = new HashSet<String>();
-		s1.add(str1);
-		s2.add(str2);
-		
-		if (s1.contains(str2) && s2.contains(str1))
-		{
-			System.err.println("s1 contains int2");
-		}
+
 		
 		gui = new CastroGUI();
 		gui.init();
@@ -253,7 +237,7 @@ public class CastroGUI implements ActionListener, ChangeListener {
 		Functionality.DataModule.Init(IndexTypeEnum.TF);
 				
 		content = frame.getContentPane();
-		content.setLayout(null);
+		content.setLayout(new BorderLayout(5, 5));
 		
 		String[][] data = {};
 		
@@ -263,6 +247,9 @@ public class CastroGUI implements ActionListener, ChangeListener {
 		
 		Integer table_height = 100;
 		Integer search_top = 65 + insets.top + table_height;
+		
+		Box frameNorthBox = Box.createVerticalBox();
+		
 		table_search = new JTable(data, names);
 		table_search.setFillsViewportHeight(true);
 		table_search.setColumnSelectionAllowed(false); 
@@ -272,8 +259,9 @@ public class CastroGUI implements ActionListener, ChangeListener {
 		table_search.getSelectionModel().addListSelectionListener(listener);	
 				
 		JScrollPane scroll_panel = new JScrollPane(table_search);
-		content.add(scroll_panel);		
-		scroll_panel.setBounds(insets.left + 10, insets.top + 10, frame_width - insets.left - insets.right - 20, 150);
+		scroll_panel.setPreferredSize(new Dimension(3000, 100));
+		
+		frameNorthBox.add(scroll_panel);
 		
 		tableSearchSetColumnWidth();
 		
@@ -445,6 +433,8 @@ public class CastroGUI implements ActionListener, ChangeListener {
 
 		Box smallVB5 = Box.createVerticalBox();
 		bleLabel = new JLabel("Action:");
+		bleLabel.setBackground(Color.GREEN);
+		bleLabel.setOpaque(true);
 		bleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		smallVB5.add(bleLabel);
 		smallVB5.add(Box.createVerticalStrut(5));
@@ -469,8 +459,14 @@ public class CastroGUI implements ActionListener, ChangeListener {
 		horizontal_box.add(strut4);
 		horizontal_box.add(smallVB5);
 
-		content.add(horizontal_box);
-		horizontal_box.setBounds(10 + insets.left, search_top, frame_width - insets.left - insets.right - 20, 45);
+		frameNorthBox.add(horizontal_box);
+		
+		content.add(frameNorthBox, BorderLayout.NORTH);		
+		//scroll_panel.setBounds(insets.left + 10, insets.top + 10, frame_width - insets.left - insets.right - 20, 150);
+
+		
+		//content.add(horizontal_box);
+		//horizontal_box.setBounds(10 + insets.left, search_top, frame_width - insets.left - insets.right - 20, 45);
 
 		Box featuresVB = Box.createVerticalBox();
 
@@ -678,33 +674,106 @@ public class CastroGUI implements ActionListener, ChangeListener {
 		layoutStartStopBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
 		
 		featuresVB.add(layoutStartStopBtn);
+		featuresVB.setPreferredSize(new Dimension(170, 400));
 		
-		content.add(featuresVB);
-		featuresVB.setBounds(10 + insets.left, search_top + 50, 170, frame_height - search_top - 85);
+		Box blebleBox = Box.createVerticalBox();
+		blebleBox.add(featuresVB);
+		Box emptyBleBox = Box.createHorizontalBox();
+		emptyBleBox.setPreferredSize(new Dimension(170, 10000));
+		blebleBox.add(emptyBleBox);
+		
+		content.add(blebleBox, BorderLayout.WEST);
+		//featuresVB.setBounds(10 + insets.left, search_top + 50, 170, frame_height - search_top - 85);
+
+		
+		JPanel centralPanel = new JPanel(new BorderLayout());
+		
 		
 		graphPanel = new JPanel();
-		
-		graphPanel.setBorder(new LineBorder(Color.BLACK, 1));
+		graphPanel.setLayout(new BorderLayout());
+		graphPanel.setBorder(new LineBorder(Color.RED, 1));
 		graphPanel.setBackground(Color.WHITE);
-		content.add(graphPanel);
+		
+		centralPanel.add(graphPanel, BorderLayout.CENTER);
+		
+		JPanel leftRightGraphPanel = new JPanel(new BorderLayout());
+		JButton translateLeftBtn = new JButton("L");
+		JButton translateRightBtn = new JButton("R");
+		
+		translateLeftBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				visu.graphTranslation(-25, 0);
+			
+			}
+		});
+
+		translateRightBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				visu.graphTranslation(25, 0);
+			
+			}
+		});
+
+		translateLeftBtn.setPreferredSize(new Dimension(50,20));
+		translateRightBtn.setPreferredSize(new Dimension(50, 20));
+		leftRightGraphPanel.add(translateLeftBtn, BorderLayout.WEST);
+		
+		Box pomVBox = Box.createHorizontalBox();
+		pomVBox.add(translateRightBtn);
+		pomVBox.add(Box.createHorizontalStrut(43));
+		
+		leftRightGraphPanel.add(pomVBox, BorderLayout.EAST);
+		//leftRightGraphPanel.setPreferredSize(new Dimension(10000, 60));
+		centralPanel.add(leftRightGraphPanel, BorderLayout.SOUTH);
+		
+		JPanel upDownGraphPanel = new JPanel(new BorderLayout());
+		JButton translateUpBtn = new JButton("U");
+
+		translateUpBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				visu.graphTranslation(0, -25);
+			
+			}
+		});
+
+		JButton translateDownBtn = new JButton("D");
+		translateUpBtn.setPreferredSize(new Dimension(50,20));
+		translateDownBtn.setPreferredSize(new Dimension(50, 20));
+
+		translateDownBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				visu.graphTranslation(0, +25);
+			
+			}
+		});
+
+		upDownGraphPanel.add(translateUpBtn, BorderLayout.NORTH);
+		upDownGraphPanel.add(translateDownBtn, BorderLayout.SOUTH);
+		//leftRightGraphPanel.setPreferredSize(new Dimension(10000, 60));
+		centralPanel.add(upDownGraphPanel, BorderLayout.EAST);
+		
+		
+		content.add(centralPanel, BorderLayout.CENTER);
 	
-		int graphLeft = 10 + insets.left + 170;
+	
+		/*int graphLeft = 10 + insets.left + 170;
 		int graphTop = search_top + 60;
 		int graphWidth = frame_width - (10 + insets.left + 185 + 200);
-		int graphHeight = frame_height - 260;
-		graphPanel.setBounds(graphLeft, graphTop, graphWidth,  graphHeight);
+		int graphHeight = frame_height - 260;*/
+		//graphPanel.setBounds(graphLeft, graphTop, graphWidth,  graphHeight);
 		
 		
 		JEditorPane jep = new JEditorPane();
 		jep.setEditable(true);
 		
 		JScrollPane jepScroll = new JScrollPane(jep);
-		content.add(jepScroll);
-		jepScroll.setBounds(graphLeft + graphWidth + 10, graphTop, 180, graphHeight);
+		content.add(jepScroll, BorderLayout.EAST);
+		jepScroll.setPreferredSize(new Dimension(180, 3000));
+		//jepScroll.setBounds(graphLeft + graphWidth + 10, graphTop, 180, graphHeight);
 		speechDetailPanel = new SpeechDetailPanel(jep);
 		
 		frame.setSize(new Dimension(frame_width, frame_height));
-		frame.setResizable(false);
+		//frame.setResizable(false);
 		frame.setVisible(true);
 	}
 	
@@ -838,7 +907,7 @@ public class CastroGUI implements ActionListener, ChangeListener {
 	private void visualizeGraph()
 	{
 		//-198, -270
-		visu = new Visualize(bigGraph, frame_width - 208, frame_height - 280);
+		visu = new Visualize(bigGraph, graphPanel.getWidth() - 5, graphPanel.getHeight() - 5);
 		
 		if (graph_component != null) 
 		{
@@ -848,6 +917,7 @@ public class CastroGUI implements ActionListener, ChangeListener {
 		//visu.thick_edge_theshold = Double.parseDouble(edgeThresholdTB.getText()) * 3.0 / 2.0;
 		//visu.normal_edge_threshold = Double.parseDouble(edgeThresholdTB.getText());
 		graph_component = visu.drawGraph();
+		graph_component.addComponentListener(this);
 		graphPanel.add(graph_component, BorderLayout.CENTER);
 		graphPanel.validate();
 		System.err.println("added to content");
@@ -899,6 +969,11 @@ public class CastroGUI implements ActionListener, ChangeListener {
 					normStartIndex = i + 1;
 				}
 			}
+		}
+		
+		if (normStartIndex < str.length())
+		{
+			terms.add(str.substring(normStartIndex, str.length()));
 		}
 		
 		return terms;
@@ -973,5 +1048,29 @@ public class CastroGUI implements ActionListener, ChangeListener {
 			setDistanceFilter();
 		}
 
+	}
+
+	public void componentHidden(ComponentEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void componentMoved(ComponentEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void componentResized(ComponentEvent arg0) {
+		if (arg0.getSource().equals(graph_component))
+		{
+			visu.layoutResize(graph_component.getWidth(), graph_component.getHeight());
+		}
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void componentShown(ComponentEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -264,7 +264,7 @@ while (my $radek = <DICTIONARY>)
 		}
 		else
 		{
-			print STDERR "non-alphanumeric lexical item: $wordForm\n";
+			#print STDERR "non-alphanumeric lexical item: $wordForm\n";
 		}
 	}
 	else

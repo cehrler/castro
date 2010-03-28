@@ -44,6 +44,8 @@ import edu.uci.ics.jung.algorithms.layout3d.AbstractLayout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseMultigraph;
 import edu.uci.ics.jung.graph.util.Context;
+import edu.uci.ics.jung.visualization.Layer;
+import edu.uci.ics.jung.visualization.MultiLayerTransformer;
 import edu.uci.ics.jung.visualization.RenderContext;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
@@ -52,6 +54,11 @@ import edu.uci.ics.jung.visualization.control.EditingModalGraphMouse;
 import edu.uci.ics.jung.visualization.decorators.AbstractVertexShapeTransformer;
 import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
 import edu.uci.ics.jung.visualization.picking.PickedState;
+import edu.uci.ics.jung.visualization.renderers.BasicRenderer;
+import edu.uci.ics.jung.visualization.renderers.BasicVertexLabelRenderer;
+import edu.uci.ics.jung.visualization.renderers.DefaultVertexLabelRenderer;
+import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
+import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 
 import Functionality.*; 
 import GUI.CastroGUI;
@@ -102,11 +109,27 @@ public class Visualize implements ItemListener, MouseListener {
 		
 	}
 	
+	public void graphTranslation(int _x, int _y)
+	{
+		MutableTransformer modelTransformer = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
+		modelTransformer.translate(_x, _y);
+	}
+	
+	public void layoutResize(int _width, int _height)
+	{
+		layout.setSize(new Dimension(_width, _height));
+	}
+	
 	public JComponent actualizeGraph(boolean lockLayout)
 	{
 		//myGraph = g;
 		
+		System.err.println("Location: x = " + vv.getLocation().x + ", y = " + vv.getLocation().y);
+		
+		MultiLayerTransformer mlt = vv.getRenderContext().getMultiLayerTransformer();
 		Map<Functionality.Node, Point2d> locSet = new HashMap<Functionality.Node, Point2d>();
+		
+	
 		
 		PickedState<Node> psn = vv.getPickedVertexState();
 		
@@ -139,7 +162,7 @@ public class Visualize implements ItemListener, MouseListener {
 		vv.getRenderContext().setEdgeIncludePredicate(eip);
 		
 		vv.setPickedVertexState(newPsn);
-		
+		vv.getRenderContext().setMultiLayerTransformer(mlt);
 		layout.lock(lockLayout);
 		
 		return vv;
@@ -168,6 +191,20 @@ public class Visualize implements ItemListener, MouseListener {
 		vv.setPreferredSize(new Dimension(layout_width, layout_height));
 		// Show vertex and edge labels
 		vv.getRenderContext().setVertexLabelTransformer(new DefaultToStringLabeller());
+		//BasicVertexLabelRenderer<Functionality.Node, Functionality.Edge> bvlr =  new (BasicVertexLabelRenderer<Functionality.Node, Functionality.Edge>)(vv.getRenderContext().getVertexLabelRenderer());
+		
+		BasicRenderer<Functionality.Node, Functionality.Edge> br = new BasicRenderer<Node, Edge>();
+		br.setVertexLabelRenderer(new BasicVertexLabelRenderer<Functionality.Node, Functionality.Edge>(Position.CNTR));
+		
+		
+		vv.setRenderer(br);
+		
+		MyVertexLabelRenderer dvlr = new MyVertexLabelRenderer(Color.red);
+		
+		vv.getRenderContext().setVertexLabelRenderer(dvlr);
+		
+		
+		//bvlr.setPosition(Position.CNTR);
 		
 		//vv.getRenderContext().setEdgeLabelTransformer(new ToStringLabeller());
 		vv.setDoubleBuffered(true);
