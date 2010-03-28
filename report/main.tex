@@ -53,8 +53,22 @@
 \else
 \usepackage{graphicx}
 \fi
-\title{A LaTeX Article}
-\author{  }
+
+% declare non-metalanguage data
+\newcommand{\lingform}[1]{\emph{#1}}
+\newcommand{\unattested}{\textsuperscript{!}}
+\newcommand{\ungrammatical}{*}
+\newcommand{\unacceptable}{\textsuperscript{\#}}
+\newcommand{\marginallyacceptable}{\textsuperscript{?}}
+\newcommand{\verymarginallyacceptable}{\textsuperscript{??}}
+\newcommand{\term}[1]{{\bf #1}}
+\newcommand{\scare}[1]{`#1'}
+\newcommand{\tag}[1]{\textsc{#1}}
+\newcommand{\subtag}[1]{\textsubscript{\MakeUppercase{#1}}}
+\newcommand{\code}[1]{{\tt #1}}
+
+\title{Graphical representation of document similarity using named entity recognition and lexical similarity}
+\author{Todd Shore, Carsten Ehrler, Michal Richter and Yevgeni Berzak}
 
 \date{2010-03-06}
 
