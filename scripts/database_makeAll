@@ -17,4 +17,4 @@ $run_mysql --execute="source ./getSpeechText.sql;"
 $run_mysql --execute="source ./getDictionary.sql;"
 
 
-echo "Hi Comrade, If you didn't see any error message so far, you probably created database succesfully:) Keep the revolution!" 
+echo "Hi Comrade, If you didn't see any error message so far, you probably created database successfully:) Keep the revolution!" 
