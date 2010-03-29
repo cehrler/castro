@@ -26,8 +26,20 @@ public class SimMatrixElem extends SimMatrix {
 	
 	private List<List<Double> > matrix;
 	
+	private static List<Double> convertArray = null;
 
-	private SimMatrixElem() {}
+	private SimMatrixElem() 
+	{
+		if (convertArray == null)
+		{
+			convertArray = new ArrayList<Double>();
+			
+			for (int i = 0; i < 257; i++)
+			{
+				convertArray.add((double)i / 256.0);
+			}
+		}
+	}
 	
 	private void setSim(Integer a, Integer b, Double val)
 	{
@@ -66,6 +78,9 @@ public class SimMatrixElem extends SimMatrix {
 	{
 		Double pomDouble;
 		SimMatrixElem simMat = new SimMatrixElem();
+		
+		System.err.println("SimMatrixElem: LoadFromFile(" + filename + ")");
+		
 		try {
 	        DataInputStream is = new DataInputStream(new FileInputStream(filename));
 			
@@ -129,7 +144,7 @@ public class SimMatrixElem extends SimMatrix {
 		
 		for (int i = 0; i < simMat.numSpeeches; i++)
 		{
-			if (i % 20 == 0) System.out.println("i = " + i);
+			//if (i % 20 == 0) System.out.println("i = " + i);
 
 			Set<Integer> nonzeroI = index.GetNonzeroCells(i);
 			for (int j = i + 1; j < simMat.numSpeeches; j++)
@@ -173,7 +188,7 @@ public class SimMatrixElem extends SimMatrix {
 	{
 		if (b < 0) b += 256;
 		
-		return b / 256.0;
+		return convertArray.get(b);
 	}
 	
 	public void SaveToFile(String filename)

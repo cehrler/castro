@@ -1,9 +1,57 @@
-\note{Evaluation 
+\note{FROM CAROLINE: Evaluation 
 of sub-components and system overall (insofar as it makes sense) 
 either quantitative (e.g., accuracy for information extraction 
-task) 
-and/or qualitative (e.g., give examples where your system 
+task) and/or qualitative (e.g., give examples where your system 
 improves IR over keyword-based search) 
-also discuss cases where your system doesn’t perform well and 
+also discuss cases where your system doesn't perform well and 
 describe how it could be improved (error analysis)}
 
+\subsection {Named Entity Recognition}
+\label{sec:named_entity_recognition}
+
+\subsection {String Kernels and Co-reference Resolution}
+\label{sec:string_kernels_and_co-reference_resolution}
+
+\subsection {Document Similarity}
+\label{sec:document_similarity}
+
+\subsection {Information Retrieval}
+\label{sec:information_retrieval}
+
+\subsection {GUI Performance}
+\label{sec:gui_performance}
+The results of the document similarity visualization are mixed: While there are many relationships represented between documents, the qualitative value of these relationships is irregular.
+
+For example, a query including the named entity \code{"Central Committe"} and the keyword \code{economy} for documents between the years of 1959 and 1984 produced a cluster of documents including the following headlines:
+
+\begin{enumerate}
+\item ``USSR--Cuban Fishing Base Pact Signed''\label{eval:doc179}
+\item ``Fidel Castro sends regrets to Dominican Olympic Committee''\label{eval:doc553}
+\item A meeting of Fidel Castro with Salim Rabay'l `Ali, assistant secretary of the Central Committee of the United Political Organization National Front\label{eval:doc682}
+\item A meeting of Fidel Castro with Jesse Jackson regarding US--Cuban normalization\label{eval:doc879}
+\item A meeting of Fidel Castro with Mrs. Nguyen Thi Binh, minister of foreign affairs of the Republic of South Vietnam\label{eval:doc643}
+\item An address by Fidel Castro to the people of Chile regarding Chilean--Cuban relations and working for a better future\label{eval:doc391}
+\item Fidel Castro visits the South Vietnamese embassy in Cuba to welcome ``the great victory \ldots in liberating Saigon'' and inquire about social, economic and political conditions in South Vietnam\label{eval:doc626}
+\end{enumerate} 
+
+This cluster was obtained with a relative edge density of 2.52 (relatively high) while also applying a vertex distance filter of 1, selecting document \ref{eval:doc179} as a focal point. In other words, the graph was set to display many relations between all documents which shared at least one named entity with the document in question. Of the six documents connected to this document in the resulting graph (shown above), only one--- \ref{eval:doc626}--- is qualitatively related to document \ref{eval:doc179} in a direct sense.
+
+However, all these documents contain the named entity \lingform{Central Committee} or a named entity similar to it according to the string kernel similarity measure. This is often realised as \lingform{First secretary of the \textbf{Central Committee} of the Communist Party of Cuba} or a variant of it--- which often co-refers to \lingform{Fidel Castro} or a variant of it.
+
+It seems then that the document clustering is more relevant than first observed: All the documents contain references to \code{Fidel Castro}. However, this is still of little practical use, as the named entity \code{Fidel Castro} is in the vast majority of the documents in the corpus: This clustering does not distinguish a document or group of documents in a way which is of great use to a user browsing the corpus.
+
+However, querying more specific terms revealed different results: Querying \code{"Giron"}, and \code{"Kennedy"} produced a graph of documents which are much more similar to each other in a qualitative sense than that produced by the previous query, for example:
+
+\begin{enumerate}
+\item ``Castro marks 5th anniversary of [Bay of Pigs] invasion'' \label{eval:doc274}
+\item Speech for funeral of five Cuban troops killed in Baracoa landing operation [of the Bay of Pigs invasion]\label{eval:doc337}
+\item ``Castro marks 2nd anniversary of [Bay of Pigs]'' invasion \label{eval:doc210}
+\item An article on US--Cuban--Soviet relations, including consequences of ``Giron'' (the Bay of Pigs) and the Cuban Missile Crisis, mentioning President Kennedy\label{eval:doc864}
+\item Report of the arrival of Algerian Preimier Ben Bella in Havana and Castro's speech for it--- in which he mentions the ``victory'' at ``Giron''
+\item ``Castro discusses Latin America in EFE interview'', mentioning Kennedy and several of his actions regarding Latin America \label{eval:doc923}
+\item ``Castro denounces U.S. aggression'' (April 1961) \label{eval:doc134} (regarding 
+\end{enumerate} 
+
+clustered most similar to document \ref{eval:doc134} anniversary speeches, edge density 2.52, distance 1.
+
+7 total documents in cluster. All but one of them are directly related to the Bay of Pigs invasion itself, US aggression and/or President Kennedy. Even more interesting is that the document \ref{eval:doc337} was relatively isolated in the graph compared to the many edges connecting the anniversary speeches and politically-motivated documents such as \ref{eval:doc923,eval:doc134}.

@@ -8,9 +8,10 @@
 
 % Use utf-8 encoding for foreign characters
 \usepackage[utf8]{inputenc}
-
 % Setup for fullpage use
 \usepackage{fullpage}
+
+\renewcommand{\baselinestretch}{1.5}
 
 % Uncomment some of the following if you use the features
 %
@@ -53,10 +54,19 @@
 \else
 \usepackage{graphicx}
 \fi
-\title{A LaTeX Article}
-\author{  }
 
-\date{2010-03-06}
+% declare non-metalanguage data
+\newcommand{\lingform}[1]{\emph{#1}}
+\newcommand{\term}[1]{{\bf #1}}
+\newcommand{\scare}[1]{`#1'}
+\newcommand{\subtag}[1]{\textsubscript{\MakeUppercase{#1}}}
+\newcommand{\code}[1]{{\tt #1}}
+
+\title{Graphical representation of document similarity using named entity recognition and lexical similarity}
+\author{Todd Shore, Carsten Ehrler, Michal Richter and Yevgeni Berzak}
+
+
+\date{\today}
 
 \begin{document}
 
@@ -79,68 +89,35 @@
 \label{sec:introduction}
 \input{introduction}
 
-	\subsection{General Description}
-	\note a system for powerful search and navigation through a collection of historical documents.
-	
-	\subsection{Subtasks}
- 	\note processing steps and system components
-
-	\subsection {NLP Motivation}
-	\note application of existing tools and development of new tools and techniques for processing historical data.
-	
-	\subsection{Historic Motivation}
-		\subsubsection{Working with Collections of Historic Documents}
- 		\note what is difficult about it, why existing tools are limited 
- 					why our approach is useful:
- 					relevance of metadata, NE's, graphical representation, etc for finding documents that suit the interest of the 
- 					historian.
-		\subsubsection{Case Study: Fidel Castro}
- 		\note Introduction, importance and particularities of Castro's speeches
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Background} % (fold)
 \label{sec:background}
 \input{background}
 
-\subsection {Background and Previous Work in NLP}
-\subsection {Background and Previous Work in Historical Research}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Main Part} % (fold)
+\section{Main Part}
 \label{sec:main_part}
 \input{mainpart}
-% section main_part (end)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Evaluation} % (fold)
+\section{Evaluation}
 \label{sec:evaluation}
 \input{evaluation}
-	\subsection {Named Entity Recognition}
-	\subsection {String Kernels and Co-reference Resolution}
-	\subsection {Document Similarity}
-	\subsection {Information Retrieval}
-	\subsection {GUI Performance}
-% section evaluation (end)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Conclusion} % (fold)
+\section{Conclusion}
 \label{sec:conclusion}
 \input{conclusion}
 
-	\subsection {Summary}
-	\subsection {Future Work}
-% section conclusion (end)
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Appendix} % (fold)
+\section{Appendix}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{plain}
-\bibliography{}
+\bibliography{bib.bib}
 \end{document}

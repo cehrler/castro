@@ -1,5 +1,45 @@
-\note{Conclusion 
-summary: in how far where the objectives for the system 
-achieved (i.e., how well does it work and in how far might it 
-be useful for Historians) 
-outlook: what else could be done?}
+\subsection {Summary}
+\label{sec:summary}
+
+We presented a system that bla bla bla
+TO BE COMPLETED
+
+
+\subsection {Future Work}
+\label{sec:future_work}
+The presented system is a work in constant progress. 
+In the following we present several ideas for possible improvements we plan to experiment with in future work.
+
+TO BE EXPANDED
+APLICABILITY OF APPROACH TO OTHER HISTORICAL DATABASES
+
+\subsubsection{NLP processing}
+For our current goals we limited ourselves to three kinds of named entities. 
+It is however possible to extract additional relevant types of named entities. 
+This direction can be further expanded with automatic extraction of events and other kinds of information that can be relevant for measuring 
+document similarity in a historically motivated way.  
+
+The proposed coreference resolution approach can be further expanded to include referring expressions. 
+This is expected to have a positive impact on the reliability of the similarity measure. 
+We also intend to experiment with an off-the-shelf coreference resolution system such as BART.
+We plan to perform more thorough evaluation of each of the NLP dub tasks. 
+
+
+\subsubsection{Visualization}
+The visualization system can be further improved in several manners. 
+A direction we intend to explore is the relevance and possibilities of plotting and representing correlations of the retrieved documents 
+to different parameters, such as time and locations.
+
+We also indent to experiment with additional graph layouts that have the potential of highlighting different properties of the 
+retrieved set of documents. For example, we plan to implement a chronological layout, in which nodes are presented on a single chronological 
+line. Edges will come in the form of arcs. Such representation has the potential of revealing time related information that is not 
+directly visible in the current layout. 
+
+As our representation comes in the form of a graph, a natural direction for futher exploration would be to examine the usefulness of 
+graph algorithms for inferring interpretable information. One of the possibilities is to experiment with automatic clustering algorithm 
+that would enable highligting clusters in the graph. 
+
+Finally, we plan to perform several optimizations that would improve the real-time performance of our graphical user interface.  
+
+We believe that enhancing the system in the proposed directions can further establish the relevance and usefulness of our tool for historians.  
+

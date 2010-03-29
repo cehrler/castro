@@ -2,8 +2,12 @@
 
 use strict;
 
+my $outputDir = "../work";
+
 my $neListFile = $ARGV[0];
 my $inpFilesList = $ARGV[1];
+
+$outputDir = $ARGV[2];
 
 open(NELIST, "<$neListFile") || die "Can't open $neListFile";
 open(INPFILES, "<$inpFilesList") || die "Can't open $inpFilesList";
@@ -109,7 +113,7 @@ close(INPFILES);
 
 foreach my $indType ("PERSONS", "ORGANIZATIONS", "LOCATIONS")
 {
-  open(INDEXOUT, ">$indType.ind");
+  open(INDEXOUT, ">$outputDir/$indType.ind");
   print INDEXOUT "speeches:".$counter."\n";
   print INDEXOUT "NEs:".$neTypeCounts{$indType}."\n";
 

@@ -10,6 +10,8 @@ print "CREATE TABLE speech_NE (SPEECH_ID INT NOT NULL, NE_ID INT NOT NULL, COUNT
 #print "CREATE TABLE NE_class (NE_CLASS_ID INT NOT NULL PRIMARY KEY, TYPE VARCHAR(20) NOT NULL, VALUE VARCHAR(100) NOT NULL, INDEX_COL INT NOT NULL);\n";
 print "CREATE TABLE NE (NE_ID INT NOT NULL PRIMARY KEY, NE_NAME VARCHAR(100) NOT NULL, NE_TYPE VARCHAR(20) NOT NULL, NE_INDEX_ID INT NOT NULL);\n\n";
 
+
+
 sub checkParanthesis {
 	my $s = shift;
 	$s =~ s/([^\\])"/\1\\"/g;
@@ -79,6 +81,12 @@ $currNEType = "";
 print "INSERT INTO speech_NE (SPEECH_ID, NE_ID, COUNT) VALUES\n";
 
 my $first = 1;
+my $speechText = "";
+my $ofset = 0;
+my $ind = 0;
+
+my @neInFile = ();
+my $neObj;
 
 while (my $radek = <FILELIST>)
 {
@@ -95,6 +103,11 @@ while (my $radek = <FILELIST>)
 	}
 	
 	open(FILE, "<../data/$file.nerd") || die "Can't open file: ../data/$file.nerd";
+	
+	$speechText = `cat ../data/$file.text`;
+	$speechText =~ s/\n/<br\/>/g;
+	
+	@neInFile = ();
 	
 	while (my $line = <FILE>)
 	{
@@ -121,15 +134,23 @@ while (my $radek = <FILELIST>)
 				$neName = $1;
 				$neCount = $2;
 				
+				my $neObj;
+				$neObj->{"NE"} = $neName;
+				$neObj->{"neType"} = $currNEType;
+				push(@neInFile, $neObj);
+				
+				
+				#$speechText =~ s/$neName/<$currNEType>$neName<\/$currNEType>/g;
+				
 				if (!defined($ne{"$currNEType,$neName"}))
 				{
 					die "Undefined NE:$currNEType,$neName!!!";
 				}
 				
 				if ($first == 1) { $first = 0; }
-				else { print ",\n"; }
+				else { print "INSERT INTO speech_NE (SPEECH_ID, NE_ID, COUNT) VALUES "; }
 				
-				print "($currSpeechID, ".$ne{"$currNEType,$neName"}->{"ID"}.", $neCount)";
+				print "($currSpeechID, ".$ne{"$currNEType,$neName"}->{"ID"}.", $neCount);\n";
 			}
 			else
 			{
@@ -139,6 +160,32 @@ while (my $radek = <FILELIST>)
 		}
 	}
 	
+	@neInFile = reverse sort { length($a->{"NE"}) <=> length($b->{"NE"}) } @neInFile;
+	
+	foreach my $neKey (@neInFile)
+	{
+	  #print STDERR $neKey->{"NE"}."\n";
+	  $ofset = 0;
+	  $neName = $neKey->{"NE"};
+	  $currNEType = $neKey->{"neType"};
+	  while ( ($ind = index($speechText, $neName, $ofset)) >= 0)
+	  {
+	    if ($ind == 0 || ($ind + length($neName) + 1) >= length($speechText) || substr($speechText, $ind - 1, length($neName) + 2) =~ m/^\W.*\W$/)
+	    {
+	      substr($speechText, $ind, length($neName), "<$currNEType>$neName</$currNEType>");
+	      $ofset = $ind + length($neName) + 2 * length($currNEType) + 5;
+	    }
+	    else
+	    {
+	      $ofset = $ind + 1;
+	    }
+	  }
+  }
+  
+  #exit(1);
+	
+	$speechText = checkParanthesis($speechText);
+	print "UPDATE speech SET SPEECH_TEXT = \"$speechText\" WHERE SPEECH_ID = $currSpeechID;\n";
 	
 	close(FILE);
 }

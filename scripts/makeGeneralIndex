@@ -95,6 +95,11 @@ my $indexOut = $ARGV[3];
 my @fileList = ();
 my %neList = ();
 
+if (scalar(@ARGV) < 4)
+{
+	print STDERR "correct usage: file_list(file_ID.txt) NE_list(NE_ID.txt) dictionary_output index_output\n";
+}
+
 open(FILELISTFILE, "<$fileListFile") || die "Can't open $fileListFile";
 
 while (my $radek = <FILELISTFILE>)
@@ -142,7 +147,7 @@ my %index = ();
 
 for (my $docID = 0; $docID < scalar(@fileList); $docID++)
 {
-	open(FILE, "<./data/".$fileList[$docID].".text") || die "Can't open file: ./data/".$fileList[$docID].".text";
+	open(FILE, "<../data/".$fileList[$docID].".text") || die "Can't open file: ../data/".$fileList[$docID].".text";
 	
 	print STDERR $fileList[$docID]."\n";
 	
