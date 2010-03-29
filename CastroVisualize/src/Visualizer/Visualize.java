@@ -43,7 +43,9 @@ import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.algorithms.layout3d.AbstractLayout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseMultigraph;
+import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import edu.uci.ics.jung.graph.util.Context;
+import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.MultiLayerTransformer;
 import edu.uci.ics.jung.visualization.RenderContext;
@@ -65,7 +67,7 @@ import GUI.CastroGUI;
 
 public class Visualize implements ItemListener, MouseListener {
 	
-	VisualizationViewer<Functionality.Node,Functionality.Edge> vv;
+	MyVisualizationViewer<Functionality.Node,Functionality.Edge> vv;
 	
 	Graph<Functionality.Node, Functionality.Edge> qt;
 	
@@ -91,7 +93,8 @@ public class Visualize implements ItemListener, MouseListener {
 		myGraph = g;
 		layout_width = _layout_width;
 		layout_height = _layout_height;
-		qt = new SparseMultigraph(); 
+		qt = new UndirectedSparseGraph();
+		
 		Iterator<Functionality.Node> nodeIterator = g.getNodes().iterator();
 		while(nodeIterator.hasNext()) {
 			qt.addVertex(nodeIterator.next());
@@ -117,7 +120,7 @@ public class Visualize implements ItemListener, MouseListener {
 	
 	public void layoutResize(int _width, int _height)
 	{
-		layout.setSize(new Dimension(_width, _height));
+		//layout.setSize(new Dimension(_width, _height));
 	}
 	
 	public JComponent actualizeGraph(boolean lockLayout)
@@ -165,30 +168,37 @@ public class Visualize implements ItemListener, MouseListener {
 		vv.getRenderContext().setMultiLayerTransformer(mlt);
 		layout.lock(lockLayout);
 		
-		return vv;
+	    MyGraphZoomScrollPane graphPane = new MyGraphZoomScrollPane(vv);
+	    
+		return graphPane;
 	}
 	
 	public void LayoutStart()
 	{
 		layout.lock(false);
+		vv.setRedrawing(true);
 
 	}
 	
 	public void LayoutStop()
 	{
 		layout.lock(true);
+		vv.setRedrawing(false);
+		
 	}
 	
 	public JComponent drawGraph() {
 		// System.out.println("The graph qt"+qt.toString()); // DEBUG
 		// ISOMLayout
 		layout = new SpringLayoutWeighted(this.qt);
-		
 		layout.setSize(new Dimension(layout_width, layout_height));
+		//layout.setSize(new Dimension(layout_width, layout_height));
 		
-		vv = new VisualizationViewer<Functionality.Node,Functionality.Edge>(layout);
+		vv = new MyVisualizationViewer<Functionality.Node,Functionality.Edge>(layout);
 		vv.setBackground(Color.WHITE);
 		vv.setPreferredSize(new Dimension(layout_width, layout_height));
+		vv.setIgnoreRepaint(true);
+		
 		// Show vertex and edge labels
 		vv.getRenderContext().setVertexLabelTransformer(new DefaultToStringLabeller());
 		//BasicVertexLabelRenderer<Functionality.Node, Functionality.Edge> bvlr =  new (BasicVertexLabelRenderer<Functionality.Node, Functionality.Edge>)(vv.getRenderContext().getVertexLabelRenderer());
@@ -233,7 +243,9 @@ public class Visualize implements ItemListener, MouseListener {
 		setEdgeWeightStrokeFunction();
 	    vv.getRenderContext().setVertexShapeTransformer(new VertexShapeSizeAspect<Functionality.Node, Functionality.Edge>(myGraph) );
 	
-		return vv;
+	    MyGraphZoomScrollPane graphPane = new MyGraphZoomScrollPane(vv);
+	    
+		return graphPane;
 	}
 	
 	public void setEdgeWeightStrokeFunction()

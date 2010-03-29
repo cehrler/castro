@@ -58,6 +58,7 @@ import Visualizer.SpeechDetailPanel;
 import Visualizer.Visualize;
 
 import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
 import Functionality.DataModule;
 import Functionality.EdgeTypeEnum;
 import Functionality.IndexTypeEnum;
@@ -696,7 +697,7 @@ public class CastroGUI implements ActionListener, ChangeListener, ComponentListe
 		
 		centralPanel.add(graphPanel, BorderLayout.CENTER);
 		
-		JPanel leftRightGraphPanel = new JPanel(new BorderLayout());
+		/*JPanel leftRightGraphPanel = new JPanel(new BorderLayout());
 		JButton translateLeftBtn = new JButton("L");
 		JButton translateRightBtn = new JButton("R");
 		
@@ -750,7 +751,7 @@ public class CastroGUI implements ActionListener, ChangeListener, ComponentListe
 		upDownGraphPanel.add(translateUpBtn, BorderLayout.NORTH);
 		upDownGraphPanel.add(translateDownBtn, BorderLayout.SOUTH);
 		//leftRightGraphPanel.setPreferredSize(new Dimension(10000, 60));
-		centralPanel.add(upDownGraphPanel, BorderLayout.EAST);
+		centralPanel.add(upDownGraphPanel, BorderLayout.EAST);*/
 		
 		
 		content.add(centralPanel, BorderLayout.CENTER);
@@ -907,7 +908,7 @@ public class CastroGUI implements ActionListener, ChangeListener, ComponentListe
 	private void visualizeGraph()
 	{
 		//-198, -270
-		visu = new Visualize(bigGraph, graphPanel.getWidth() - 5, graphPanel.getHeight() - 5);
+		visu = new Visualize(bigGraph, 800, 800);
 		
 		if (graph_component != null) 
 		{
