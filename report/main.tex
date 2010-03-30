@@ -4,14 +4,21 @@
 %  Created by Carsten Ehrler on 2010-03-06.
 %  Copyright (c) 2010 __MyCompanyName__. All rights reserved.
 %
-\documentclass[12pt]{article}
+\documentclass[a4paper,final,normalheadings]{scrartcl}
+\usepackage[english]{babel}
+
+\usepackage{apacite}
+\usepackage{endnotes}
+\usepackage{url}
+\usepackage{fixltx2e}
+\usepackage{appendix}
 
 % Use utf-8 encoding for foreign characters
 \usepackage[utf8]{inputenc}
 % Setup for fullpage use
 \usepackage{fullpage}
-
-\renewcommand{\baselinestretch}{1.5}
+\usepackage{setspace}
+\setstretch{1.5}
 
 % Uncomment some of the following if you use the features
 %
@@ -112,6 +119,6 @@
 \section{Appendix}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\bibliographystyle{plain}
-\bibliography{bib.bib}
+\bibliographystyle{apacite}
+\bibliography{bib}
 \end{document}
