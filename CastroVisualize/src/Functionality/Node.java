@@ -78,6 +78,11 @@ public class Node implements Comparable<Object> {
 		return DataModule.getOrganizationsInDocument(this);
 	}
 
+	// 0 = doesn't contain, 1 = expanded, 2 = present in the text  
+	public int containsNE(String neString)
+	{
+		return DataModule.documentContainsNE(this.id, neString);
+	}
 
 	public String getAuthor() {
 		return author;

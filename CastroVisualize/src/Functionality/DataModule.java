@@ -51,11 +51,8 @@ public class DataModule {
 	private static SimMatrix smLocations;
 	private static SimMatrix smOrganizations;
 	private static SimMatrix smDictionary;
-	private static SimMatrix smAllWeightedEqually;
-	private static SimMatrix smAllPersonsWeightedDouble;
-	private static SimMatrix smAllLocationsWeightedDouble;
-	private static SimMatrix smAllOrganizationsWeightedDouble;
-	private static SimMatrix smHalfNEsHalfDictionary;
+
+	private static SimMatrix smCurrent;
 	
 	private static String smPersonsFile;
 	private static String smLocationsFile;
@@ -100,6 +97,9 @@ public class DataModule {
 	private static double normalEdgeRelativeMultiplier = 0.7;
 	private static double thickEdgeRelativeMultiplier = 1.3;
 	
+	private static IndexTypeEnum currentIndexType = IndexTypeEnum.NULL;
+	private static boolean currentIndexSmooth = false;
+	private static boolean currentSimMatrixSmooth = false;
 	
 	private static double simEpsilon = 0.000001;
 	
@@ -175,108 +175,212 @@ public class DataModule {
 		}
 	}
 	
-	public static void Init(IndexTypeEnum indexType)
+	public static void Init(String indexTypeS, boolean indexSmooth, boolean simMatrixSmooth, double simMatPersonsCoef, double simMatLocationsCoef, double simMatOrganizationsCoef, double simMatDictionaryCoef)
 	{
-		switch (indexType)
+		IndexTypeEnum indexType = IndexTypeEnum.NULL;
+		
+		if (indexTypeS == "TF")
 		{
-			case TF: personsIndexFile = "../DataModuleData/PERSONS.tf.bin";
-					 locationsIndexFile = "../DataModuleData/LOCATIONS.tf.bin";
-					 organizationsIndexFile = "../DataModuleData/ORGANIZATIONS.tf.bin";
-					 dictionaryIndexFile = "../DataModuleData/GENERAL.tf.bin";
-					 personsIndexSmoothFile = "../DataModuleData/PERSONS-smooth.tf.bin";
-					 locationsIndexSmoothFile = "../DataModuleData/LOCATIONS-smooth.tf.bin";
-					 organizationsIndexSmoothFile = "../DataModuleData/ORGANIZATIONS-smooth.tf.bin";
-					 smPersonsFile = "../DataModuleData/PERSONS-smooth.tf.sim";
-					 smLocationsFile = "../DataModuleData/LOCATIONS-smooth.tf.sim";
-					 smOrganizationsFile = "../DataModuleData/ORGANIZATIONS-smooth.tf.sim";
-					 smDictionaryFile = "../DataModuleData/GENERAL.tf.sim";
-					 break;
-			
-			case TFIDF: personsIndexFile = "../DataModuleData/PERSONS.tfidf.bin";
-			 			locationsIndexFile = "../DataModuleData/LOCATIONS.tfidf.bin";
-			 			organizationsIndexFile = "../DataModuleData/ORGANIZATIONS.tfidf.bin";
-			 			dictionaryIndexFile = "../DataModuleData/GENERAL.tf.bin";
-			 			personsIndexSmoothFile = "../DataModuleData/PERSONS-smooth.tfidf.bin";
-			 			locationsIndexSmoothFile = "../DataModuleData/LOCATIONS-smooth.tfidf.bin";
-			 			organizationsIndexSmoothFile = "../DataModuleData/ORGANIZATIONS-smooth.tfidf.bin";
-			 			smPersonsFile = "../DataModuleData/PERSONS-smooth.tfidf.sim";
-			 			smLocationsFile = "../DataModuleData/LOCATIONS-smooth.tfidf.sim";
-			 			smOrganizationsFile = "../DataModuleData/ORGANIZATIONS-smooth.tfidf.sim";
-			 			smDictionaryFile = "../DataModuleData/GENERAL.tfidf.sim";
-			 			break;
-
-			case NoNormalization: personsIndexFile = "../DataModuleData/PERSONS.nonorm.bin";
- 								  locationsIndexFile = "../DataModuleData/LOCATIONS.nonorm.bin";
- 								  organizationsIndexFile = "../DataModuleData/ORGANIZATIONS.nonorm.bin";
- 								  smPersonsFile = "../DataModuleData/PERSONS.tf.sim";
- 								  smLocationsFile = "../DataModuleData/LOCATIONS.tf.sim";
- 								  smOrganizationsFile = "../DataModuleData/ORGANIZATIONS.tf.sim";
-			 break;
-
+			indexType = IndexTypeEnum.TF;
 		}
-		
-		smPersons = SimMatrixElem.LoadFromFile(smPersonsFile);
-		smLocations = SimMatrixElem.LoadFromFile(smLocationsFile);
-		smOrganizations = SimMatrixElem.LoadFromFile(smOrganizationsFile);
-		smDictionary = SimMatrixElem.LoadFromFile(smDictionaryFile);
-		
+		else if (indexTypeS == "TFIDF")
+		{
+			indexType = IndexTypeEnum.TFIDF;
+		}
+		else
+		{
+			System.err.println("DataModule.Init: Error!");
+			System.exit(1);
+		}
+			
+		if (currentIndexType != indexType)
+		{
+
+			switch (indexType)
+			{
+				case TF: personsIndexFile = "../DataModuleData/PERSONS.tf.bin";
+						 locationsIndexFile = "../DataModuleData/LOCATIONS.tf.bin";
+						 organizationsIndexFile = "../DataModuleData/ORGANIZATIONS.tf.bin";
+						 dictionaryIndexFile = "../DataModuleData/GENERAL.tf.bin";
+						 if (indexSmooth)
+						 {
+							 personsIndexSmoothFile = "../DataModuleData/PERSONS-smooth.tf.bin";
+							 locationsIndexSmoothFile = "../DataModuleData/LOCATIONS-smooth.tf.bin";
+							 organizationsIndexSmoothFile = "../DataModuleData/ORGANIZATIONS-smooth.tf.bin";
+						 }
+						 else
+						 {
+							 personsIndexSmoothFile = "../DataModuleData/PERSONS.tf.bin";
+							 locationsIndexSmoothFile = "../DataModuleData/LOCATIONS.tf.bin";
+							 organizationsIndexSmoothFile = "../DataModuleData/ORGANIZATIONS.tf.bin";						 
+						 }
+						 if (simMatrixSmooth)
+						 {
+							 smPersonsFile = "../DataModuleData/PERSONS-smooth.tf.sim";
+							 smLocationsFile = "../DataModuleData/LOCATIONS-smooth.tf.sim";
+							 smOrganizationsFile = "../DataModuleData/ORGANIZATIONS-smooth.tf.sim";
+						 }
+						 else
+						 {
+							 smPersonsFile = "../DataModuleData/PERSONS.tf.sim";
+							 smLocationsFile = "../DataModuleData/LOCATIONS.tf.sim";
+							 smOrganizationsFile = "../DataModuleData/ORGANIZATIONS.tf.sim";						 
+						 }
+						 smDictionaryFile = "../DataModuleData/GENERAL.tf.sim";
+						 break;
+				
+				case TFIDF: personsIndexFile = "../DataModuleData/PERSONS.tfidf.bin";
+				 			locationsIndexFile = "../DataModuleData/LOCATIONS.tfidf.bin";
+				 			organizationsIndexFile = "../DataModuleData/ORGANIZATIONS.tfidf.bin";
+				 			dictionaryIndexFile = "../DataModuleData/GENERAL.tfidf.bin";
+							 if (indexSmooth)
+							 {
+								 personsIndexSmoothFile = "../DataModuleData/PERSONS-smooth.tfidf.bin";
+								 locationsIndexSmoothFile = "../DataModuleData/LOCATIONS-smooth.tfidf.bin";
+								 organizationsIndexSmoothFile = "../DataModuleData/ORGANIZATIONS-smooth.tfidf.bin";
+							 }
+							 else
+							 {
+								 personsIndexSmoothFile = "../DataModuleData/PERSONS.tfidf.bin";
+								 locationsIndexSmoothFile = "../DataModuleData/LOCATIONS.tfidf.bin";
+								 organizationsIndexSmoothFile = "../DataModuleData/ORGANIZATIONS.tfidf.bin";						 
+							 }
+							 
+							 if (simMatrixSmooth)
+							 {
+								 smPersonsFile = "../DataModuleData/PERSONS-smooth.tfidf.sim";
+								 smLocationsFile = "../DataModuleData/LOCATIONS-smooth.tfidf.sim";
+								 smOrganizationsFile = "../DataModuleData/ORGANIZATIONS-smooth.tfidf.sim";
+							 }
+							 else
+							 {
+								 smPersonsFile = "../DataModuleData/PERSONS.tfidf.sim";
+								 smLocationsFile = "../DataModuleData/LOCATIONS.tfidf.sim";
+								 smOrganizationsFile = "../DataModuleData/ORGANIZATIONS.tfidf.sim";						 
+							 }
+							 smDictionaryFile = "../DataModuleData/GENERAL.tfidf.sim";
+				 			break;
+
+				/*case NoNormalization: personsIndexFile = "../DataModuleData/PERSONS.nonorm.bin";
+	 								  locationsIndexFile = "../DataModuleData/LOCATIONS.nonorm.bin";
+	 								  organizationsIndexFile = "../DataModuleData/ORGANIZATIONS.nonorm.bin";
+	 								  smPersonsFile = "../DataModuleData/PERSONS.tf.sim";
+	 								  smLocationsFile = "../DataModuleData/LOCATIONS.tf.sim";
+	 								  smOrganizationsFile = "../DataModuleData/ORGANIZATIONS.tf.sim";
+				 break;*/
+
+			}
+
+			smPersons = SimMatrixElem.LoadFromFile(smPersonsFile);
+			smLocations = SimMatrixElem.LoadFromFile(smLocationsFile);
+			smOrganizations = SimMatrixElem.LoadFromFile(smOrganizationsFile);
+			smDictionary = SimMatrixElem.LoadFromFile(smDictionaryFile);
+
+			personsIndex = new VMindex(personsIndexFile);
+			locationsIndex = new VMindex(locationsIndexFile);
+			organizationsIndex = new VMindex(organizationsIndexFile);
+			dictionaryIndex = new VMindex(dictionaryIndexFile);
+			
+			personsIndexSmooth = new VMindex(personsIndexSmoothFile);
+			locationsIndexSmooth = new VMindex(locationsIndexSmoothFile);
+			organizationsIndexSmooth = new VMindex(organizationsIndexSmoothFile);
+
+			
+		}
+		else
+		{
+			if (currentIndexSmooth == true && indexSmooth == false)
+			{
+				personsIndexSmooth = personsIndex;
+				locationsIndexSmooth = locationsIndex;
+				organizationsIndexSmooth = organizationsIndex;
+			}
+			
+			if (currentIndexSmooth == false && indexSmooth == true)
+			{
+				if (indexType == IndexTypeEnum.TFIDF)
+				{
+					personsIndexSmoothFile = "../DataModuleData/PERSONS-smooth.tfidf.bin";
+					locationsIndexSmoothFile = "../DataModuleData/LOCATIONS-smooth.tfidf.bin";
+					organizationsIndexSmoothFile = "../DataModuleData/ORGANIZATIONS-smooth.tfidf.bin";
+				}
+				else
+				{
+					personsIndexSmoothFile = "../DataModuleData/PERSONS-smooth.tf.bin";
+					locationsIndexSmoothFile = "../DataModuleData/LOCATIONS-smooth.tf.bin";
+					organizationsIndexSmoothFile = "../DataModuleData/ORGANIZATIONS-smooth.tf.bin";					
+				}
+
+				personsIndexSmooth = new VMindex(personsIndexSmoothFile);
+				locationsIndexSmooth = new VMindex(locationsIndexSmoothFile);
+				organizationsIndexSmooth = new VMindex(organizationsIndexSmoothFile);
+
+			}
+			
+			if (currentSimMatrixSmooth != simMatrixSmooth)
+			{
+	
+				if (indexType == IndexTypeEnum.TFIDF)
+				{
+					 
+					 if (simMatrixSmooth)
+					 {
+						 smPersonsFile = "../DataModuleData/PERSONS-smooth.tfidf.sim";
+						 smLocationsFile = "../DataModuleData/LOCATIONS-smooth.tfidf.sim";
+						 smOrganizationsFile = "../DataModuleData/ORGANIZATIONS-smooth.tfidf.sim";
+					 }
+					 else
+					 {
+						 smPersonsFile = "../DataModuleData/PERSONS.tfidf.sim";
+						 smLocationsFile = "../DataModuleData/LOCATIONS.tfidf.sim";
+						 smOrganizationsFile = "../DataModuleData/ORGANIZATIONS.tfidf.sim";						 
+					 }
+
+				}
+				else
+				{
+					 if (simMatrixSmooth)
+					 {
+						 smPersonsFile = "../DataModuleData/PERSONS-smooth.tf.sim";
+						 smLocationsFile = "../DataModuleData/LOCATIONS-smooth.tf.sim";
+						 smOrganizationsFile = "../DataModuleData/ORGANIZATIONS-smooth.tf.sim";
+					 }
+					 else
+					 {
+						 smPersonsFile = "../DataModuleData/PERSONS.tf.sim";
+						 smLocationsFile = "../DataModuleData/LOCATIONS.tf.sim";
+						 smOrganizationsFile = "../DataModuleData/ORGANIZATIONS.tf.sim";						 
+					 }
+					
+				}
+				
+				smPersons = SimMatrixElem.LoadFromFile(smPersonsFile);
+				smLocations = SimMatrixElem.LoadFromFile(smLocationsFile);
+				smOrganizations = SimMatrixElem.LoadFromFile(smOrganizationsFile);
+			}
+		}
+			
+		currentIndexType = indexType;
+		currentIndexSmooth = indexSmooth;
+		currentSimMatrixSmooth = simMatrixSmooth;
 		
 		List<SimMatrix> lsm = new ArrayList<SimMatrix>();
 		lsm.add(smPersons);
 		lsm.add(smLocations);
 		lsm.add(smOrganizations);
+		lsm.add(smDictionary);
 		
-		List<Double> lw1 = new ArrayList<Double>();
-		lw1.add(1.0 / 3.0);
-		lw1.add(1.0 / 3.0);
-		lw1.add(1.0 / 3.0);
+		List<Double> lsw = new ArrayList<Double>();
+		lsw.add(simMatPersonsCoef);
+		lsw.add(simMatLocationsCoef);
+		lsw.add(simMatOrganizationsCoef);
+		lsw.add(simMatDictionaryCoef);
 		
-		smAllWeightedEqually = new SimMatrixInterp(lsm, lw1);
-
-		List<Double> lw2 = new ArrayList<Double>();
-		lw2.add(2.0 / 4.0);
-		lw2.add(1.0 / 4.0);
-		lw2.add(1.0 / 4.0);
-				
-		smAllPersonsWeightedDouble = new SimMatrixInterp(lsm, lw2);
-
-		List<SimMatrix> lsmBle = new ArrayList<SimMatrix>();
-		lsmBle.add(smAllWeightedEqually);
-		lsmBle.add(smDictionary);
-		
-		List<Double> lwBle = new ArrayList<Double>();
-		lwBle.add(0.5);
-		lwBle.add(0.5);
-		
-		smHalfNEsHalfDictionary = new SimMatrixInterp(lsmBle, lwBle);
-
-		List<Double> lw3 = new ArrayList<Double>();
-		lw3.add(1.0 / 4.0);
-		lw3.add(2.0 / 4.0);
-		lw3.add(1.0 / 4.0);
-		
-		smAllLocationsWeightedDouble = new SimMatrixInterp(lsm, lw2);
-
-		List<Double> lw4 = new ArrayList<Double>();
-		lw4.add(1.0 / 4.0);
-		lw4.add(1.0 / 4.0);
-		lw4.add(2.0 / 4.0);
-		
-		smAllOrganizationsWeightedDouble = new SimMatrixInterp(lsm, lw4);
-	
-		personsIndex = new VMindex(personsIndexFile);
-		locationsIndex = new VMindex(locationsIndexFile);
-		organizationsIndex = new VMindex(organizationsIndexFile);
-		dictionaryIndex = new VMindex(dictionaryIndexFile);
-		
-		personsIndexSmooth = new VMindex(personsIndexSmoothFile);
-		locationsIndexSmooth = new VMindex(locationsIndexSmoothFile);
-		organizationsIndexSmooth = new VMindex(organizationsIndexSmoothFile);
-		
-		connection = MySqlConnectionProvider.getNewConnection(connHost, connDB, connUser, connPasswd);
+		smCurrent = new SimMatrixInterp(lsm, lsw);
 
 		if (personsMap == null || locationsMap == null || organizationsMap == null || dictionaryMap == null)
 		{
+			connection = MySqlConnectionProvider.getNewConnection(connHost, connDB, connUser, connPasswd);
 			personsMap = new HashMap<String, Integer>();
 			locationsMap = new HashMap<String, Integer>();
 			organizationsMap = new HashMap<String, Integer>();
@@ -468,26 +572,13 @@ public class DataModule {
 		return "";
 	}
 
-	public static Graph getGraphThreshold(String SinceDate, String TillDate, String Place, String Author, String DocType, List<String> queryTerms , List<Double> termWeights, Integer maxNumNodes, SimMatrixEnum sme, double _normalEdgeThreshold, double _dottedEdgeAbsoluteMultiplier, double _thickEdgeAbsoluteMultiplier)
+	public static Graph getGraphThreshold(String SinceDate, String TillDate, String Place, String Author, String DocType, List<String> queryTerms , List<Double> termWeights, Integer maxNumNodes, double _normalEdgeThreshold, double _dottedEdgeAbsoluteMultiplier, double _thickEdgeAbsoluteMultiplier)
 	{
-		SimMatrix simMatrix;
 	
 		normalEdgeThreshold = _normalEdgeThreshold;
 		dottedEdgeAbsoluteMultiplier = _dottedEdgeAbsoluteMultiplier;
 		thickEdgeAbsoluteMultiplier = _thickEdgeAbsoluteMultiplier;
-		
-		switch (sme)
-		{
-			case PersonsOnly: simMatrix = smPersons; break;
-			case LocationsOnly: simMatrix = smLocations; break;
-			case OrganizationsOnly: simMatrix = smOrganizations; break;
-			case AllWeightedEqually: simMatrix = smAllWeightedEqually; break;
-			case AllPersonsWeightedDouble: simMatrix = smAllPersonsWeightedDouble; break;
-			case AllLocationsWeightedDouble: simMatrix = smAllLocationsWeightedDouble; break;
-			case AllOrganizationsWeightedDouble: simMatrix = smAllOrganizationsWeightedDouble; break;
-			default: simMatrix = smAllWeightedEqually; break;
-		}
-		
+				
 		if (SinceDate != "NULL") SinceDate = "\"" + SinceDate + "\"";
 		if (TillDate != "NULL") TillDate = "\"" + TillDate + "\"";
 		if (Place != "NULL") Place = "\"" + Place + "\"";
@@ -520,32 +611,19 @@ public class DataModule {
 		
 		List<Node> sn = sortNodes(ln, queryTerms, termWeights, maxNumNodes);
 		
-		displayedGraph = Graph.createGraphThreshold(sn, simMatrix, normalEdgeThreshold, dottedEdgeAbsoluteMultiplier, thickEdgeAbsoluteMultiplier); 
+		displayedGraph = Graph.createGraphThreshold(sn, smCurrent, normalEdgeThreshold, dottedEdgeAbsoluteMultiplier, thickEdgeAbsoluteMultiplier); 
 		return displayedGraph;
 		
 	}
 
 	
-	public static Graph getGraphDensity(String SinceDate, String TillDate, String Place, String Author, String DocType, List<String> queryTerms , List<Double> termWeights, Integer maxNumNodes, SimMatrixEnum sme, double _edgeDensity, double _normalEdgeRelativeMultiplier, double _thickEdgeRelativeMultiplier)
+	public static Graph getGraphDensity(String SinceDate, String TillDate, String Place, String Author, String DocType, List<String> queryTerms , List<Double> termWeights, Integer maxNumNodes, double _edgeDensity, double _normalEdgeRelativeMultiplier, double _thickEdgeRelativeMultiplier)
 	{
-		SimMatrix simMatrix;
 	
 		edgeDensity = _edgeDensity;
 		normalEdgeRelativeMultiplier = _normalEdgeRelativeMultiplier;
 		thickEdgeRelativeMultiplier = _thickEdgeRelativeMultiplier;
-		
-		switch (sme)
-		{
-			case PersonsOnly: simMatrix = smPersons; break;
-			case LocationsOnly: simMatrix = smLocations; break;
-			case OrganizationsOnly: simMatrix = smOrganizations; break;
-			case AllWeightedEqually: simMatrix = smAllWeightedEqually; break;
-			case AllPersonsWeightedDouble: simMatrix = smAllPersonsWeightedDouble; break;
-			case AllLocationsWeightedDouble: simMatrix = smAllLocationsWeightedDouble; break;
-			case AllOrganizationsWeightedDouble: simMatrix = smAllOrganizationsWeightedDouble; break;
-			default: simMatrix = smAllWeightedEqually; break;
-		}
-		
+				
 		if (SinceDate != "NULL") SinceDate = "\"" + SinceDate + "\"";
 		if (TillDate != "NULL") TillDate = "\"" + TillDate + "\"";
 		if (Place != "NULL") Place = "\"" + Place + "\"";
@@ -578,7 +656,7 @@ public class DataModule {
 		
 		List<Node> sn = sortNodes(ln, queryTerms, termWeights, maxNumNodes);
 		
-		displayedGraph = Graph.createGraphDensity(sn, simMatrix, edgeDensity, normalEdgeRelativeMultiplier, thickEdgeRelativeMultiplier); 
+		displayedGraph = Graph.createGraphDensity(sn, smCurrent, edgeDensity, normalEdgeRelativeMultiplier, thickEdgeRelativeMultiplier); 
 		return displayedGraph;
 		
 	}
@@ -664,5 +742,51 @@ public class DataModule {
 		return ret;
 	}
 
+	// 0 = doesn't contain, 1 = expanded, 2 = present in the text  
+	public static int documentContainsNE(int docID, String neString)
+	{
+		int ret = 0;
+		if (personsMap.containsKey(neString))
+		{
+			if (personsIndex.GetValue(docID, personsMap.get(neString)) > 0.001)
+			{
+				return 2;
+			}
+
+			if (personsIndexSmooth.GetValue(docID, personsMap.get(neString)) > 0.001)
+			{
+				ret = 1;
+			}
+
+		}
+		
+		if (locationsMap.containsKey(neString))
+		{
+			if (locationsIndex.GetValue(docID, locationsMap.get(neString)) > 0.001)
+			{
+				return 2;
+			}
+			if (locationsIndexSmooth.GetValue(docID, locationsMap.get(neString)) > 0.001)
+			{
+				ret = 1;
+			}
+		}
+		
+		if (organizationsMap.containsKey(neString))
+		{
+			if (organizationsIndex.GetValue(docID, organizationsMap.get(neString)) > 0.001)
+			{
+				return 2;
+			}
+
+			if (organizationsIndexSmooth.GetValue(docID, organizationsMap.get(neString)) > 0.001)
+			{
+				ret = 1;
+			}
+		}
+		
+		return ret;
+
+	}
 	
 }
