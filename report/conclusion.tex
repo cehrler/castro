@@ -21,11 +21,11 @@ our ideas for making this system maximally relevant and usable for this domain.
 
 \subsection {Future Work}
 \label{sec:future_work}
-Our system is a work in constant progress. As our system has many sub-components, improvements and extensions are possible
+As our system has many sub-components, improvements and extensions are possible
 at almost all processing facets. In the following we present several ideas for possible improvements we plan to experiment with in the
 near future.
 
-\subsubsection{NLP and IR processing}
+\subsubsection{NLP and IR Processing}
 For our current goals we limited ourselves to three kinds of named entities. 
 It is however possible to extract additional relevant types of named entities. 
 This direction can be further expanded with automatic extraction of events and other kinds of information that can be relevant for measuring 
@@ -41,10 +41,12 @@ We could further rely on their approach to expand our mechanism to include refer
 Such improvements are extremely important as they are expected to have a positive impact on the reliability of the similarity measurements. 
 Reliable aliasing is also important for our query expansion mechanism, and hence has impact on the quality of the retrieval.
 As an alternative to kernels co-referencing, we also intend to experiment with an off-the-shelf co-reference resolution system such as 
-BART and compare the results of the two approaches. 
+BART and compare the results of both approaches. 
 
-In the current implementation we approximate document similarity using the cosine measure. There are however other measures that
-could be tested. Among others, we plan to experiment with TO BE COMPLETED
+In the current implementation we measure document similarity using the Manhattan distance and approximate document query similarity 
+using the cosine measure. 
+There are however other measures that could be tested for both similarity measurments. 
+Among others, we plan to experiment with TO BE COMPLETED, MICHAL?
 
 
 \subsubsection{Visualization and GUI Functionalities}
@@ -59,17 +61,17 @@ directly visible in the current layout.
 
 As our representation comes in the form of a graph, a natural direction for further exploration would be to examine the usefulness of 
 graph algorithms for inferring interpretable information. One of the possibilities is to apply clustering algorithms 
-that would enable automatic highlighting clusters in the graph. 
+that would enable automatic highlighting of clusters in the graph. 
 
 An important extension that would greatly increase the generality and usefulness of the system, 
 will be an option for loading and switching between several databases. This will allow the user to work with several collections.
 
-In addition to the cardinal extension, we keep experimenting with different designs and features that are meant to make the
+In addition to the major planned extensions, we keep experimenting with different designs and features that are meant to make the
 system more intuitive and simple to use. 
 
 \subsubsection{Performance Optimization and Scalability}
 Our system is designed to be a real-world application that history students and historians can use in their daily study and research activities.
-For this goal to be achieved our system has to optimal in terms of loading time and GUI performance and be scalable for collections 
+For this goal to be achieved the system has to optimal in terms of loading time and GUI performance and be scalable for collections 
 of very large size. We have already done several optimizations that improved the system performance as compared to
 previous versions. MICHAL-ELABORATE HERE. However many components such as MICHAL-SAY-SOMETHING can be further optimized. MICHAL HOW? 
 To enhance the performance of the application further, we intend to make use of multi-threading techniques. 
@@ -85,7 +87,7 @@ expand and systematize the evaluation process in order to be able to identify mo
 
 One of the central aspects of our future evaluation scheme will be user evaluation and feedback. We intend to introduce our system
 to students and researchers in history departments and receive feedback on their experiences with the system.
-To this end we will design questionnaires that would guide the users with the testing of the application and help us organize their feedback.
+To this end we will design questionnaires that will guide the users with the testing of the application and help us organize their feedback.\\
  
 We believe that evaluating and enhancing the system in the proposed directions can further establish the relevance and usefulness 
 of our tool for historians.  

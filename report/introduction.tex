@@ -47,15 +47,25 @@ Several processing tasks were performed in the course of implementation of the p
 \emph{Storing Data:} Documents were stored in a MySQL database, and a data model was implemented in order to allow efficient retrieval of documents according to meta-data. \\
 \emph{NE Recognition:} A robust NE recognizer was used to identify persons, locations and organizations in each document.\\
 \emph{Document Indexing:} documents were indexed in four different manners and transformed to vector space matrices in order to support document retrieval and serve as input for similarity calculations. Three indexes were based on the three types of identified named entities. The fourth indexing method was based on global vocabulary. Both tf/idf scores and simple counts were computed.\\
-\emph{Co-reference Resolution:} In order to avoid treating name variations as different entities, a novel co-reference resolution algorithm was implemented. First, similarity matrices between all named entities of the same type in the Castro collection were calculated using p-spectrum string kernel. Then, the similarity matrices were multiplied by the documents matrix. As a result, each document representation was boosted by all name variations of the named entities that it contains.\\
-\emph{Calculation of Document Similarity:} Document similarity matrices were created using cosine as similarity measurement. Similarity was computed separately according to named entities and  lexical overlap. A link can be established between a pair of documents if their similarity passes a certain threshold. The strength of the link is determined by the strength of the similarity.
+\emph{Co-reference Resolution:} In order to avoid treating name variations as different entities, 
+we implemented an approximation of a novel co-reference resolution system, focusing on aliasing.
+First, similarity matrices between all named entities of the same type in the Castro collection were calculated using p-spectrum string kernel.
+Then, the similarity matrices were multiplied by the documents matrix. As a result, each document representation was boosted by all name 
+variations of the named entities that it contains.\\
+\emph{Calculation of Document Similarity:} Document similarity matrices were created using Manhattan distance as similarity measurement. 
+Similarity was computed separately according to named entities and  lexical overlap. 
+A link can be established between a pair of documents if their similarity passes a certain threshold. 
+The strength of the link is determined by the strength of the similarity.
 
 These processing steps created the infrastructure for a graphical user interface that provides several
 functionalities described in the following section.
 
 \subsubsection{Functionalities of the Application}
 
-\emph{Document Retrieval Engine:} Using the data model and precomputed indexes, an engine for document retrieval was implemented. The engine allows querying the database with keywords. For keywords that happen to be named entities, automatic query expansion is performed using the precomputed similarity matrix between named entities.  The engine also allows filtering according to specifications on meta-data, e.g. a period of time, type of document and others.\\ 
+\emph{Document Retrieval Engine:} Using the data model and precomputed indexes, an engine for document retrieval was implemented. 
+The engine allows querying the database with keywords. Query document similarity is measured using the cosine measure. 
+For keywords that happen to be named entities, automatic query expansion is performed using the precomputed similarity matrix between 
+named entities.  The engine also allows filtering according to specifications on meta-data, e.g. a period of time, type of document and others.\\ 
 \emph{Graphical Representation of Documents:} Documents retrieved from the database are presented as as nodes of a graph. The size of the node corresponds to its relevance for the query, its shape to the type of document.  We retrieve the similarity measure for each pair of documents, and link them with an edge if the similarity crosses a predefined threshold. Thickness of edges reflects the strength of the similarity between two documents.\\
 \emph{Functionalities for Exploration of the Collection:} We provide an interactive environment that enables the user to navigate through the documents in an effective way. Among the implemented features are, viewing the list of named entities of a particular document. Viewing common named entities for several documents. Presenting the content of a document with the named entities marked. Marking the most similar documents to a specific document. Isolating the neighbors of a document up to a specified depth. Manipulating edges representation for thresholds, absolute/relative similarity and others.
 
@@ -121,7 +131,7 @@ that suit our purposes.  In the rest of this section we provide a general overvi
 project, review relevant previous research and relate it to our implementation. 
 
 An important NLP task we face is named entity recognition. This task refers to the identification and classification of rigid designators, 
-typically proper names \cite{NEsurvey2009} . Three well studied types of named entities are persons, locations and organizations. 
+typically proper names \cite{NEsurvey2009}. Three well studied types of named entities are persons, locations and organizations. 
 As mentioned previously, all three are important for the historical domain. While early studies on NE recognition focused on designing 
 hand-crafted rules, recent studies and state-of-the-art tools apply statistical and machine learning techniques. For such tools, 
 good feature selection has proven to be crucial, and often more important that the model itself.  
