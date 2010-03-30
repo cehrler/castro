@@ -1,9 +1,11 @@
 package Visualizer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JEditorPane;
@@ -28,6 +30,25 @@ public class SpeechDetailPanel
 		return ret;
 	}*/
 	
+	private String makeStringForStringMap(Map<String, Boolean> sneID, String color)
+	{
+		String text = "";
+		String ne;
+		for (Iterator<String> it = sneID.keySet().iterator(); it.hasNext(); )
+		{
+			ne = it.next();
+			if (sneID.get(ne))
+			{
+				text += "<span style=\"color:" + color + "\">" + ne + "</span><br/>";
+			}
+			else
+			{
+				text += "<span style=\"color:" + color + "\"><b>" + ne + "</b></span><br/>";				
+			}
+		}
+		return text;
+	}
+
 	private String makeStringForSetOfNEs(Set<NamedEntity> sneID, String color)
 	{
 		String text = "";
@@ -46,7 +67,7 @@ public class SpeechDetailPanel
 		}
 		return text;
 	}
-	
+
 	public SpeechDetailPanel(JEditorPane _editor)
 	{
 		editor = _editor;
@@ -80,41 +101,94 @@ public class SpeechDetailPanel
 		else
 		{
 			Node n = nodes.get(0);
-			List<Set<NamedEntity>> ls = new ArrayList<Set<NamedEntity>>(); 
-			ls.add(n.getNamedEntitiesPerson());
-			ls.add(n.getNamedEntitiesOrganizations());
-			ls.add(n.getNamedEntitiesLocations());
 			
-			List<Set<NamedEntity>> aktLS;
-			List<Set<NamedEntity>> newLS;
+			Set<NamedEntity> persNE = n.getNamedEntitiesPerson();
+			Set<NamedEntity> locsNE = n.getNamedEntitiesLocations();
+			Set<NamedEntity> orgsNE = n.getNamedEntitiesOrganizations();
+
+			Map<String, Boolean> persMap = new HashMap<String, Boolean>();
+			Map<String, Boolean> locsMap = new HashMap<String, Boolean>();
+			Map<String, Boolean> orgsMap = new HashMap<String, Boolean>();
 			
+			
+			
+			NamedEntity ne;
+			for (Iterator<NamedEntity> it = persNE.iterator(); it.hasNext(); )
+			{
+			  ne = it.next();
+			  persMap.put(ne.getText(), ne.getExpanded());
+			}
+
+			for (Iterator<NamedEntity> it = locsNE.iterator(); it.hasNext(); )
+			{
+			  ne = it.next();
+			  locsMap.put(ne.getText(), ne.getExpanded());
+			}
+
+			for (Iterator<NamedEntity> it = orgsNE.iterator(); it.hasNext(); )
+			{
+			  ne = it.next();
+			  orgsMap.put(ne.getText(), ne.getExpanded());
+			}
+
+			String bleS;
+			int pomI;
 			for (int i = 1; i < nodes.size(); i++)
 			{
 				n = nodes.get(i);
-				aktLS = new ArrayList<Set<NamedEntity>>();
-				aktLS.add(n.getNamedEntitiesPerson());
-				aktLS.add(n.getNamedEntitiesOrganizations());
-				aktLS.add(n.getNamedEntitiesLocations());
 
-				newLS = new ArrayList<Set<NamedEntity>>();
+				Map<String, Boolean> newPersMap = new HashMap<String, Boolean>();
+				Map<String, Boolean> newLocsMap = new HashMap<String, Boolean>();
+				Map<String, Boolean> newOrgsMap = new HashMap<String, Boolean>();
 				
-				NamedEntity ne;
-				for (int j = 0; j < 3; j++)
+				for (Iterator<String> it = persMap.keySet().iterator(); it.hasNext(); )
 				{
-					newLS.add(new HashSet<NamedEntity>());
+					bleS = it.next();
+					pomI = n.containsNE(bleS);
 					
-					for (Iterator<NamedEntity> it = aktLS.get(j).iterator(); it.hasNext(); )
+					if (pomI == 1)
 					{
-						ne = it.next();
-						
-						if (ls.get(j).contains(ne))
-						{
-							newLS.get(j).add(ne);
-						}
+						newPersMap.put(bleS, true);
 					}
-					
-					ls.set(j, newLS.get(j));
+					else if (pomI == 2)
+					{						
+						newPersMap.put(bleS, persMap.get(bleS));
+					}
 				}
+
+				for (Iterator<String> it = locsMap.keySet().iterator(); it.hasNext(); )
+				{
+					bleS = it.next();
+					pomI = n.containsNE(bleS);
+					
+					if (pomI == 1)
+					{
+						newLocsMap.put(bleS, true);
+					}
+					else if (pomI == 2)
+					{
+						newLocsMap.put(bleS, locsMap.get(bleS));
+					}
+				}
+
+				for (Iterator<String> it = orgsMap.keySet().iterator(); it.hasNext(); )
+				{
+					bleS = it.next();
+					pomI = n.containsNE(bleS);
+					
+					if (pomI == 1)
+					{
+						orgsMap.put(bleS, true);
+					}
+					else if (pomI == 2)
+					{
+						newOrgsMap.put(bleS, orgsMap.get(bleS));
+					}
+				}
+				
+				persMap = newPersMap;
+				locsMap = newLocsMap;
+				orgsMap = newOrgsMap;
 			}
 			
 			String text = "Selected docs IDs:<br/>";// = n.getHeadline() + "<br/><br/>";
@@ -124,14 +198,15 @@ public class SpeechDetailPanel
 				if (i != 0) text += ", ";
 				text += nodes.get(i).getSpeech_id();
 			}
+			
 			text += "<br/><br/><b>Common named entities:</b><br/>";
 			
 			text += "<i>persons:</i><br/>";
-			text += makeStringForSetOfNEs(ls.get(0), neTypeColors.getPersonsString());
+			text += makeStringForStringMap(persMap, neTypeColors.getPersonsString());
 			text += "<br/><i>organizations:</i><br/>";
-			text += makeStringForSetOfNEs(ls.get(1), neTypeColors.getOrganizationsString());
+			text += makeStringForStringMap(orgsMap, neTypeColors.getOrganizationsString());
 			text += "<br/><i>locations:</i><br/>";
-			text += makeStringForSetOfNEs(ls.get(2), neTypeColors.getLocationsString());
+			text += makeStringForStringMap(locsMap, neTypeColors.getLocationsString());
 			editor.setText(text);
 		}
 		

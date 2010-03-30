@@ -35,6 +35,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -65,6 +66,7 @@ import Functionality.IndexTypeEnum;
 import Functionality.SimMatrixEnum;
 import Functionality.VertexDisplayPredicateMode;
 import Visualizer.CastroTableModel;
+import GUI.SettingsWindow;;
 
 public class CastroGUI implements ActionListener, ChangeListener, ComponentListener {
 	
@@ -112,6 +114,8 @@ public class CastroGUI implements ActionListener, ChangeListener, ComponentListe
 	private JCheckBox normalEdgeChB;
 	private JCheckBox thickEdgeChB;
 	
+	private JMenuItem settingsMenuItem;
+	
 	private JButton layoutStartStopBtn;
 	
 	private Integer maxNumNodes = 25;
@@ -120,27 +124,19 @@ public class CastroGUI implements ActionListener, ChangeListener, ComponentListe
 	private static int edgeDensitySliderNumberOfValues = 100;
 	
 	
-	private static double dottedEdgeAbsoluteMultiplier = 0.7;
-	private static double thickEdgeAbsoluteMultiplier = 1.3;
-	
-	private static double normalEdgeRelativeMultiplier = 1;
-	private static double thickEdgeRelativeMultiplier = 1.4;
-	
-	private static double edgeDensity = 2.5;
-	private static double normalEdgeThreshold = 0.5;
 	
 	
 	private static int frame_width = 1200;
 	private static int frame_height = 700;
 	
-	private static double maxEdgeDensity = 3;
-	private static double maxEdgeThreshold = 1;
+	public static Double edgeDensity = 2.5;
+	private static Double normalEdgeThreshold = 0.5;
+	
 	
 	private boolean lockLayout = true;
 	
-	private static String currIndex = "TF";
 	private static SelectionListener listener;
-	private static CastroGUI gui;
+	public static CastroGUI gui;
 	public CastroGUI() {
 		
 	}
@@ -235,10 +231,28 @@ public class CastroGUI implements ActionListener, ChangeListener, ComponentListe
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		Functionality.DataModule.InitConfiguration();
-		Functionality.DataModule.Init(IndexTypeEnum.TF);
+		Functionality.DataModule.Init(SettingsWindow.currIndex, SettingsWindow.smoothedIndex, SettingsWindow.smoothedSimMatrix, SettingsWindow.personsCoef, SettingsWindow.locationsCoef, SettingsWindow.organizationsCoef, SettingsWindow.lexicalSimilarityCoef);
 				
 		content = frame.getContentPane();
 		content.setLayout(new BorderLayout(5, 5));
+		
+		JMenuBar menuBar = new JMenuBar();
+		
+		JMenu menu = new JMenu("Castro Menu");
+		
+		settingsMenuItem = new JMenuItem("Settings...");
+		
+		settingsMenuItem.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent arg0) {
+				SettingsWindow.Show();
+			}
+			
+		});
+		
+		menu.add(settingsMenuItem);
+		menuBar.add(menu);
+		frame.setJMenuBar(menuBar);
 		
 		String[][] data = {};
 		
@@ -369,54 +383,24 @@ public class CastroGUI implements ActionListener, ChangeListener, ComponentListe
 				{
 					termWeights.add(1.0);
 				}
-				
-				SimMatrixEnum sm = SimMatrixEnum.AllWeightedEqually;				
-				if ((String)simMatCB.getSelectedItem() == "PersonsOnly")
-				{
-					sm = SimMatrixEnum.PersonsOnly;
-				}
-				else if ((String)simMatCB.getSelectedItem() == "LocationsOnly")
-				{
-					sm = SimMatrixEnum.LocationsOnly;
-				}
-				else if ((String)simMatCB.getSelectedItem() == "OrganizationsOnly")
-				{
-					sm = SimMatrixEnum.OrganizationsOnly;
-				}
-				else if ((String)simMatCB.getSelectedItem() == "AllWeightedEqually")
-				{
-					sm = SimMatrixEnum.AllWeightedEqually;
-				}
-				else if ((String)simMatCB.getSelectedItem() == "AllPersonsWeightedDouble")
-				{
-					sm = SimMatrixEnum.AllPersonsWeightedDouble;
-				}
-				else if ((String)simMatCB.getSelectedItem() == "AllLocationsWeightedDouble")
-				{
-					sm = SimMatrixEnum.AllPersonsWeightedDouble;
-				}
-				else if ((String)simMatCB.getSelectedItem() == "AllOrganizationsWeightedDouble")
-				{
-					sm = SimMatrixEnum.AllOrganizationsWeightedDouble;
-				}
-				
+								
 				Integer maxNumNodes = Integer.parseInt(maxDocsTB.getText());
 				
 				if (getEdgeMode() == "Relative")
 				{
 					System.err.println("edge density: " + edgeDensity);
-					System.err.println("dottedEdgeRelativeThreshold: " + normalEdgeRelativeMultiplier);
-					System.err.println("thickEdgeRelativeThreshold: " + thickEdgeRelativeMultiplier);
+					System.err.println("dottedEdgeRelativeThreshold: " + SettingsWindow.normalEdgeRelativeMultiplier);
+					System.err.println("thickEdgeRelativeThreshold: " + SettingsWindow.thickEdgeRelativeMultiplier);
 					
-					bigGraph = DataModule.getGraphDensity(SinceDate, TillDate, Place, Author, DocType, queryTerms, termWeights, maxNumNodes, sm, edgeDensity, normalEdgeRelativeMultiplier, thickEdgeRelativeMultiplier);
+					bigGraph = DataModule.getGraphDensity(SinceDate, TillDate, Place, Author, DocType, queryTerms, termWeights, maxNumNodes,  edgeDensity, SettingsWindow.normalEdgeRelativeMultiplier, SettingsWindow.thickEdgeRelativeMultiplier);
 				}
 				else
 				{
 					System.err.println("normal edge threshold: " + normalEdgeThreshold);
-					System.err.println("dottedEdgeRelativeThreshold: " + dottedEdgeAbsoluteMultiplier);
-					System.err.println("thickEdgeRelativeThreshold: " + thickEdgeAbsoluteMultiplier);
+					System.err.println("dottedEdgeRelativeThreshold: " + SettingsWindow.dottedEdgeAbsoluteMultiplier);
+					System.err.println("thickEdgeRelativeThreshold: " + SettingsWindow.thickEdgeAbsoluteMultiplier);
 					
-					bigGraph = DataModule.getGraphThreshold(SinceDate, TillDate, Place, Author, DocType, queryTerms, termWeights, maxNumNodes, sm, normalEdgeThreshold, dottedEdgeAbsoluteMultiplier, thickEdgeAbsoluteMultiplier);
+					bigGraph = DataModule.getGraphThreshold(SinceDate, TillDate, Place, Author, DocType, queryTerms, termWeights, maxNumNodes,  normalEdgeThreshold, SettingsWindow.dottedEdgeAbsoluteMultiplier, SettingsWindow.thickEdgeAbsoluteMultiplier);
 					
 				}
 				table_search.setModel(new CastroTableModel(bigGraph));
@@ -508,7 +492,7 @@ public class CastroGUI implements ActionListener, ChangeListener, ComponentListe
 		vbFilter = Box.createVerticalBox();
 
 		
-		filterCB = new JComboBox(new String[] {"NoFilter", "DistanceFilter", "ActivationFilter"} );
+		filterCB = new JComboBox(new String[] {"NoFilter", "DistanceFilter"} );
 		filterCB.addActionListener(this);
 		
 		vbFilter.add(filterCB);
@@ -526,7 +510,7 @@ public class CastroGUI implements ActionListener, ChangeListener, ComponentListe
 		vbFilterDistance.add(distanceSlider);
 		vbFilterDistance.add(Box.createVerticalStrut(10));
 		
-		distanceFilterTypeCB = new JComboBox(new String[] { "Conjunction", "Disjunction" });
+		distanceFilterTypeCB = new JComboBox(new String[] { "Union", "Intersection" });
 		distanceFilterTypeCB.addActionListener(this);
 		vbFilterDistance.add(distanceFilterTypeCB);
 		
@@ -800,7 +784,7 @@ public class CastroGUI implements ActionListener, ChangeListener, ComponentListe
 			System.err.println("Invalid core edge type");
 		}
 		
-		if (distanceFilterTypeCB.getSelectedItem().equals("Conjunction"))
+		if (distanceFilterTypeCB.getSelectedItem().equals("Union"))
 		{
 			
 			visu.setDistanceFilter(distanceSlider.getValue(), VertexDisplayPredicateMode.conjunction, ete);
@@ -846,14 +830,14 @@ public class CastroGUI implements ActionListener, ChangeListener, ComponentListe
 			{
 				vbEdgesAbsolute.setVisible(false);
 				vbEdgesRelative.setVisible(true);
-				DataModule.displayedGraph.ChangeEdgeDensities(edgeDensity, normalEdgeRelativeMultiplier, thickEdgeRelativeMultiplier);
+				DataModule.displayedGraph.ChangeEdgeDensities(edgeDensity, SettingsWindow.normalEdgeRelativeMultiplier, SettingsWindow.thickEdgeRelativeMultiplier);
 				redrawGraph();
 			}
 			else
 			{
 				vbEdgesAbsolute.setVisible(true);
 				vbEdgesRelative.setVisible(false);
-				DataModule.displayedGraph.ChangeEdgeThresholds(normalEdgeThreshold, dottedEdgeAbsoluteMultiplier, thickEdgeAbsoluteMultiplier);
+				DataModule.displayedGraph.ChangeEdgeThresholds(normalEdgeThreshold, SettingsWindow.dottedEdgeAbsoluteMultiplier, SettingsWindow.thickEdgeAbsoluteMultiplier);
 				redrawGraph();
 			}
 		}
@@ -883,25 +867,25 @@ public class CastroGUI implements ActionListener, ChangeListener, ComponentListe
 	private static void setEdgeDensitySliderValue(JSlider slider, double value)
 	{
 		//System.err.println("sedEdgeSliderValue: " + value);
-		slider.setValue((int)Math.round(value / (maxEdgeDensity / (double)edgeDensitySliderNumberOfValues)));
+		slider.setValue((int)Math.round(value / (SettingsWindow.maxEdgeDensity / (double)edgeDensitySliderNumberOfValues)));
 	}
 	
 	private static double getEdgeDensitySliderValue(JSlider slider)
 	{
 		//System.err.println("getEdgeSliderValue: " + slider.getValue() * (maxEdgeDensity / (double)edgeDensitySliderNumberOfValues));
-		return (slider.getValue() - 1) * (maxEdgeDensity / (double)edgeDensitySliderNumberOfValues);
+		return (slider.getValue() - 1) * (SettingsWindow.maxEdgeDensity / (double)edgeDensitySliderNumberOfValues);
 	}
 
 	private static void setEdgeThresholdSliderValue(JSlider slider, double value)
 	{
 		//System.err.println("sedEdgeSliderValue: " + value);
-		slider.setValue((int)Math.round(value / (maxEdgeThreshold / (double)edgeThresholdSliderNumberOfValues)));
+		slider.setValue((int)Math.round(value / (SettingsWindow.maxEdgeThreshold / (double)edgeThresholdSliderNumberOfValues)));
 	}
 	
 	private static double getEdgeThresholdSliderValue(JSlider slider)
 	{
 		//System.err.println("getEdgeSliderValue: " + slider.getValue() * (maxEdgeThreshold / (double)edgeThresholdSliderNumberOfValues));
-		return (slider.getValue() - 1) * (maxEdgeThreshold / (double)edgeThresholdSliderNumberOfValues);
+		return (slider.getValue() - 1) * (SettingsWindow.maxEdgeThreshold / (double)edgeThresholdSliderNumberOfValues);
 	}
 
 	
@@ -997,10 +981,10 @@ public class CastroGUI implements ActionListener, ChangeListener, ComponentListe
 				if (DataModule.displayedGraph != null)
 				{
 					//System.err.println("bleble!!!");
-					DataModule.displayedGraph.ChangeEdgeDensities(edgeDensity, normalEdgeRelativeMultiplier, thickEdgeRelativeMultiplier);
+					DataModule.displayedGraph.ChangeEdgeDensities(edgeDensity, SettingsWindow.normalEdgeRelativeMultiplier, SettingsWindow.thickEdgeRelativeMultiplier);
 					
 										
-
+					redrawGraph();
 					//visualizeGraph();
 				}
 		}
@@ -1010,8 +994,8 @@ public class CastroGUI implements ActionListener, ChangeListener, ComponentListe
 			
 			if (DataModule.displayedGraph != null)
 			{
-				System.err.println("bleble!!!");
-				DataModule.displayedGraph.ChangeEdgeThresholds(normalEdgeThreshold, dottedEdgeAbsoluteMultiplier, thickEdgeAbsoluteMultiplier);
+				//System.err.println("bleble!!!");
+				DataModule.displayedGraph.ChangeEdgeThresholds(normalEdgeThreshold, SettingsWindow.dottedEdgeAbsoluteMultiplier, SettingsWindow.thickEdgeAbsoluteMultiplier);
 					
 				redrawGraph();
 			}
@@ -1073,5 +1057,10 @@ public class CastroGUI implements ActionListener, ChangeListener, ComponentListe
 	public void componentShown(ComponentEvent arg0) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public void performSearch()
+	{
+		search_button.doClick();
 	}
 }
