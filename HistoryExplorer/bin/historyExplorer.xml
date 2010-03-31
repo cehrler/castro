@@ -3,7 +3,7 @@
     <!--this file was created by Eclipse Runnable JAR Export Wizard-->
     <!--ANT 1.7 is required                                        -->
     <target name="create_run_jar">
-        <jar destfile="/home/michalisek/castro/HistoryExplorer/historyExplorer.jar" filesetmanifest="mergewithoutmain">
+        <jar destfile="/home/michalisek/castro/HistoryExplorer/bin/historyExplorer.jar" filesetmanifest="mergewithoutmain">
             <manifest>
                 <attribute name="Main-Class" value="GUI.CastroGUI"/>
                 <attribute name="Class-Path" value="."/>

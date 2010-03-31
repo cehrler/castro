@@ -166,6 +166,7 @@ public class Visualize implements ItemListener, MouseListener {
 		
 		vv.setPickedVertexState(newPsn);
 		vv.getRenderContext().setMultiLayerTransformer(mlt);
+		vv.getRenderContext().setVertexFillPaintTransformer(VertexColorTransformer.vctInstance);
 		layout.lock(lockLayout);
 		
 	    MyGraphZoomScrollPane graphPane = new MyGraphZoomScrollPane(vv);
@@ -242,6 +243,7 @@ public class Visualize implements ItemListener, MouseListener {
 
 		setEdgeWeightStrokeFunction();
 	    vv.getRenderContext().setVertexShapeTransformer(new VertexShapeSizeAspect<Functionality.Node, Functionality.Edge>(myGraph) );
+		vv.getRenderContext().setVertexFillPaintTransformer(VertexColorTransformer.vctInstance);
 	
 	    MyGraphZoomScrollPane graphPane = new MyGraphZoomScrollPane(vv);
 	    
@@ -347,7 +349,7 @@ public class Visualize implements ItemListener, MouseListener {
 				ps.pick(ln.get(i), false);
 			}
 		}
-		
+		VertexColorTransformer.vctInstance.setSelectedNodes(nodes);
 		CastroGUI.setSelectedNodesDetail(pickedList);
 		
 		vv.setPickedVertexState(ps);

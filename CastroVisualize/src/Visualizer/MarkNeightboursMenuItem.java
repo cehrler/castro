@@ -18,10 +18,10 @@ import org.apache.commons.collections15.Transformer;
 
 import Functionality.Edge;
 
-public class MarkNeightboursMenuItem<V> extends JMenuItem implements VertexListener<V> {
+public class MarkNeightboursMenuItem extends JMenuItem implements VertexListener<Functionality.Node> {
 
 	final static int N = 2; 
-	private V vertex;
+	private Functionality.Node vertex;
 	private VisualizationViewer visComp;
 
 
@@ -32,69 +32,8 @@ public class MarkNeightboursMenuItem<V> extends JMenuItem implements VertexListe
 		this.addActionListener(new ActionListener(){
 			@SuppressWarnings("unchecked")
 			public void actionPerformed(ActionEvent e) {
-
-				//Initiation step: mark all back to false
-				Collection<Functionality.Node> allNodes = visComp.getGraphLayout().getGraph().getVertices();
-				Iterator<Functionality.Node> it = allNodes.iterator();
-				while (it.hasNext()){
-					it.next().setMarked(false);
-				}
-				
-				
-				//visComp.getPickedVertexState().pick(vertex, false);
-				Collection<Functionality.Edge> edg = visComp.getGraphLayout().getGraph().getOutEdges(vertex);
-
-				// sort edges by strength
-				ArrayList arr = new ArrayList();
-				arr.addAll(edg);
-				Collections.sort(arr);
-				Iterator<Functionality.Edge> itr = arr.iterator();
-				int i=0;
-
-				//collect strongest neighbors
-				ArrayList strongestNeighbors = new ArrayList(N);
-				while (itr.hasNext() && i< N){
-					Functionality.Edge curr = itr.next();
-					Functionality.Node n1 = curr.getNode1();
-					Functionality.Node n2 = curr.getNode2();
-					if (n1.getSpeech_id() == ((Functionality.Node) vertex).getSpeech_id()) {
-						strongestNeighbors.add(n2);
-					} else {
-						strongestNeighbors.add(n1);
-					}
-					i++;
-
-				}
-				//mark strongest neighbors and obtain the holy grail
-				Iterator<Functionality.Node> snIt = strongestNeighbors.iterator();
-				while (snIt.hasNext()){
-					snIt.next().setMarked(true);
-				}
-
-				Transformer<Functionality.Node, Paint> vertexPaint = new Transformer<Functionality.Node, Paint>() {
-					public Paint transform(Functionality.Node i) {
-						if (i.getMarked()){
-							return Color.YELLOW;
-						}
-						//if (i.getSpeech_id() == ((Functionality.Node) vertex).getSpeech_id()){
-						//	return Color.GREEN;
-						//} 
-						else  {
-							return Color.RED;
-						}
-					}
-				};
-
-				
-				
-				Transformer trans = visComp.getRenderContext().getVertexFillPaintTransformer();
-				
-				visComp.getRenderContext().setVertexFillPaintTransformer(vertexPaint);
+				VertexColorTransformer.vctInstance.setMarkedNodes(vertex.getNeighborsMap());
 				visComp.repaint();
-				visComp.getRenderContext().setVertexFillPaintTransformer(trans);
-
-
-
 			}
 		});
 	}
@@ -104,7 +43,7 @@ public class MarkNeightboursMenuItem<V> extends JMenuItem implements VertexListe
 	 * @param v 
 	 * @param visComp 
 	 */
-	public void setVertexAndView(V v, VisualizationViewer visComp) {
+	public void setVertexAndView(Functionality.Node v, VisualizationViewer visComp) {
 		this.vertex = v;
 		this.visComp = visComp;
 		this.setText("Mark Neightbours");
