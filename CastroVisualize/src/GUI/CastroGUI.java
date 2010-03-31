@@ -170,6 +170,11 @@ public class CastroGUI implements ActionListener, ChangeListener, ComponentListe
 		tcm.getColumn(7).setPreferredWidth(50);
 	}
 	
+	public List<String> getQueryTerms() 
+	{
+		return processQueryString(NE_textField.getText());
+	}
+	
 	public static void updateTableSelection(Set<Functionality.Node> sn)
 	{
 		gui.table_search.getSelectionModel().removeListSelectionListener(listener);
@@ -418,8 +423,8 @@ public class CastroGUI implements ActionListener, ChangeListener, ComponentListe
 
 		Box smallVB5 = Box.createVerticalBox();
 		bleLabel = new JLabel("Action:");
-		bleLabel.setBackground(Color.GREEN);
-		bleLabel.setOpaque(true);
+		//bleLabel.setBackground(Color.GREEN);
+		//bleLabel.setOpaque(true);
 		bleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		smallVB5.add(bleLabel);
 		smallVB5.add(Box.createVerticalStrut(5));
@@ -676,7 +681,7 @@ public class CastroGUI implements ActionListener, ChangeListener, ComponentListe
 		
 		graphPanel = new JPanel();
 		graphPanel.setLayout(new BorderLayout());
-		graphPanel.setBorder(new LineBorder(Color.RED, 1));
+		graphPanel.setBorder(new LineBorder(Color.BLACK, 1));
 		graphPanel.setBackground(Color.WHITE);
 		
 		centralPanel.add(graphPanel, BorderLayout.CENTER);

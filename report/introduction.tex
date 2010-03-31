@@ -1,16 +1,41 @@
-
-
 \subsection{General Description}
 \label{sec:general_description}
-The availability of historical documents in digital form has been constantly increasing in recent years. Digitalization of sources is extremely valuable for historians, as it contributes to preservation, facilitates accessibility and enables exploiting computational methods for the benefit of historical research. Despite the growth of digitalized historical data, available collections are rarely accompanied by tools which significantly facilitate the work of historians. If available at all,  interfaces typically include a simple keyword search, providing the user a list of documents that match his query. 
+The availability of historical documents in digital form has been constantly increasing in recent years. 
+Digitalization of sources is extremely valuable for historians, as it contributes to preservation, facilitates 
+accessibility and enables exploiting computational methods for the benefit of historical research. Despite the growth 
+of digitalized historical data, available collections are rarely accompanied by tools which significantly facilitate the 
+work of historians. If available at all,  interfaces typically include a simple keyword search, providing the user a list 
+of documents that match his query. 
 
-Though such tools can indeed spare valuable time dedicated to manual work, they are far from exploiting the full power and flexibility that state of the art technology has to offer. Moreover, provided systems are usually generic, and rarely address the specific needs of researchers in the historical domain. This situation calls for development and adaptation of NLP techniques for historical data, as well as for creation of user interfaces that would enable historians to use this technology effectively for their needs. 
+Though such tools can indeed spare valuable time dedicated to manual work, 
+they are far from exploiting the full power and flexibility that state of the art technology has to offer. 
+Moreover, provided systems are usually generic, and rarely address the specific needs of researchers in the historical domain. 
+This situation calls for development and adaptation of NLP techniques for historical data, as well as for creation of user interfaces 
+that would enable historians to use this technology effectively for their needs. 
 
-This project addresses both aspects the current shortage. We take up the algorithmic challenge by applying and tailoring NLP tools that extract information relevant for historians and link between historical documents. The need for intuitive user interfaces is addressed by providing an interactive graphical tool that enables historians without computational background to use relevant NLP techniques and present their outcome. This twofold approach aims at improving the chances of historians working with sources to find information that is relevant for their research goals.
+This project addresses both aspects the current shortage. We take up the algorithmic challenge by applying and tailoring NLP tools 
+that extract information relevant for historians and link between historical documents according to similarity with regard to this information.
+The need for intuitive user interfaces is addressed by providing an interactive graphical tool that enables historians without 
+computational background to use relevant NLP techniques and present their outcome. This twofold approach aims at improving the chances of 
+historians working with sources to find information that is relevant for their research goals.
 
-We introduce an interactive graphical system for powerful search, recommendation and navigation through a collection of historical documents. We exemplify our approach on the \citeA{CastroDB}, a collection speeches and other documents by Fidel Castro, from 1959 to 1996. Our system includes keyword and meta-data search with automatic query expansion for named entities. Retrieved documents are presented as a list of items, as well as an interactive graph where nodes represent documents and edges represent links between documents. Documents are linked according to degree of shared named entities or degree of lexical similarity. This representation enables identification of groups of documents that revolve around similar topics as well as exploration of more specific relations between any subset of presented documents. The system also enables the user to receive a local perspective on a specific document and present its most strongly connected neighbors, thus serving also as a recommendation tool. 
+The core idea of our approach is to extract historically relevant information such as persons locations and organizations,
+and then use this information to determine similarity between documents. Similarity according to historically relevant information
+can then be interpreted in terms of links between documents and be represented graphically for various uses.
 
-Underlying the system are various computational methods and tools for text processing, information storage and retrieval, named entity recognition, co-reference resolution, data visualization and others. In the following section we provide an overview of the specific processing subtasks involved and the functionalities of the system.
+We introduce an interactive graphical system for powerful search and navigation through a collection of historical documents. 
+We exemplify our approach on the Castro Speech Database [[[!!! add citing Castro Speech Database !!! ]]], a collection 
+speeches and other documents by Fidel Castro, from 1959 to 1996. Our system includes keyword and meta-data search with automatic query 
+expansion for named entities. Retrieved documents are presented as a list of items, as well as an interactive graph where nodes represent 
+documents and edges represent links between documents. Documents are linked according to degree of shared named entities or degree of lexical 
+similarity. This representation enables identification of groups of documents that revolve around similar topics as well as exploration of 
+more specific relations between any subset of presented documents. The system also enables the user to receive a local perspective on a 
+specific document and present its most strongly connected neighbors, thus serving also as a recommendation tool. 
+
+Underlying the system are various computational methods and tools for text processing, 
+information storage and retrieval, named entity recognition, co-reference resolution, 
+data visualization and others. In the following section we provide an overview of the specific processing subtasks 
+involved and the functionalities of the system.
 
 \subsection{Subtasks}
 \label{sec:subtasks}
@@ -20,14 +45,25 @@ Several processing tasks were performed in the course of implementation of the p
 \emph{Storing Data:} Documents were stored in a MySQL database, and a data model was implemented in order to allow efficient retrieval of documents according to meta-data. \\
 \emph{NE Recognition:} A robust NE recognizer was used to identify persons, locations and organizations in each document.\\
 \emph{Document Indexing:} documents were indexed in four different manners and transformed to vector space matrices in order to support document retrieval and serve as input for similarity calculations. Three indexes were based on the three types of identified named entities. The fourth indexing method was based on global vocabulary. Both tf/idf scores and simple counts were computed.\\
-\emph{Co-reference Resolution:} In order to avoid treating name variations as different entities, a novel co-reference resolution algorithm was implemented. First, similarity matrices between all named entities of the same type in the Castro collection were calculated using p-spectrum string kernel. Then, the similarity matrices were multiplied by the documents matrix. As a result, each document representation was boosted by all name variations of the named entities that it contains.\\
-\emph{Calculation of Document Similarity:} Document similarity matrices were created using cosine as similarity measurement. Similarity was computed separately according to named entities and  lexical overlap. A link can be established between a pair of documents if their similarity passes a certain threshold. The strength of the link is determined by the strength of the similarity.
+\emph{Co-reference Resolution:} In order to avoid treating name variations as different entities, 
+we implemented an approximation of a novel co-reference resolution system, focusing on aliasing.
+First, similarity matrices between all named entities of the same type in the Castro collection were calculated using p-spectrum string kernel.
+Then, the similarity matrices were multiplied by the documents matrix. As a result, each document representation was boosted by all name 
+variations of the named entities that it contains.\\
+\emph{Calculation of Document Similarity:} Document similarity matrices were created using Manhattan distance as similarity measurement. 
+Similarity was computed separately according to named entities and  lexical overlap. 
+A link can be established between a pair of documents if their similarity passes a certain threshold. 
+The strength of the link is determined by the strength of the similarity.
 
-These processing steps created the infrastructure for a graphical user interface that provides several   functionalities described in the following section.
+These processing steps created the infrastructure for a graphical user interface that provides several
+functionalities described in the following section.
 
 \subsubsection{Functionalities of the Application}
 
-\emph{Document Retrieval Engine:} Using the data model and precomputed indexes, an engine for document retrieval was implemented. The engine allows querying the database with keywords. For keywords that happen to be named entities, automatic query expansion is performed using the precomputed similarity matrix between named entities.  The engine also allows filtering according to specifications on meta-data, e.g. a period of time, type of document and others.\\ 
+\emph{Document Retrieval Engine:} Using the data model and precomputed indexes, an engine for document retrieval was implemented. 
+The engine allows querying the database with keywords. Query document similarity is measured using the cosine measure. 
+For keywords that happen to be named entities, automatic query expansion is performed using the precomputed similarity matrix between 
+named entities.  The engine also allows filtering according to specifications on meta-data, e.g. a period of time, type of document and others.\\ 
 \emph{Graphical Representation of Documents:} Documents retrieved from the database are presented as as nodes of a graph. The size of the node corresponds to its relevance for the query, its shape to the type of document.  We retrieve the similarity measure for each pair of documents, and link them with an edge if the similarity crosses a predefined threshold. Thickness of edges reflects the strength of the similarity between two documents.\\
 \emph{Functionalities for Exploration of the Collection:} We provide an interactive environment that enables the user to navigate through the documents in an effective way. Among the implemented features are, viewing the list of named entities of a particular document. Viewing common named entities for several documents. Presenting the content of a document with the named entities marked. Marking the most similar documents to a specific document. Isolating the neighbors of a document up to a specified depth. Manipulating edges representation for thresholds, absolute/relative similarity and others.
 
@@ -35,38 +71,85 @@ A detailed description of each functionality is provided in section \ref{sec:com
 
 \subsection{Motivation: Working with Collections of Historic Documents}
 \label{sec:motivation}
-One of the major tasks of historians consists of working with sources that often come in the form of historical documents. Such documents have numerous usages in the various branches of historical research. Some of these are related the quest of reveling general trends and patterns about a historic period or personality while others focus on finding specific details and pieces of historical information. Historical documents serve both for the formulation of historical hypothesis's and for their validation and rejection efforts. 
+One of the major tasks of historians consists of working with sources that often come in the form of historical documents. 
+Such documents have numerous usages in the various branches of historical research. Some of these are related the quest of reveling 
+general trends and patterns about a historic period or personality while others focus on finding specific details and pieces of historical 
+information. Historical documents serve both for the formulation of historical hypothesis's and for their validation and rejection efforts. 
 
-While the amount of written accounts about ancient history is relatively limited and well known, historians of modern times often have to face an abundance of historical written materials. Dealing with big collections of documents introduces additional challenges for historians. In particular, the focus is often shifted to the identification and retrieval of documents that might be relevant for the interests of the historians. Furthermore, identifying trends as well as implicit and explicit links between documents becomes an extremely difficult task to perform manually.
+While the amount of written accounts about ancient history is relatively limited and well known, historians of modern times often have to 
+face an abundance of historical written materials. Dealing with big collections of documents introduces additional challenges for historians. 
+In particular, the focus is often shifted to the identification and retrieval of documents that might be relevant for the interests of the 
+historians. Furthermore, identifying trends as well as implicit and explicit links between documents becomes an extremely difficult task to 
+perform manually.
 
-Our systems is designed to support the work of the historian with sources and specifically with large collections of documents such as the Castro Speech Database in several manners. Following are some of aspects of our system that are likely to be appealing for historians.
+Our systems is designed to support the work of the historian with sources and specifically with large collections of documents such as the 
+Castro Speech Database in several manners. Following are some of aspects of our system that are likely to be appealing for historians.
 
-We focus on automatic markup of named entities. In particular we identify persons, organizations and locations. All three bear potential interest for historians, both in terms of discovery of new entities and identification of known entities. 
+We focus on automatic markup of named entities. In particular we identify persons, organizations and locations. All three bear potential 
+interest for historians, both in terms of discovery of new entities and identification of known entities. 
 
-Retrieval of documents that contain known named entities or general keywords is done automatically. Documents containing name variations of the entities appearing in the query are also retrieved, enabling historians to receive documents that might be relevant for their interests but do not appear in his query. 
+Retrieval of documents that contain known named entities or general keywords is done automatically. Documents containing name variations of 
+the entities appearing in the query are also retrieved, enabling historians to receive documents that might be relevant for their interests 
+but do not appear in his query. 
 
-Our retrieval mechanism and graphical interface incorporates meta-data, if such is provided with the documents in the collection. Using meta-data extends the flexibility of the search and allows a more informative graphical presentation of query results. In our case, different types of documents have different node shapes. 
+Our retrieval mechanism and graphical interface incorporates meta-data, if such is provided with the documents in the collection. 
+Using meta-data extends the flexibility of the search and allows a more informative graphical presentation of query results. In our case, 
+different types of documents have different node shapes. 
 
-We present links between retrieved documents based on named entity and lexical overlap. These links can be valuable in many scenarios. For instance, if the historian is interested in a specific document, he can easily identify which other documents contain similar named entities or similar vocabulary.  This feature not only helps with the discovery of explicit information about named entities in the collection, but can also provide useful generalizations with regard to documents that potentially deal with similar, sometimes implicit topics to those of the document of interest.   
+We present links between retrieved documents based on named entity and lexical overlap. These links can be valuable in many scenarios. 
+For instance, if the historian is interested in a specific document, he can easily identify which other documents contain similar named 
+entities or similar vocabulary.  This feature not only helps with the discovery of explicit information about named entities in the 
+collection, but can also provide useful generalizations with regard to documents that potentially deal with similar, sometimes implicit 
+topics to those of the document of interest.   
 
-Providing a graphical representation of the query results also supports the historian in inferring global statements about the collection or one of its subsets. In particular, one can identify groups of highly interconnected documents. Identified cliques are likely to reflect different kinds of topics and might be correlated to various parameters, such as time and location. Absence of links and identification of ``stand alone'' documents can also be highly informative, as they can indicate unique content. 
+Providing a graphical representation of the query results also supports the historian in inferring global statements about the collection or 
+one of its subsets. In particular, one can identify groups of highly interconnected documents. Identified cliques are likely to reflect 
+different kinds of topics and might be correlated to various parameters, such as time and location. Absence of links and identification of 
+``stand alone'' documents can also be highly informative, as they can indicate unique content. 
 
-Our system aims to be both intuitive and simple while allowing considerable amount of flexibility. It enables users to adjust many of the parameters such that they would best suit their needs. A historian that has an intuition that any sort of links between the documents might be relevant for him, may adjust the similarity threshold for presenting edges to be very low. On the other hand, if only tight connections are desired, the threshold can be raised. Other operations on the graph such as switching from named entity to lexical similarity, adjusting thickness of edges to reflect different degree of similarity, setting links according to df/idf scores and others have explicit textual interpretation and potential to help to the user achieve his goals. 
+Our system aims to be both intuitive and simple while allowing considerable amount of flexibility. It enables users to adjust many of the 
+parameters such that they would best suit their needs. A historian that has an intuition that any sort of links between the documents might 
+be relevant for him, may adjust the similarity threshold for presenting edges to be very low. On the other hand, if only tight connections 
+are desired, the threshold can be raised. Other operations on the graph such as switching from named entity to lexical similarity, adjusting 
+thickness of edges to reflect different degree of similarity, setting links according to df/idf scores and others have explicit textual 
+interpretation and potential to help to the user achieve his goals. 
 
-Finally, our system is designed to make retrieval and navigation through the collection easy and enjoyable. We provide text viewing possibilities, and graph manipulation operations such that the user would be able to explore the collection effectively and with minimal effort.
+Finally, our system is designed to make retrieval and navigation through the collection easy and enjoyable. We provide text viewing 
+possibilities, and graph manipulation operations such that the user would be able to explore the collection effectively and with minimal effort.
 
 
 \subsection {NLP Background and Previous Work}
 \label{sec:nlp_background}
 
 
-Our work lies within the area of NLP and IR for historical texts. It involves several well known NLP and information retrieval tasks as well as topics from information visualization and user interfaces. We tackle these tasks by a combination of off-the-shelf tools, implementing and adapting established models, and by introducing new methods that suit our purposes.  In the rest of this section we provide a general overview of the different NLP tasks and frameworks involved in our project, review relevant previous research and relate it to our implementation. 
+Our work lies within the area of NLP and IR for historical texts. 
+It involves several well known NLP and information retrieval tasks as well as topics from information visualization and user interfaces. 
+We tackle these tasks by a combination of off-the-shelf tools, implementing and adapting established models, and by introducing new methods 
+that suit our purposes.  In the rest of this section we provide a general overview of the different NLP tasks and frameworks involved in our 
+project, review relevant previous research and relate it to our implementation. 
 
-An important NLP task we face is named entity recognition. This task refers to the identification and classification of rigid designators, typically proper names \cite{NEsurvey2009} . Three well studied types of named entities are persons, locations and organizations. As mentioned previously, all three are important for the historical domain. While early studies on NE recognition focused on designing hand-crafted rules, recent studies and state-of-the-art tools apply statistical and machine learning techniques. For such tools, good feature selection has proven to be crucial, and often more important that the model itself.  To recognize named entities in our collection we apply the Stanford NE Recognizer \cite{sner}. It is based on Conditional Random Fields, uses a wide range of features and is available with pre-trained models.  For a detailed description see section ?.
+An important NLP task we face is named entity recognition. This task refers to the identification and classification of rigid designators, 
+typically proper names \cite{NEsurvey2009}. Three well studied types of named entities are persons, locations and organizations. 
+As mentioned previously, all three are important for the historical domain. While early studies on NE recognition focused on designing 
+hand-crafted rules, recent studies and state-of-the-art tools apply statistical and machine learning techniques. For such tools, 
+good feature selection has proven to be crucial, and often more important that the model itself.  
+To recognize named entities in our collection we apply the Stanford NE Recognizer \cite{sner}. It is based on Conditional Random Fields, 
+uses a wide range of features and is available with pre-trained models.  For a detailed description see section ?.
 
-Another branch of NLP research relevant for our work is co-reference resolution. Coreference resolution is the task of determining which phrases refer to the same extra-linguistic entities in a text or a collection of texts. Following the relative success of the algorithm and features proposed in \cite {soon2001coreference}, machine learning with an emphasis on feature engineering has been the predominant approach for this task. Coreference resolution is widely recognized as an extremely complex problem and existing tools such as BART \cite{bart} achieve only moderate performance rates of around 65\% F-score. Due to the limitations of existing technology and the nature of our task we restrict ourselves to multi-document aliasing, namely recognizing variations of the same name in a collection of documents. Our approach is based on string similarity, which we approximate using a p-spectrum string kernel \cite{kernels2004}. We describe our coreference approach in section ?.
+Another branch of NLP research relevant for our work is co-reference resolution. 
+Coreference resolution is the task of determining which phrases refer to the same extra-linguistic entities in a text or a collection of texts.
+Following the relative success of the algorithm and features proposed in \cite {soon2001coreference}, machine learning 
+with an emphasis on feature engineering has been the predominant approach for this task. Coreference resolution is widely 
+recognized as an extremely complex problem and existing tools such as BART \cite{bart} achieve only moderate performance rates 
+of around 65\% F-score. Due to the limitations of existing technology and the nature of our task we restrict ourselves to multi-document 
+aliasing, namely recognizing variations of the same name in a collection of documents. Our approach is based on string similarity, 
+which we approximate using a p-spectrum string kernel \cite{kernels2004}. We describe our coreference approach in section ?.
 
-Our implementation of the document retrieval modules and linkage of documents according to similarity relies heavily on standard techniques and measures used in Information Retrieval, and  specifically on the vector space model \cite{ir2008}. We adopt and adapt techniques for document indexing \cite{indexing1999}, vector space term weighting \cite{jones2004}, \cite{salton1971} and determining query-document and inter-document similarity using the cosine measure. We use ideas from query expansion literature \cite{xu1996} to perform query expansion as well as document smoothing for named entities. 
+Our implementation of the document retrieval modules and linkage of documents according to similarity relies heavily on standard techniques 
+and measures used in Information Retrieval, and  specifically on the vector space model \cite{ir2008}. We adopt and adapt techniques for 
+document indexing \cite{indexing1999}, vector space term weighting \cite{jones2004}, \cite{salton1971} and determining query-document and 
+inter-document similarity using the cosine measure. We use ideas from query expansion literature \cite{xu1996} to perform query expansion 
+as well as document smoothing for named entities. 
 
 [[[TO BE CONTITUED]]]
 
