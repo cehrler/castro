@@ -50,7 +50,6 @@ public class MyGraphZoomScrollPane extends GraphZoomScrollPane {
 	class HorizontalAdjustmentListenerImpl implements AdjustmentListener {
         int previous = 0;
         public void adjustmentValueChanged(AdjustmentEvent e) {
-        	System.err.println("Horizontal adjustment");
             int hval = e.getValue();
             float dh = previous - hval;
             previous = hval;
@@ -72,7 +71,6 @@ public class MyGraphZoomScrollPane extends GraphZoomScrollPane {
     class VerticalAdjustmentListenerImpl implements AdjustmentListener {
         int previous = 0;
         public void adjustmentValueChanged(AdjustmentEvent e) {
-        	System.err.println("Vertical adjustment");
             JScrollBar sb = (JScrollBar)e.getSource();
             BoundedRangeModel m = sb.getModel();
             int vval = m.getValue();
