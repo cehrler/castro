@@ -1,10 +1,4 @@
-%
-%  untitled
-%
-%  Created by Carsten Ehrler on 2010-03-06.
-%  Copyright (c) 2010 __MyCompanyName__. All rights reserved.
-%
-\documentclass[a4paper,final,normalheadings]{scrartcl}
+\documentclass[a4paper,final]{scrartcl}
 \usepackage[english]{babel}
 
 \usepackage{apacite}
@@ -12,31 +6,20 @@
 \usepackage{url}
 \usepackage{fixltx2e}
 \usepackage{appendix}
-
-% Use utf-8 encoding for foreign characters
+\usepackage{booktabs}
 \usepackage[utf8]{inputenc}
-% Setup for fullpage use
 \usepackage{fullpage}
+
+% Set vertical line spacing
 \usepackage{setspace}
 \setstretch{1.5}
 
-% Uncomment some of the following if you use the features
-%
-% Running Headers and footers
-%\usepackage{fancyhdr}
-
-% Multipart figures
-%\usepackage{subfigure}
-
-% More symbols
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{color}
 %\usepackage{latexsym}
-
 % Surround parts of graphics with box
 \usepackage{boxedminipage}
-
 % Package for including code in the document
 \usepackage{listings}
 
@@ -45,9 +28,7 @@
 
 % This is now the recommended way for checking for PDFLaTeX:
 \usepackage{ifpdf}
-
 \newcommand{\note}[1]{{\textbf{Note:} \color{blue} #1}}
-
 %\newif\ifpdf
 %\ifx\pdfoutput\undefined
 %\pdffalse % we are not running PDFLaTeX
@@ -71,8 +52,6 @@
 
 \title{Graphical representation of document similarity using named entity recognition and lexical similarity}
 \author{Todd Shore, Carsten Ehrler, Michal Richter and Yevgeni Berzak}
-
-
 \date{\today}
 
 \begin{document}
