@@ -39,7 +39,8 @@ public class MarkNeightboursMenuItem<V> extends JMenuItem implements VertexListe
 				while (it.hasNext()){
 					it.next().setMarked(false);
 				}
-
+				
+				
 				//visComp.getPickedVertexState().pick(vertex, false);
 				Collection<Functionality.Edge> edg = visComp.getGraphLayout().getGraph().getOutEdges(vertex);
 
@@ -84,8 +85,13 @@ public class MarkNeightboursMenuItem<V> extends JMenuItem implements VertexListe
 					}
 				};
 
+				
+				
+				Transformer trans = visComp.getRenderContext().getVertexFillPaintTransformer();
+				
 				visComp.getRenderContext().setVertexFillPaintTransformer(vertexPaint);
 				visComp.repaint();
+				visComp.getRenderContext().setVertexFillPaintTransformer(trans);
 
 
 

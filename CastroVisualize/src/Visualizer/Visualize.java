@@ -330,7 +330,7 @@ public class Visualize implements ItemListener, MouseListener {
 		
 	}
 	
-	public void FocusNodes(Set<Functionality.Node> nodes)
+	public void FocusNodes(Set<Functionality.Node> nodes, boolean adjustVertexFilter)
 	{
 		PickedState<Functionality.Node> ps = vv.getPickedVertexState();
 		List<Functionality.Node> ln = DataModule.displayedGraph.getNodes();
@@ -355,7 +355,7 @@ public class Visualize implements ItemListener, MouseListener {
 		
 		//DataModule.displayedGraph.setCenter(n);
 		
-		if (vdp instanceof VertexDisplayPredicateDistance)
+		if (vdp instanceof VertexDisplayPredicateDistance && adjustVertexFilter)
 		{
 			((VertexDisplayPredicateDistance) vdp).setCentralNodes(ps.getPicked());
 		}
