@@ -226,13 +226,13 @@ public class CastroGUI implements ActionListener, ChangeListener, ComponentListe
 			
 			
 			//bigGraph.setCenter(bigGraph.getNodeById(id));
-			visu.FocusNodes(sn);
+			visu.FocusNodes(sn, true);
 		}
 	}
 
 	private void init() {
 		
-		frame = new JFrame("CastroGUI");
+		frame = new JFrame("History Explorer - Unlock the secrets of the past!");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		Functionality.DataModule.InitConfiguration();
@@ -243,7 +243,7 @@ public class CastroGUI implements ActionListener, ChangeListener, ComponentListe
 		
 		JMenuBar menuBar = new JMenuBar();
 		
-		JMenu menu = new JMenu("Castro Menu");
+		JMenu menu = new JMenu("Menu");
 		
 		settingsMenuItem = new JMenuItem("Settings...");
 		
@@ -322,12 +322,13 @@ public class CastroGUI implements ActionListener, ChangeListener, ComponentListe
 		
 		Box smallVB1p1 = Box.createVerticalBox();
 		
-		bleLabel = new JLabel("Max. num. docs");
-		bleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		bleLabel = new JLabel("Max number of results:");
+		bleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		
 		smallVB1p1.add(bleLabel);
 		maxDocsTB = new JTextField();
 		maxDocsTB.setText(maxNumNodes.toString());
+		maxDocsTB.setAlignmentX(Component.LEFT_ALIGNMENT);
 		maxDocsTB.setHorizontalAlignment(JTextField.RIGHT);
 		smallVB1p1.add(Box.createVerticalStrut(5));
 		smallVB1p1.setMaximumSize(new Dimension(80, 1000));
@@ -335,24 +336,27 @@ public class CastroGUI implements ActionListener, ChangeListener, ComponentListe
 
 		
 		Box smallVB2 = Box.createVerticalBox();
-		bleLabel = new JLabel("Select year from:");
-		bleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		bleLabel = new JLabel("From:");
+		bleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		smallVB2.add(bleLabel);
 		smallVB2.add(Box.createVerticalStrut(5));
+		search_year_start.setAlignmentX(Component.LEFT_ALIGNMENT);
 		smallVB2.add(search_year_start);
 		
 		Box smallVB3 = Box.createVerticalBox();
-		bleLabel = new JLabel("Select year until:");
-		bleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		bleLabel = new JLabel("To:");
+		bleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		smallVB3.add(bleLabel);
 		smallVB3.add(Box.createVerticalStrut(5));
+		search_year_end.setAlignmentX(Component.LEFT_ALIGNMENT);
 		smallVB3.add(search_year_end);
 		
 		Box smallVB4 = Box.createVerticalBox();
 		bleLabel = new JLabel("Type:");
-		bleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		bleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		smallVB4.add(bleLabel);
 		smallVB4.add(Box.createVerticalStrut(5));
+		search_type.setAlignmentX(Component.LEFT_ALIGNMENT);
 		smallVB4.add(search_type);
 				
 		search_button = new JButton("Search");
@@ -422,13 +426,13 @@ public class CastroGUI implements ActionListener, ChangeListener, ComponentListe
 		});
 
 		Box smallVB5 = Box.createVerticalBox();
-		bleLabel = new JLabel("Action:");
+		bleLabel = new JLabel("    ");
 		//bleLabel.setBackground(Color.GREEN);
 		//bleLabel.setOpaque(true);
-		bleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		bleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		smallVB5.add(bleLabel);
 		smallVB5.add(Box.createVerticalStrut(5));
-		search_button.setAlignmentX(Component.CENTER_ALIGNMENT);
+		search_button.setAlignmentX(Component.LEFT_ALIGNMENT);
 		smallVB5.add(search_button);
 		
 		horizontal_box.add(smallVB1);
@@ -492,12 +496,12 @@ public class CastroGUI implements ActionListener, ChangeListener, ComponentListe
 		
 		Box hbFilter = Box.createHorizontalBox();
 		hbFilter.add(Box.createHorizontalStrut(10));
-		hbFilter.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Vertex Filter:"));
+		hbFilter.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Document Filter:"));
 		
 		vbFilter = Box.createVerticalBox();
 
 		
-		filterCB = new JComboBox(new String[] {"NoFilter", "DistanceFilter"} );
+		filterCB = new JComboBox(new String[] {"NoFilter", "distance filter"} );
 		filterCB.addActionListener(this);
 		
 		vbFilter.add(filterCB);
@@ -515,13 +519,13 @@ public class CastroGUI implements ActionListener, ChangeListener, ComponentListe
 		vbFilterDistance.add(distanceSlider);
 		vbFilterDistance.add(Box.createVerticalStrut(10));
 		
-		distanceFilterTypeCB = new JComboBox(new String[] { "Union", "Intersection" });
+		distanceFilterTypeCB = new JComboBox(new String[] { "union", "intersection" });
 		distanceFilterTypeCB.addActionListener(this);
 		vbFilterDistance.add(distanceFilterTypeCB);
 		
 		vbFilterDistance.add(Box.createVerticalStrut(10));
 		
-		coreEdgeTypeCB = new JComboBox(new String[] { "AllEdges", "NormalAndThick", "ThickOnly" });
+		coreEdgeTypeCB = new JComboBox(new String[] { "all edges", "normal and thick", "thick" });
 		coreEdgeTypeCB.addActionListener(this);
 		vbFilterDistance.add(coreEdgeTypeCB);
 		
@@ -557,7 +561,7 @@ public class CastroGUI implements ActionListener, ChangeListener, ComponentListe
 
 		vbEdgesRelative = Box.createVerticalBox();
 		
-		bleLabel = new JLabel("Edge density:");
+		bleLabel = new JLabel("link density:");
 		
 		vbEdgesRelative.add(bleLabel);
 		vbEdgesRelative.add(Box.createVerticalStrut(5));
@@ -580,7 +584,7 @@ public class CastroGUI implements ActionListener, ChangeListener, ComponentListe
 		
 		vbEdgesAbsolute = Box.createVerticalBox();
 
-		bleLabel = new JLabel("Edge thres.:");
+		bleLabel = new JLabel("Link Threshold:");
 		
 		vbEdgesAbsolute.add(bleLabel);
 		vbEdgesAbsolute.add(Box.createVerticalStrut(5));
@@ -659,7 +663,7 @@ public class CastroGUI implements ActionListener, ChangeListener, ComponentListe
 
 		featuresVB.add(Box.createVerticalStrut(5));
 		
-		layoutStartStopBtn = new JButton("Layout start");
+		layoutStartStopBtn = new JButton("Arange Graph");
 		layoutStartStopBtn.addActionListener(this);
 		layoutStartStopBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
 		
@@ -771,15 +775,15 @@ public class CastroGUI implements ActionListener, ChangeListener, ComponentListe
 	{
 		EdgeTypeEnum ete;
 		
-		if (coreEdgeTypeCB.getSelectedItem().equals("AllEdges"))
+		if (coreEdgeTypeCB.getSelectedItem().equals("all edges"))
 		{
 			ete = EdgeTypeEnum.dotted;
 		}
-		else if (coreEdgeTypeCB.getSelectedItem().equals("NormalAndThick"))
+		else if (coreEdgeTypeCB.getSelectedItem().equals("normal and thick"))
 		{
 			ete = EdgeTypeEnum.normal;
 		}
-		else if (coreEdgeTypeCB.getSelectedItem().equals("ThickOnly"))
+		else if (coreEdgeTypeCB.getSelectedItem().equals("thick"))
 		{
 			ete = EdgeTypeEnum.thick;
 		}
@@ -789,7 +793,7 @@ public class CastroGUI implements ActionListener, ChangeListener, ComponentListe
 			System.err.println("Invalid core edge type");
 		}
 		
-		if (distanceFilterTypeCB.getSelectedItem().equals("Union"))
+		if (distanceFilterTypeCB.getSelectedItem().equals("union"))
 		{
 			
 			visu.setDistanceFilter(distanceSlider.getValue(), VertexDisplayPredicateMode.conjunction, ete);
@@ -805,7 +809,7 @@ public class CastroGUI implements ActionListener, ChangeListener, ComponentListe
 		if (e.getSource().equals(filterCB))
 		{
 			//System.err.println(e.getActionCommand());
-			if (filterCB.getSelectedItem().equals("DistanceFilter"))
+			if (filterCB.getSelectedItem().equals("distance filter"))
 			{
 				vbFilterNone.setVisible(false);
 				vbFilterDistance.setVisible(true);
@@ -815,7 +819,7 @@ public class CastroGUI implements ActionListener, ChangeListener, ComponentListe
 					setDistanceFilter();
 				}
 			}
-			else if (filterCB.getSelectedItem().equals("NoFilter"))
+			else if (filterCB.getSelectedItem().equals("no filter"))
 			{
 				vbFilterNone.setVisible(true);
 				vbFilterDistance.setVisible(false);
@@ -848,16 +852,16 @@ public class CastroGUI implements ActionListener, ChangeListener, ComponentListe
 		}
 		else if (e.getSource().equals(layoutStartStopBtn))
 		{
-			if (layoutStartStopBtn.getText().equals("Layout start"))
+			if (layoutStartStopBtn.getText().equals("Arange Graph"))
 			{
 				lockLayout = false;
-				layoutStartStopBtn.setText("Layout stop");
+				layoutStartStopBtn.setText("Stop");
 				visu.LayoutStart();
 			}
 			else
 			{
 				lockLayout = true;
-				layoutStartStopBtn.setText("Layout start");
+				layoutStartStopBtn.setText("Arange Graph");
 				visu.LayoutStop();
 			}
 		}
@@ -1032,7 +1036,7 @@ public class CastroGUI implements ActionListener, ChangeListener, ComponentListe
 		graphPanel.add(graph_component, BorderLayout.CENTER);
 		graphPanel.validate();
 
-		if (filterCB.getSelectedItem().equals("DistanceFilter"))
+		if (filterCB.getSelectedItem().equals("distance filter"))
 		{
 			System.err.println("!!!setDistanceFilter");
 			setDistanceFilter();

@@ -49,7 +49,7 @@ public class SettingsWindow implements ActionListener {
 	public static Double maxEdgeDensity = 3.0;
 	public static Double maxEdgeThreshold = 1.0;
 
-	public static String currIndex = "TF";
+	public static String currIndex = "TFIDF";
 	public static boolean smoothedIndex = true;
 	public static boolean smoothedSimMatrix = true;
 	
@@ -61,7 +61,7 @@ public class SettingsWindow implements ActionListener {
 	public SettingsWindow()
 	{
 		frame = new JFrame("Castro Settings");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 		Container content = frame.getContentPane();
 		content.setLayout(new BorderLayout());
