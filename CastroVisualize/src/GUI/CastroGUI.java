@@ -170,6 +170,11 @@ public class CastroGUI implements ActionListener, ChangeListener, ComponentListe
 		tcm.getColumn(7).setPreferredWidth(50);
 	}
 	
+	public List<String> getQueryTerms() 
+	{
+		return processQueryString(NE_textField.getText());
+	}
+	
 	public static void updateTableSelection(Set<Functionality.Node> sn)
 	{
 		gui.table_search.getSelectionModel().removeListSelectionListener(listener);

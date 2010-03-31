@@ -7,6 +7,7 @@ import java.awt.Container;
 import java.awt.Paint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
@@ -15,6 +16,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import org.apache.commons.collections15.Transformer;
+
+import GUI.CastroGUI;
 
 
 public class OpenTextMenuItem<V> extends JMenuItem implements VertexListener<V> {
@@ -47,6 +50,12 @@ public class OpenTextMenuItem<V> extends JMenuItem implements VertexListener<V> 
         		text = text.replaceAll("<ORGANIZATIONS>", "<span style=\"color:" + neTypeColors.getOrganizationsString() + "\"><b>");
         		text = text.replaceAll("</ORGANIZATIONS>", "</span></b>");
         		
+        		List<String> queryTerms = CastroGUI.gui.getQueryTerms();
+        		
+        		for (int i = 0; i < queryTerms.size(); i++)
+        		{
+        			text = text.replaceAll(queryTerms.get(i), "<b><u>" + queryTerms.get(i) + "</u></b>");
+        		}
         		
         		System.err.println(text);
         		

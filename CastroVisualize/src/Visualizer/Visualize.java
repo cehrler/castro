@@ -204,14 +204,14 @@ public class Visualize implements ItemListener, MouseListener {
 		//BasicVertexLabelRenderer<Functionality.Node, Functionality.Edge> bvlr =  new (BasicVertexLabelRenderer<Functionality.Node, Functionality.Edge>)(vv.getRenderContext().getVertexLabelRenderer());
 		
 		BasicRenderer<Functionality.Node, Functionality.Edge> br = new BasicRenderer<Node, Edge>();
-		br.setVertexLabelRenderer(new BasicVertexLabelRenderer<Functionality.Node, Functionality.Edge>(Position.CNTR));
+		//br.setVertexLabelRenderer(new BasicVertexLabelRenderer<Functionality.Node, Functionality.Edge>(Position.CNTR));
 		
 		
 		vv.setRenderer(br);
 		
-		MyVertexLabelRenderer dvlr = new MyVertexLabelRenderer(Color.red);
+		//MyVertexLabelRenderer dvlr = new MyVertexLabelRenderer(Color.red);
 		
-		vv.getRenderContext().setVertexLabelRenderer(dvlr);
+		//vv.getRenderContext().setVertexLabelRenderer(dvlr);
 		
 		
 		//bvlr.setPosition(Position.CNTR);
