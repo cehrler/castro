@@ -81,7 +81,7 @@ public class VMindex {
 	        DataInputStream os = new DataInputStream(new FileInputStream(filename));
 			
 	        numSpeeches = os.readInt();
-	        System.err.println("numSpeeches: " + numSpeeches);
+	        System.err.println("Loading index file: " + filename);
 	        if (numSpeeches > 10000 || numSpeeches < 0)
 	        {
 	        	throw new Exception("Wrong format or our database inflated!");
@@ -90,7 +90,6 @@ public class VMindex {
 	        neCells = new ArrayList<Set<Integer> >();
 	        
 	        numNEs = os.readInt();
-	        System.err.println("numNEs: " + numNEs);
 	  	  
 	        if (numNEs > 10000000 || numNEs < 0)
 	        {

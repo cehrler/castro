@@ -261,19 +261,14 @@ public class CastroGUI implements ActionListener, ChangeListener,
 		String[] names = { "ID", "Author", "Title", "Type", "Location",
 				"Report Date", "Source", "Speech Date" };
 
-		Insets insets = content.getInsets();
-
-		Integer table_height = 100;
-		Integer search_top = 65 + insets.top + table_height;
-
 		Box frameNorthBox = Box.createVerticalBox();
 
 		table_search = new JTable(data, names);
 		table_search.setFillsViewportHeight(true);
+		table_search.setToolTipText(GuiConst.table_search_tooltip);
 		table_search.setColumnSelectionAllowed(false);
 		table_search.setRowSelectionAllowed(true);
-		table_search
-				.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		table_search.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		listener = new SelectionListener(table_search);
 		table_search.getSelectionModel().addListSelectionListener(listener);
 
@@ -288,6 +283,10 @@ public class CastroGUI implements ActionListener, ChangeListener,
 		search_year_end = new JComboBox();
 		search_type = new JComboBox();
 
+		search_year_start.setToolTipText(GuiConst.search_year_start_tooltip);
+		search_year_end.setToolTipText(GuiConst.search_year_end_tooltip);
+		search_type.setToolTipText(GuiConst.search_type_tooltip);
+		
 		String[] years = new String[37];
 		for (int i = 0; i < years.length; ++i) {
 			years[i] = new Integer(1959 + i).toString();
@@ -310,9 +309,9 @@ public class CastroGUI implements ActionListener, ChangeListener,
 		search_type.addItem("MEETING");
 		search_type.addItem("REPORT");
 		NE_textField = new JTextField();
-		NE_textField
-				.setText("\"Conrado Benitez\" \"Santiago Chile\" \"PRENSA LATINA Havana\"");
-
+		NE_textField.setText("\"Conrado Benitez\" \"Santiago Chile\" \"PRENSA LATINA Havana\"");
+		NE_textField.setToolTipText(GuiConst.NE_textField_tooltip);
+		
 		Box smallVB1 = Box.createVerticalBox();
 		JLabel bleLabel = new JLabel("Search terms:");
 		bleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -333,7 +332,8 @@ public class CastroGUI implements ActionListener, ChangeListener,
 		smallVB1p1.add(Box.createVerticalStrut(5));
 		smallVB1p1.setMaximumSize(new Dimension(80, 1000));
 		smallVB1p1.add(maxDocsTB);
-
+		maxDocsTB.setToolTipText(GuiConst.maxDocsTB_tooltip);
+		
 		Box smallVB2 = Box.createVerticalBox();
 		bleLabel = new JLabel("From:");
 		bleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -359,6 +359,7 @@ public class CastroGUI implements ActionListener, ChangeListener,
 		smallVB4.add(search_type);
 
 		search_button = new JButton("Search");
+		search_button.setToolTipText(GuiConst.search_button_tooltip);
 		search_button.setVerticalTextPosition(AbstractButton.BOTTOM);
 		search_button.setHorizontalTextPosition(AbstractButton.CENTER);
 		search_button.setMnemonic(KeyEvent.VK_S);
@@ -393,11 +394,6 @@ public class CastroGUI implements ActionListener, ChangeListener,
 				Integer maxNumNodes = Integer.parseInt(maxDocsTB.getText());
 
 				if (getEdgeMode() == "relative") {
-					System.err.println("edge density: " + edgeDensity);
-					System.err.println("dottedEdgeRelativeThreshold: "
-							+ SettingsWindow.normalEdgeRelativeMultiplier);
-					System.err.println("thickEdgeRelativeThreshold: "
-							+ SettingsWindow.thickEdgeRelativeMultiplier);
 
 					bigGraph = DataModule.getGraphDensity(SinceDate, TillDate,
 							Place, Author, DocType, queryTerms, termWeights,
@@ -405,12 +401,6 @@ public class CastroGUI implements ActionListener, ChangeListener,
 							SettingsWindow.normalEdgeRelativeMultiplier,
 							SettingsWindow.thickEdgeRelativeMultiplier);
 				} else {
-					System.err.println("normal edge threshold: "
-							+ normalEdgeThreshold);
-					System.err.println("dottedEdgeRelativeThreshold: "
-							+ SettingsWindow.dottedEdgeAbsoluteMultiplier);
-					System.err.println("thickEdgeRelativeThreshold: "
-							+ SettingsWindow.thickEdgeAbsoluteMultiplier);
 
 					bigGraph = DataModule.getGraphThreshold(SinceDate,
 							TillDate, Place, Author, DocType, queryTerms,
@@ -423,18 +413,6 @@ public class CastroGUI implements ActionListener, ChangeListener,
 				tableSearchSetColumnWidth();
 				visualizeGraph();
 
-				// setEdgeSliderValue(dottedEdgeSlider,
-				// bigGraph.getDottedEdgeThreshold());
-				System.err.println("dottedEdgeThreshold: "
-						+ bigGraph.getDottedEdgeThreshold());
-				// setEdgeSliderValue(normalEdgeSlider,
-				// bigGraph.getNormalEdgeThreshold());
-				System.err.println("normalEdgeThreshold: "
-						+ bigGraph.getNormalEdgeThreshold());
-				// setEdgeSliderValue(thickEdgeSlider,
-				// bigGraph.getThickEdgeThreshold());
-				System.err.println("thickEdgeThreshold: "
-						+ bigGraph.getThickEdgeThreshold());
 			}
 		});
 
@@ -469,52 +447,17 @@ public class CastroGUI implements ActionListener, ChangeListener,
 		frameNorthBox.add(horizontal_box);
 
 		content.add(frameNorthBox, BorderLayout.NORTH);
-		// scroll_panel.setBounds(insets.left + 10, insets.top + 10, frame_width
-		// - insets.left - insets.right - 20, 150);
-
-		// content.add(horizontal_box);
-		// horizontal_box.setBounds(10 + insets.left, search_top, frame_width -
-		// insets.left - insets.right - 20, 45);
 
 		Box featuresVB = Box.createVerticalBox();
 
-		bleLabel = new JLabel("Similarity matrix:");
-		bleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-		// featuresVB.add(bleLabel);
-		simMatCB = new JComboBox();
-		simMatCB.addItem("AllWeightedEqually");
-		simMatCB.addItem("PersonsOnly");
-		simMatCB.addItem("LocationsOnly");
-		simMatCB.addItem("OrganizationsOnly");
-		simMatCB.addItem("AllPersonsWeightedDouble");
-		simMatCB.addItem("AllLocationsWeightedDouble");
-		simMatCB.addItem("AllOrganizationsWeightedDouble");
-		// featuresVB.add(simMatCB);
-
-		// featuresVB.add(Box.createVerticalStrut(10));
-
-		bleLabel = new JLabel("Index type:");
-		bleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-		// featuresVB.add(bleLabel);
-
-		indexCB = new JComboBox();
-		indexCB.addItem("TF");
-		indexCB.addItem("TFIDF");
-		// featuresVB.add(indexCB);
-
-		// featuresVB.add(Box.createVerticalStrut(10));
-
 		Box hbFilter = Box.createHorizontalBox();
 		hbFilter.add(Box.createHorizontalStrut(10));
-		hbFilter.setBorder(BorderFactory.createTitledBorder(BorderFactory
-				.createLineBorder(Color.BLACK), "Document Filter:"));
+		hbFilter.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Document Filter:"));
 
 		vbFilter = Box.createVerticalBox();
 
-		filterCB = new JComboBox(
-				new String[] { "no filter", "distance filter" });
+		filterCB = new JComboBox(new String[] { "no filter", "distance filter" });
+		filterCB.setToolTipText(GuiConst.filterCB_tooltip);
 		filterCB.addActionListener(this);
 
 		vbFilter.add(filterCB);
@@ -523,6 +466,7 @@ public class CastroGUI implements ActionListener, ChangeListener,
 		vbFilterDistance = Box.createVerticalBox();
 
 		distanceSlider = new JSlider(0, 3);
+		distanceSlider.setToolTipText(GuiConst.distanceSlider_tooltip);
 		distanceSlider.setMajorTickSpacing(1);
 		distanceSlider.setPaintLabels(true);
 		distanceSlider.setPaintTicks(true);
@@ -532,23 +476,22 @@ public class CastroGUI implements ActionListener, ChangeListener,
 		vbFilterDistance.add(distanceSlider);
 		vbFilterDistance.add(Box.createVerticalStrut(10));
 
-		distanceFilterTypeCB = new JComboBox(new String[] { "union",
-				"intersection" });
+		distanceFilterTypeCB = new JComboBox(new String[] { "union", "intersection" });
+		distanceFilterTypeCB.setToolTipText(GuiConst.distanceFilterTypeCB_tooltip);
 		distanceFilterTypeCB.addActionListener(this);
 		vbFilterDistance.add(distanceFilterTypeCB);
 
 		vbFilterDistance.add(Box.createVerticalStrut(10));
 
-		coreEdgeTypeCB = new JComboBox(new String[] { "all edges",
-				"normal and thick", "thick" });
+		coreEdgeTypeCB = new JComboBox(new String[] { "all edges", "normal and thick", "thick" });
+		coreEdgeTypeCB.setToolTipText(GuiConst.coreEdgeTypeCB_tooltip);
 		coreEdgeTypeCB.addActionListener(this);
 		vbFilterDistance.add(coreEdgeTypeCB);
 
 		vbFilterDistance.setVisible(false);
 
 		vbFilterNone = Box.createVerticalBox();
-		vbFilterNone.add(Box.createVerticalStrut(vbFilterDistance
-				.getPreferredSize().height));
+		vbFilterNone.add(Box.createVerticalStrut(vbFilterDistance.getPreferredSize().height));
 
 		vbFilter.add(vbFilterNone);
 		vbFilter.add(vbFilterDistance);
@@ -559,8 +502,7 @@ public class CastroGUI implements ActionListener, ChangeListener,
 		featuresVB.add(hbFilter);
 
 		Box hbEdges = Box.createHorizontalBox();
-		hbEdges.setBorder(BorderFactory.createTitledBorder(BorderFactory
-				.createLineBorder(Color.BLACK), "Edges:"));
+		hbEdges.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Links:"));
 		hbEdges.add(Box.createHorizontalStrut(10));
 
 		Box vbEdges = Box.createVerticalBox();
@@ -571,8 +513,8 @@ public class CastroGUI implements ActionListener, ChangeListener,
 		edgeSliderDictionary.put(10, new JLabel("0.5"));
 		edgeSliderDictionary.put(20, new JLabel("1"));
 
-		edgeDisplayTypeCB = new JComboBox(
-				new String[] { "absolute", "relative" });
+		edgeDisplayTypeCB = new JComboBox(new String[] { "absolute", "relative" });
+		edgeDisplayTypeCB.setToolTipText(GuiConst.edgeDisplayTypeCB_tooltip);
 		edgeDisplayTypeCB.addActionListener(this);
 
 		edgeDisplayTypeCB.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -587,11 +529,10 @@ public class CastroGUI implements ActionListener, ChangeListener,
 
 		edgeDensitySlider = new JSlider(0, edgeDensitySliderNumberOfValues);
 		edgeDensitySlider.setPaintTicks(true);
+		edgeDensitySlider.setToolTipText(GuiConst.edgeDensitySlider_tooltip);
 		// dottedEdgeSlider.setPaintLabels(true);
-		edgeDensitySlider
-				.setMajorTickSpacing(edgeDensitySliderNumberOfValues / 2);
-		edgeDensitySlider
-				.setMinorTickSpacing(edgeDensitySliderNumberOfValues / 20);
+		edgeDensitySlider.setMajorTickSpacing(edgeDensitySliderNumberOfValues / 2);
+		edgeDensitySlider.setMinorTickSpacing(edgeDensitySliderNumberOfValues / 20);
 		edgeDensitySlider.setSnapToTicks(true);
 		edgeDensitySlider.addChangeListener(this);
 		setEdgeDensitySliderValue(edgeDensitySlider, edgeDensity);
@@ -610,6 +551,7 @@ public class CastroGUI implements ActionListener, ChangeListener,
 		vbEdgesAbsolute.add(Box.createVerticalStrut(5));
 
 		edgeThresholdSlider = new JSlider(0, edgeThresholdSliderNumberOfValues);
+		edgeThresholdSlider.setToolTipText(GuiConst.edgeThresholdSlider_tooltip);
 		edgeThresholdSlider.setPaintTicks(true);
 		// dottedEdgeSlider.setPaintLabels(true);
 		edgeThresholdSlider.setMajorTickSpacing(edgeThresholdSliderNumberOfValues / 2);
@@ -633,6 +575,7 @@ public class CastroGUI implements ActionListener, ChangeListener,
 		hbDottedEdges.add(Box.createHorizontalStrut(3));
 
 		dottedEdgeChB = new JCheckBox();
+		dottedEdgeChB.setToolTipText(GuiConst.dottedEdgeChB_tooltip);
 		dottedEdgeChB.setSelected(true);
 		dottedEdgeChB.addChangeListener(this);
 		hbDottedEdges.add(dottedEdgeChB);
@@ -646,6 +589,7 @@ public class CastroGUI implements ActionListener, ChangeListener,
 		hbNormalEdges.add(Box.createHorizontalStrut(3));
 
 		normalEdgeChB = new JCheckBox();
+		normalEdgeChB.setToolTipText(GuiConst.normalEdgeChB_tooltip);
 		normalEdgeChB.setSelected(true);
 		normalEdgeChB.addChangeListener(this);
 		hbNormalEdges.add(normalEdgeChB);
@@ -660,6 +604,7 @@ public class CastroGUI implements ActionListener, ChangeListener,
 		hbThickEdges.add(Box.createHorizontalStrut(3));
 
 		thickEdgeChB = new JCheckBox();
+		thickEdgeChB.setToolTipText(GuiConst.thickEdgeChB_tooltip);
 		thickEdgeChB.setSelected(true);
 		thickEdgeChB.addChangeListener(this);
 		hbThickEdges.add(thickEdgeChB);
@@ -673,19 +618,11 @@ public class CastroGUI implements ActionListener, ChangeListener,
 		featuresVB.add(hbEdges);
 		featuresVB.add(Box.createVerticalStrut(10));
 
-		/*
-		 * bleLabel = new JLabel("Edge threshold:");
-		 * bleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-		 * 
-		 * featuresVB.add(bleLabel); edgeThresholdTB = new JTextField();
-		 * edgeThresholdTB.setText(edgeThresholdDefault.toString());
-		 * edgeThresholdTB.setHorizontalAlignment(JTextField.RIGHT);
-		 * featuresVB.add(edgeThresholdTB);
-		 */
 
 		featuresVB.add(Box.createVerticalStrut(5));
 
-		layoutStartStopBtn = new JButton("Arange Graph");
+		layoutStartStopBtn = new JButton("Arrange Graph");
+		layoutStartStopBtn.setToolTipText(GuiConst.layoutStartStopBtn_tooltip);
 		layoutStartStopBtn.addActionListener(this);
 		layoutStartStopBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -779,6 +716,7 @@ public class CastroGUI implements ActionListener, ChangeListener,
 		JEditorPane jep = new JEditorPane();
 		jep.setEditable(true);
 
+		jep.setToolTipText(GuiConst.jep_tooltip);
 		JScrollPane jepScroll = new JScrollPane(jep);
 		
 		Box jepBox = Box.createVerticalBox();
@@ -809,7 +747,6 @@ public class CastroGUI implements ActionListener, ChangeListener,
 			ete = EdgeTypeEnum.thick;
 		} else {
 			ete = EdgeTypeEnum.dotted;
-			System.err.println("Invalid core edge type");
 		}
 
 		if (distanceFilterTypeCB.getSelectedItem().equals("union")) {
@@ -825,12 +762,10 @@ public class CastroGUI implements ActionListener, ChangeListener,
 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource().equals(filterCB)) {
-			// System.err.println(e.getActionCommand());
 			if (filterCB.getSelectedItem().equals("distance filter")) {
 				vbFilterNone.setVisible(false);
 				vbFilterDistance.setVisible(true);
 				if (visu != null) {
-					// System.err.println(distanceFilterTypeCB.getSelectedItem());
 					setDistanceFilter();
 				}
 			} else if (filterCB.getSelectedItem().equals("no filter")) {
@@ -872,20 +807,10 @@ public class CastroGUI implements ActionListener, ChangeListener,
 			}
 		}
 
-		/*
-		 * if (e.getSource().equals(filterBtn) ||
-		 * e.getSource().equals(filterCB)) {
-		 * visu.updateFilter(filterChB.isSelected(),
-		 * Integer.parseInt(depthTB.getText())); }
-		 */
 	}
 
 	private static void setEdgeDensitySliderValue(JSlider slider, double value) {
-		// System.err.println("sedEdgeSliderValue: " + value);
-		slider
-				.setValue((int) Math
-						.round(value
-								/ (SettingsWindow.maxEdgeDensity / (double) edgeDensitySliderNumberOfValues)));
+		slider.setValue((int) Math.round(value / (SettingsWindow.maxEdgeDensity / (double) edgeDensitySliderNumberOfValues)));
 	}
 
 	private static double getEdgeDensitySliderValue(JSlider slider) {
@@ -897,17 +822,13 @@ public class CastroGUI implements ActionListener, ChangeListener,
 
 	private static void setEdgeThresholdSliderValue(JSlider slider, double value) {
 		// System.err.println("sedEdgeSliderValue: " + value);
-		slider
-				.setValue((int) Math
-						.round(value
-								/ (SettingsWindow.maxEdgeThreshold / (double) edgeThresholdSliderNumberOfValues)));
+		slider.setValue((int) Math.round(value / (SettingsWindow.maxEdgeThreshold / (double) edgeThresholdSliderNumberOfValues)));
 	}
 
 	private static double getEdgeThresholdSliderValue(JSlider slider) {
 		// System.err.println("getEdgeSliderValue: " + slider.getValue() *
 		// (maxEdgeThreshold / (double)edgeThresholdSliderNumberOfValues));
-		return (slider.getValue() - 1)
-				* (SettingsWindow.maxEdgeThreshold / (double) edgeThresholdSliderNumberOfValues);
+		return (slider.getValue() - 1) * (SettingsWindow.maxEdgeThreshold / (double) edgeThresholdSliderNumberOfValues);
 	}
 
 	private void visualizeGraph() {
@@ -984,7 +905,6 @@ public class CastroGUI implements ActionListener, ChangeListener,
 			edgeDensity = getEdgeDensitySliderValue(edgeDensitySlider);
 
 			if (DataModule.displayedGraph != null) {
-				// System.err.println("bleble!!!");
 				DataModule.displayedGraph.ChangeEdgeDensities(edgeDensity,
 						SettingsWindow.normalEdgeRelativeMultiplier,
 						SettingsWindow.thickEdgeRelativeMultiplier);
@@ -1023,10 +943,6 @@ public class CastroGUI implements ActionListener, ChangeListener,
 			graphPanel.remove(graph_component);
 		}
 
-		// visu.thick_edge_theshold =
-		// Double.parseDouble(edgeThresholdTB.getText()) * 3.0 / 2.0;
-		// visu.normal_edge_threshold =
-		// Double.parseDouble(edgeThresholdTB.getText());
 		graph_component = visu.actualizeGraph(lockLayout);
 		visu.setEdgeWeightStrokeFunction();
 		graphPanel.add(graph_component, BorderLayout.CENTER);
