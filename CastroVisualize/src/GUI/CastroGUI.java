@@ -575,6 +575,7 @@ public class CastroGUI implements ActionListener, ChangeListener,
 				new String[] { "absolute", "relative" });
 		edgeDisplayTypeCB.addActionListener(this);
 
+		edgeDisplayTypeCB.setAlignmentX(Component.LEFT_ALIGNMENT);
 		vbEdges.add(edgeDisplayTypeCB);
 
 		vbEdgesRelative = Box.createVerticalBox();
@@ -600,33 +601,34 @@ public class CastroGUI implements ActionListener, ChangeListener,
 		vbEdgesRelative.setVisible(false);
 
 		vbEdges.add(vbEdgesRelative);
-
+		vbEdges.setAlignmentX(Component.LEFT_ALIGNMENT);
 		vbEdgesAbsolute = Box.createVerticalBox();
 
 		bleLabel = new JLabel("Link Threshold:");
-
+		bleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		vbEdgesAbsolute.add(bleLabel);
 		vbEdgesAbsolute.add(Box.createVerticalStrut(5));
 
 		edgeThresholdSlider = new JSlider(0, edgeThresholdSliderNumberOfValues);
 		edgeThresholdSlider.setPaintTicks(true);
 		// dottedEdgeSlider.setPaintLabels(true);
-		edgeThresholdSlider
-				.setMajorTickSpacing(edgeThresholdSliderNumberOfValues / 2);
-		edgeThresholdSlider
-				.setMinorTickSpacing(edgeThresholdSliderNumberOfValues / 20);
+		edgeThresholdSlider.setMajorTickSpacing(edgeThresholdSliderNumberOfValues / 2);
+		edgeThresholdSlider.setMinorTickSpacing(edgeThresholdSliderNumberOfValues / 20);
 		edgeThresholdSlider.setSnapToTicks(true);
 		edgeThresholdSlider.addChangeListener(this);
+		edgeThresholdSlider.setAlignmentX(Component.LEFT_ALIGNMENT);
 		setEdgeThresholdSliderValue(edgeThresholdSlider, normalEdgeThreshold);
 		// dottedEdgeSlider.setLabelTable(edgeSliderDictionary);
 
 		vbEdgesAbsolute.add(edgeThresholdSlider);
+		vbEdgesAbsolute.setAlignmentX(Component.LEFT_ALIGNMENT);
 		vbEdgesAbsolute.setVisible(true);
 
 		vbEdges.add(vbEdgesAbsolute);
 
 		Box hbDottedEdges = Box.createHorizontalBox();
 		JLabel dottedEdgeLabel = new JLabel("Dotted:");
+		
 		hbDottedEdges.add(dottedEdgeLabel);
 		hbDottedEdges.add(Box.createHorizontalStrut(3));
 
@@ -634,7 +636,7 @@ public class CastroGUI implements ActionListener, ChangeListener,
 		dottedEdgeChB.setSelected(true);
 		dottedEdgeChB.addChangeListener(this);
 		hbDottedEdges.add(dottedEdgeChB);
-
+		hbDottedEdges.setAlignmentX(Component.LEFT_ALIGNMENT);
 		vbEdges.add(hbDottedEdges);
 		vbEdges.add(Box.createVerticalStrut(5));
 
@@ -647,7 +649,7 @@ public class CastroGUI implements ActionListener, ChangeListener,
 		normalEdgeChB.setSelected(true);
 		normalEdgeChB.addChangeListener(this);
 		hbNormalEdges.add(normalEdgeChB);
-
+		hbNormalEdges.setAlignmentX(Component.LEFT_ALIGNMENT);
 		vbEdges.add(hbNormalEdges);
 		vbEdges.add(Box.createVerticalStrut(5));
 
@@ -661,7 +663,7 @@ public class CastroGUI implements ActionListener, ChangeListener,
 		thickEdgeChB.setSelected(true);
 		thickEdgeChB.addChangeListener(this);
 		hbThickEdges.add(thickEdgeChB);
-
+		hbThickEdges.setAlignmentX(Component.LEFT_ALIGNMENT);
 		vbEdges.add(hbThickEdges);
 		vbEdges.add(Box.createVerticalStrut(5));
 
@@ -702,12 +704,17 @@ public class CastroGUI implements ActionListener, ChangeListener,
 
 		JPanel centralPanel = new JPanel(new BorderLayout());
 
+		Box centralBox = Box.createVerticalBox();
 		graphPanel = new JPanel();
 		graphPanel.setLayout(new BorderLayout());
+		bleLabel = new JLabel("Similarity graph panel:");
+		bleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		centralBox.add(bleLabel);
 		graphPanel.setBorder(new LineBorder(Color.BLACK, 1));
 		graphPanel.setBackground(Color.WHITE);
 
-		centralPanel.add(graphPanel, BorderLayout.CENTER);
+		centralBox.add(graphPanel);
+		centralPanel.add(centralBox, BorderLayout.CENTER);
 
 		/*
 		 * JPanel leftRightGraphPanel = new JPanel(new BorderLayout()); JButton
@@ -773,7 +780,14 @@ public class CastroGUI implements ActionListener, ChangeListener,
 		jep.setEditable(true);
 
 		JScrollPane jepScroll = new JScrollPane(jep);
-		content.add(jepScroll, BorderLayout.EAST);
+		
+		Box jepBox = Box.createVerticalBox();
+		//jepBox.add(Box.createVerticalStrut(5));
+		bleLabel = new JLabel("Named entities:");
+		bleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		jepBox.add(bleLabel);
+		jepBox.add(jepScroll);
+		content.add(jepBox, BorderLayout.EAST);
 		jepScroll.setPreferredSize(new Dimension(180, 3000));
 		// jepScroll.setBounds(graphLeft + graphWidth + 10, graphTop, 180,
 		// graphHeight);
