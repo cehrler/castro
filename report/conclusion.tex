@@ -28,7 +28,7 @@ near future.
 \subsubsection{NLP and IR Processing}
 For our current goals we limited ourselves to three kinds of named entities. 
 It is however possible to extract additional relevant types of named entities. 
-This direction can be further expanded with automatic extraction of events and other kinds of information that can be relevant for measuring 
+This direction can be further expanded with automatic extraction of events and other kinds of information that could be interesting for measuring 
 document similarity in a historically motivated way.  
 
 As described previously, the string kernel based aliasing method works on the characters level. 
@@ -44,43 +44,46 @@ As an alternative to kernels co-referencing, we also intend to experiment with a
 BART and compare the results of both approaches. 
 
 In the current implementation we measure document similarity using the Manhattan distance and approximate document query similarity 
-using the cosine measure. 
-There are however other measures that could be tested for both similarity measurments. 
-Among others, we plan to experiment with TO BE COMPLETED, MICHAL?
+using the cosine measure. There are however other measures that could be tested for both similarity measurments. 
+
+Querying expension can be applied not only to named entities, but also to other query terms. This could be done by pre-computing similarity matrixes
+of the indexed vocabulary words using distributional and other methods for determining lexical similarity. Additionaly, we intend to improve
+the currently avaliable exact matching of query terms to a model that is sensitive to morphological variations.
 
 
 \subsubsection{Visualization and GUI Functionalities}
-The visualization system can be further improved in several manners. 
-A direction we intend to explore is the relevance and possibilities of plotting and representing correlations of 
-the retrieved documents to different parameters, such as time and locations.
 
-We also be interested to experiment with additional graph layouts that have the potential of highlighting different properties of the 
+We are interested to experiment with additional graph layouts that have the potential of highlighting different properties of the 
 retrieved set of documents. For example, we plan to implement a chronological layout, in which nodes are presented on a single chronological 
-line. Edges will come in the form of arcs. Such representation has the potential of revealing time related information that is not 
-directly visible in the current layout. 
+line. Edges will come in the form of arcs. Such representation has the potential of unvieling time related information that is not 
+directly visible in the current layout. Another possibility would be arranging the documents according to their location, possibly on the background
+of a map. 
 
-add sniplets.
+Currently, we present a table in which each line contains meta-data informtaion about a certain document. This representation can be extended
+to include Google style text sniplets of each document, with highlighted query terms.
 
-As our representation comes in the form of a graph, a natural direction for further exploration would be to examine the usefulness of 
+As our main visual representation comes in the form of a graph, a natural direction for further exploration would be to examine the usefulness of 
 graph algorithms for inferring interpretable information. One of the possibilities is to apply clustering algorithms 
-that would enable automatic highlighting of clusters in the graph. On the data.
+that would enable automatic highlighting of cliques in the graph. This possibility can be particulary relevant when working with graphs that 
+contain a large number of documents, a setup in which clusters may be difficult to identify manually. 
 
-An important extension that would greatly increase the generality and usefulness of the system, 
-will be an option for loading and switching between several databases. This will allow the user to work with several collections.
+An important extension that would increase the generality and usefulness of the system, 
+is an option for loading and switching between several databases. This will allow the user to work with several collections. Querying options
+would then have to be adjusted to the meta-data avaliable for each collection.
 
 In addition to the major planned extensions, we keep experimenting with different designs and features that are meant to make the
 system more intuitive and simple to use. 
 
 \subsubsection{Performance Optimization and Scalability}
-Our system is designed to be a real-world application that history students and historians can use in their daily study and research activities.
-For this goal to be achieved the system has to be optimal in terms of loading time and GUI performance and be scalable for collections 
+Our system is designed to be a practical application that history students and historians can use in their daily study and research activities.
+For this goal to be achieved, the system has to be optimal in terms of loading time and GUI performance and be scalable for collections 
 of very large size. We have already done several optimizations that improved the system performance as compared to
-previous versions. We optimaized the graph components by elimination of unnecessary graph redrawing. Index files and and similarity matrixes
-files were converted in a binarry format which optimizes loading time and space requirments. JUNG.
+previous versions. Among others, we optimaized the graph components by elimination of unnecessary graph redrawing. 
+Index files and and similarity matrixes files were converted to a binarry format which optimizes loading time and space requirments. 
 To enhance the performance of the application further, we intend to make use of multi-threading techniques. 
 
 Our final goal is to achieve fast loading time of the application, fast retrieval times of the documents and completely 
-smooth performance of all GUI components. We will test performance on collections larger then the Castro database to ensure
+smooth performance of all GUI components. We will test performance on collections larger then the Castro Speech Database to ensure
 that the system is indeed scalable.    
 
 \subsubsection{Evaluation}
