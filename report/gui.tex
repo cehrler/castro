@@ -1,27 +1,60 @@
+The query functions, graph and display functions are integrated into a single graphical front-end relying primarily on the mouse for user input.
 
-Using the similarity matrix generated, a graph of document similarities is generated: Each document is represented as a node, which is connected to other documents in the graph by edges representing the similarity measure of the two documents.
+\begin{figure}[h]
+\centering
+\caption{GUI}
+\includegraphics[width=160mm]{gui.png}
+\end{figure}
 
-\subsubsection {Querying Functionalities}
-\label{sec:querying_functionalities}
-The nodes of the graph are generated from the results of a database query supplied by the user, who can search either by keyword, by named entity (entered in double quotes, e.g.\ \code{"Castro"}) or by a combination of both in the same query. Likewise, the user may select a range of years to search in (e.g.\ retrieve documents only occurring between 1970 and 1975), as well as select only certain types of documents to be searched (e.g.\ retrieve only documents of type \code{SPEECH} or \code{INTERVIEW}). The documents most relevant to the current query are displayed, the number of the documents displayed being specified by the user (e.g.\ display the 25 most relevant documents), and edges connecting each document are drawn based on the similarity measures relating each document to each other.
+\subsubsection{Search function}
+\begin{figure}[h]
+\centering
+\caption{Search query}
+\includegraphics[width=160mm]{search.png}
+\end{figure}
 
-\subsubsection {Presenting Results}
-\label{sec:presenting_results}
-After submitting a query, the graph is drawn, in which the relevance measure of each document to the current query is represented by the absolute size of the node representing the document in question: The larger the node, the more relevant it is to the current query. The type of document represented by the node is represented by its shape: \note{Add symbol key!}
+Search terms are entered in the query form (item 1 in the figure above): Entering any term will return both NEs and also keywords sharing the exact form (not case-sensitive)--- For instance, entering \lingform{committee} will both return exact instances of \code{committee} in the document itself, and will return NEs similar to \lingform{committee} based on the string kernel similarity measure, e.g.\ \lingform{Central Committee} and \lingform{Central Committee of the Cuban Communist Party}. Multi-word searches are denoted in double quotes, e.g.\ \code{``Central Committee''}. The maximum amount of query results can be adjusted (item 2): For example, entering a value of \code{10} will return ten documents most relevant to the query. The set of years searched between is also modifiable specified by (item 3), as well as the type(s) of documents searched (e.g.\ \code{Speech}, \code{Interview}) (item 5). Once the criteria are entered, the query is run by (item 5).
 
-By default, the edges drawn are determined by the absolute similarity measure: If the similarity measure of two documents is greater than a user-adjustable edge threshold, an edge is drawn between them. The higher the absolute similarity of the two documents, the thicker the edge. However, the user may set the method of edge generation to display edges according to the relative similarity of the documents shown: According to the user-specifiable edge density, the more similar two documents are compared to the similarities of other documents, the thicker the edge.
 
-By adjusting the edge threshold (for absolute similarity) or the edge density (for relative similarity) the user can adjust the level of detail represented by the graph. This allows the user to both discern relationships between documents which are not very similar to each other, and to prune out relatively weaker relationships between documents which are very similar to each other.
 
-\pagebreak
-%\begin{figure}[t]
-%\centering
-%\caption{GUI}
-%\includegraphics[width=160mm]{gui.png}
-%\end{figure}
+\paragraph{Presentation}
+The results of the current query are displayed both in a table of results (\note{picture ref}) and in a graph displayed in the main window (\note{picture ref}).
 
-\subsubsection {Navigating Through Results}
-\label{sec:navigation_through_results}
-The graph, query input and display options are integrated into an interactive graphical front-end: Clicking on the node in the graph with the mouse selects it and displays in a sidebar the named entities associated with the document the node represents. Boldface entries represent named entities in the given document, while the non-boldface entries represent named entities similar to the boldface named entities in the document according to the string kernel similarity measure. For example, the named entity \textbf{\lingform{Castro}} may also return the similar named entities \lingform{Fidel}, \lingform{Fidel Castro} and \lingform{Dr. Fidel}. Additionally, by right-clicking on the node, the user may choose to view the document metadata (e.g.\ document type, date or location) or the document text itself. In the text, the named entities recognized in the text are displayed in a color associated with the type of entity, e.g.\ red for persons, green for organizations and blue for locations.
+\subsubsection{Results}
+\begin{figure}[h]
+\centering
+\caption{Query results table}
+\includegraphics[width=160mm]{table.png}
+\end{figure}
 
-Additionally, a vertex filter may be applied, enabling the user to display only nodes of a specified distance from a selected node, e.g.\ displaying only the nodes directly connected to the current node (a distance of 1) or displaying nodes which are connected to the selected node through at most one node (a distance of 2). This may be done in real-time, i.e.\ after applying a distance filter, the user may select a node in the graph to view an updated graph of all nodes satisfying the distance criterion for the newly-selected node. This feature allows the user to draw ``sub-graphs'' of the main graph in real time, allowing the user to focus on a particular cluster of documents and thus allowing the user even greater control over the search results.
+In the table, the documents are displayed in rows sorted by their relevance to the query in descending order. The metadata associated with each document is displayed in columns. If there was no metadata retrieved for a document, the entry for the data is empty or \code{NULL}.
+
+\subsubsection{Results}
+\begin{figure}[h]
+\centering
+\caption{Document similarity graph}
+\includegraphics[width=80mm]{nodecloseup.png}
+\end{figure}
+
+In the graph, each document is represented by a node (item 6). The relevance of the document to the query is represented by the size of the node: The larger the node, the more relevant the document is to the submitted query. The edges between the nodes represent similarities between the documents based on the similarity of the two documents based on the NEs each contain and their aliases according to the string kernel measure. The stronger the similarity connection, the heavier the line weight of the edge drawn. There are three line weights: ``dotted'' (item 7), ``normal'' (item 8) and ``heavy'' (item 9), in ascending order of the level of similarity they represent. The graph is fully scalable with scroll-wheel functions, and is able to be re-arranged by clicking and dragging each node to optimize the view of the graph manually. The graph can also be set to automatically re-arrange the nodes by clicking ``Arrange Graph''. By pressing CTRL and clicking on a node, the view will be centered on the said node automatically.
+
+\paragraph{Navigation}
+Selecting a document either through its corresponding entry in the table or node in the graph with the mouse or keyboard highlights it and displays the NEs in the document in a sidebar. The NEs in a particular document and their string kernel-based aliases are displayed in the sidebar: Boldface entries represent NEs in the given document, while the non-boldface entries represent NEs similar to the boldface NEs in the document according to the string kernel similarity measure. For example, the NE \textbf{\lingform{Castro}} may also return the similar NEs \lingform{Fidel}, \lingform{Fidel Castro} and \lingform{Dr. Fidel}. The type of the NE (e.g.\ \code{Person} or \code{Organization}) is represented by the color of the text, e.g.\ red for \meta{Persons}, green for \meta{Organizations} and blue for \meta{Locations}. It also is possible to select multiple documents, e.g.\ by holding SHIFT and clicking on multiple nodes/table entries, or by clicking and dragging the mouse to create a selection box encompassing the nodes/table entries to be selected. When multiple documents are selected, the entries displayed in the sidebar are those that are common to all selected documents.
+
+\begin{figure}[h]
+\centering
+\caption{Document similarity graph}
+\includegraphics[width=80mm]{nodeclick.png}
+\end{figure}
+
+In addition to viewing document metadata in the query results table, the user may to view the metadata of the document associated with a particular node (e.g.\ document \meta{Type}, \meta{Date} or \meta{Location}) through the node's context menu (item 10) (i.e.\ by right-clicking on the node with the mouse). Also available through the context menu is the text of the document itself, which is displayed in a separate window which can be kept open while still navigating through the graph and viewing other nodes (item 11). The NEs in the text are denoted by being colored according to their type. Lastly, it is possible to automatically select the nearest neighbors of the node, i.e.\ to select the nodes which share a NE directly with the said node.
+
+\paragraph{Display options}
+
+\begin{figure}[h]
+\centering
+\caption{Display options}
+%\includegraphics[width=80mm]{displayopts.png}
+\end{figure}
+
+Lastly, the graphical display may be further adjusted by applying a distance filter (item 12) or by adjusting the method by which edges are drawn (item 13).

@@ -76,15 +76,16 @@ input/output examples, evaluation??}
 \subsection{Representing Documents in Vector Space}
 \label{sec:representing_documents_in_vector_space}
 
-\subsubsection{General Indexing Approach}
-\label{sec:general_indexing_approach}
+\subsubsection{Indexing and Term Weighting}
+\label{sec:indexing_term_weighting}
 \note{description of the 4 different representations, tf/tfidf with motivation and
 interpretation for each, examples}
 
-\subsubsection{Non Contextual Co-reference Resolution with String Kernels}
-\label{sec:string_kernel}
+\subsubsection{Aliasing with String Kernels}
+\label{sec:aliasing_string_kernel}
+
 \note{motivation, description of the algorithm to create similarity matrixes between NE's,
-smoothing document representations with Kernel matrix as co-reference resolution}
+smoothing document representations with Kernel matrix as aliasing}
 
 \subsection{Information Retrieval}
 \label{sec:information_retrieval}
@@ -103,18 +104,8 @@ smoothing document representations with Kernel matrix as co-reference resolution
 
 \subsection{Graphical Representation}
 \label{sec:graphical_representation}
-\input{gui}
+\input{representation}
 	
 \subsection{Combining It All: User Interface} 
 \label{sec:combining_it_all:_user_interface}
-
-\note detailed description of all the features
-
-\subsubsection{Querying Functionalities}
-\label{sec:querying_functionalities}
-
-\subsubsection{Presenting Results}
-\label{sec:presenting_results}
-
-\subsubsection{Navigating through Results}
-\label{navigation_through_results}
+\input{gui}

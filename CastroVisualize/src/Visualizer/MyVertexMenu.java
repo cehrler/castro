@@ -7,7 +7,7 @@ public class MyVertexMenu extends JPopupMenu {
 		super("Vertex Menu");
 		this.add(new InfoMenuItem<Functionality.Node>());
 		this.add(new OpenTextMenuItem<Functionality.Node>());
-		this.add(new MarkNeightboursMenuItem<Functionality.Node>());
+		this.add(new MarkNeightboursMenuItem());
 		this.addSeparator();
 	}
 }

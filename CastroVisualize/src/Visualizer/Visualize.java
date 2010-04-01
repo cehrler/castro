@@ -170,6 +170,7 @@ public class Visualize implements ItemListener, MouseListener {
 		
 		vv.setPickedVertexState(newPsn);
 		vv.getRenderContext().setMultiLayerTransformer(mlt);
+		vv.getRenderContext().setVertexFillPaintTransformer(VertexColorTransformer.vctInstance);
 		layout.lock(lockLayout);
 		
 	    MyGraphZoomScrollPane graphPane = new MyGraphZoomScrollPane(vv);
@@ -191,6 +192,37 @@ public class Visualize implements ItemListener, MouseListener {
 		
 	}
 	
+	public void CenterGraph(int borderSpacing, boolean _repaint)
+	{
+		List<Functionality.Node> ln = myGraph.getNodes();
+		
+		double xsum = 0;
+		double ysum = 0;
+		
+		for (int i = 0; i < ln.size(); i++)
+		{
+			xsum += layout.getX(ln.get(i));
+			ysum += layout.getY(ln.get(i));
+		}
+		
+		double xmean = xsum / ln.size();
+		double ymean = ysum / ln.size();
+		
+		double xcoef = (layout_width - borderSpacing * 2) / (double)layout_width;
+		double ycoef = (layout_height - borderSpacing * 2) / (double)layout_height;
+		
+		for (int i = 0; i < ln.size(); i++)
+		{
+			double xnew = borderSpacing + layout.getX(ln.get(i)) * xcoef;
+			double ynew = borderSpacing + layout.getY(ln.get(i)) * ycoef;
+			
+			layout.setLocation(ln.get(i), xnew, ynew);
+		}
+		
+		if (_repaint == true)
+			vv.repaint();
+	}
+	
 	public JComponent drawGraph() {
 		// System.out.println("The graph qt"+qt.toString()); // DEBUG
 		// ISOMLayout
@@ -208,14 +240,14 @@ public class Visualize implements ItemListener, MouseListener {
 		//BasicVertexLabelRenderer<Functionality.Node, Functionality.Edge> bvlr =  new (BasicVertexLabelRenderer<Functionality.Node, Functionality.Edge>)(vv.getRenderContext().getVertexLabelRenderer());
 		
 		BasicRenderer<Functionality.Node, Functionality.Edge> br = new BasicRenderer<Node, Edge>();
-		br.setVertexLabelRenderer(new BasicVertexLabelRenderer<Functionality.Node, Functionality.Edge>(Position.CNTR));
+		//br.setVertexLabelRenderer(new BasicVertexLabelRenderer<Functionality.Node, Functionality.Edge>(Position.CNTR));
 		
 		
 		vv.setRenderer(br);
 		
-		MyVertexLabelRenderer dvlr = new MyVertexLabelRenderer(Color.red);
+		//MyVertexLabelRenderer dvlr = new MyVertexLabelRenderer(Color.red);
 		
-		vv.getRenderContext().setVertexLabelRenderer(dvlr);
+		//vv.getRenderContext().setVertexLabelRenderer(dvlr);
 		
 		
 		//bvlr.setPosition(Position.CNTR);
@@ -229,8 +261,12 @@ public class Visualize implements ItemListener, MouseListener {
 		layout.step();
 		layout.step();
 		layout.step();
+	    layout.step();
+		layout.step();
+		layout.step();
+		layout.step();
 		layout.lock(true);
-		
+		CenterGraph(10, false);
 		
 		// Create a graph mouse and add it to the visualization component
 		//DefaultModalGraphMouse gm = new DefaultModalGraphMouse();
@@ -246,6 +282,7 @@ public class Visualize implements ItemListener, MouseListener {
 
 		setEdgeWeightStrokeFunction();
 	    vv.getRenderContext().setVertexShapeTransformer(new VertexShapeSizeAspect<Functionality.Node, Functionality.Edge>(myGraph) );
+		vv.getRenderContext().setVertexFillPaintTransformer(VertexColorTransformer.vctInstance);
 	
 	    MyGraphZoomScrollPane graphPane = new MyGraphZoomScrollPane(vv);
 	    
@@ -259,7 +296,7 @@ public class Visualize implements ItemListener, MouseListener {
 		EdgeWeightStrokeFunction<Functionality.Edge> ewsf = new EdgeWeightStrokeFunction<Functionality.Edge>(_normalEdgeThreshold, _thickEdgeThreshold);
 		vv.getRenderContext().setEdgeStrokeTransformer(ewsf);
 		vv.repaint();
-		System.err.println("edge stroke fc: " + _normalEdgeThreshold + ", " + _thickEdgeThreshold);
+		//System.err.println("edge stroke fc: " + _normalEdgeThreshold + ", " + _thickEdgeThreshold);
 	}
 	
 	public void setEdgeFilter(boolean dotted, boolean normal, boolean thick)
@@ -334,7 +371,7 @@ public class Visualize implements ItemListener, MouseListener {
 		
 	}
 	
-	public void FocusNodes(Set<Functionality.Node> nodes)
+	public void FocusNodes(Set<Functionality.Node> nodes, boolean adjustVertexFilter)
 	{
 		PickedState<Functionality.Node> ps = vv.getPickedVertexState();
 		List<Functionality.Node> ln = DataModule.displayedGraph.getNodes();
@@ -351,7 +388,7 @@ public class Visualize implements ItemListener, MouseListener {
 				ps.pick(ln.get(i), false);
 			}
 		}
-		
+		VertexColorTransformer.vctInstance.setSelectedNodes(nodes);
 		CastroGUI.setSelectedNodesDetail(pickedList);
 		
 		vv.setPickedVertexState(ps);
@@ -359,7 +396,7 @@ public class Visualize implements ItemListener, MouseListener {
 		
 		//DataModule.displayedGraph.setCenter(n);
 		
-		if (vdp instanceof VertexDisplayPredicateDistance)
+		if (vdp instanceof VertexDisplayPredicateDistance && adjustVertexFilter)
 		{
 			((VertexDisplayPredicateDistance) vdp).setCentralNodes(ps.getPicked());
 		}

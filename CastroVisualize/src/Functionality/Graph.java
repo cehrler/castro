@@ -107,7 +107,7 @@ public class Graph {
 		for (int i = 0; i < Math.min(edgesBle.size(), numEdges); i++)
 		{
 			Edge e = edgesBle.get(i);
-			System.err.println("edge " + i + ": " + e.getStrength());
+			//System.err.println("edge " + i + ": " + e.getStrength());
 			edges.add(e);
 			e.getNode1().addEdge(e.getNode2(), e.getStrength());
 			e.getNode2().addEdge(e.getNode1(), e.getStrength());
@@ -193,7 +193,7 @@ public class Graph {
 	
 	public void ChangeEdgeDensities(double _edgeDensity, double _normalEdgeRelativeMultiplier, double _thickEdgeRelativeMultiplier)
 	{
-		System.err.println("edge density: " + _edgeDensity);
+		//System.err.println("edge density: " + _edgeDensity);
 		int numEdges = (int)Math.round( nodes.size() * _edgeDensity );
 			
 		createEdgesDensity(numEdges);
@@ -219,7 +219,7 @@ public class Graph {
 			thickEdgeThreshold = 0.6;			
 		}
 		
-		System.err.println("---dottedEdge: " + dottedEdgeThreshold + ", normalEdge: " + normalEdgeThreshold + ", thickEdge: " + thickEdgeThreshold);
+		//System.err.println("---dottedEdge: " + dottedEdgeThreshold + ", normalEdge: " + normalEdgeThreshold + ", thickEdge: " + thickEdgeThreshold);
 		
 	}
 	
@@ -237,9 +237,9 @@ public class Graph {
 		gr.simMatrix = _simMatrix;
 		gr.ChangeEdgeDensities(_edgeDensity, _normalEdgeRelativeMultiplier, _thickEdgeRelativeMultiplier);
 		
-		System.err.println("dottedEdgeThreshold: " + gr.dottedEdgeThreshold);
-		System.err.println("normalEdgeThreshold: " + gr.normalEdgeThreshold);
-		System.err.println("thickEdgeThreshold: " + gr.thickEdgeThreshold);
+		//System.err.println("dottedEdgeThreshold: " + gr.dottedEdgeThreshold);
+		//System.err.println("normalEdgeThreshold: " + gr.normalEdgeThreshold);
+		//System.err.println("thickEdgeThreshold: " + gr.thickEdgeThreshold);
 		
 		
 		return gr;

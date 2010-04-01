@@ -1,45 +1,100 @@
 \subsection {Summary}
 \label{sec:summary}
 
-We presented a system that bla bla bla
-TO BE COMPLETED
+We presented a system that supports historians in their work with collections of historical documents. 
+Our application provides an innovative interface that enables searching and browsing collections in an intuitive and easy to use way.
+Most importantly, our approach aims at helping historians to formalize research hypothesis's and testing them on the collection.
 
+We achieve that by using NLP and IR techniques to extract historically relevant information about the documents and by exploiting
+this information for determining potential links between documents. We organize the data and present it graphically,
+in a unique way that can reveal hidden patterns and connections between the documents.
+ 
+It is important to stress that though our current version of the system is dedicated solely to the Castro Speech Database, 
+it can be relatively easily extended to other collections of historical data. Moreover, we believe that our core idea of
+extracting domain relevant information and organizing documents by similarity according to this information, can be tailored
+to collections of texts in other domains. For example, one could use our approach to organize articles in a scientific field 
+according to citation similarity. 
+
+Having said that, our current focus still lies in the realm of historical texts. In the following section we elaborate on
+our ideas for making this system maximally relevant and usable for this domain. 
+ 
 
 \subsection {Future Work}
 \label{sec:future_work}
-The presented system is a work in constant progress. 
-In the following we present several ideas for possible improvements we plan to experiment with in future work.
+As our system has many sub-components, improvements and extensions are possible
+at almost all processing facets. In the following we present several ideas for possible improvements we plan to experiment with in the
+near future.
 
-TO BE EXPANDED
-APLICABILITY OF APPROACH TO OTHER HISTORICAL DATABASES
-
-\subsubsection{NLP processing}
+\subsubsection{NLP and IR Processing}
 For our current goals we limited ourselves to three kinds of named entities. 
 It is however possible to extract additional relevant types of named entities. 
-This direction can be further expanded with automatic extraction of events and other kinds of information that can be relevant for measuring 
+This direction can be further expanded with automatic extraction of events and other kinds of information that could be interesting for measuring 
 document similarity in a historically motivated way.  
 
-The proposed coreference resolution approach can be further expanded to include referring expressions. 
-This is expected to have a positive impact on the reliability of the similarity measure. 
-We also intend to experiment with an off-the-shelf coreference resolution system such as BART.
-We plan to perform more thorough evaluation of each of the NLP dub tasks. 
+As described previously, the string kernel based aliasing method works on the characters level. 
+This leads to over-generation which can be only partially reduced by raising the inter-entity similarity threshold. 
+A further improvement of the aliasing precision might come in the form of incorporating knowledge about the structure of the named entities. 
+For example, a name could be tagged
+with labels such as \emph{first name, last name, role} and others. This knowledge can then be integrated as tree kernels
+that would further constrain the acceptable name variations. The feasibility of this direction is exemplified in \cite{string_kernel_coref}.
+We could further rely on their approach to expand our mechanism to include referring expressions by using expletive and binding kernels.
+Such improvements are extremely important as they are expected to have a positive impact on the reliability of the similarity measurements. 
+Reliable aliasing is also important for our query expansion mechanism, and hence has impact on the quality of the retrieval.
+As an alternative to kernels co-referencing, we also intend to experiment with an off-the-shelf co-reference resolution system such as 
+BART and compare the results of both approaches. 
+
+In the current implementation we measure document similarity using the Manhattan distance and approximate document query similarity 
+using the cosine measure. There are however other measures that could be tested for both similarity measurments. 
+
+Querying expension can be applied not only to named entities, but also to other query terms. This could be done by pre-computing similarity matrixes
+of the indexed vocabulary words using distributional and other methods for determining lexical similarity. Additionaly, we intend to improve
+the currently avaliable exact matching of query terms to a model that is sensitive to morphological variations.
 
 
-\subsubsection{Visualization}
-The visualization system can be further improved in several manners. 
-A direction we intend to explore is the relevance and possibilities of plotting and representing correlations of the retrieved documents 
-to different parameters, such as time and locations.
+\subsubsection{Visualization and GUI Functionalities}
 
-We also indent to experiment with additional graph layouts that have the potential of highlighting different properties of the 
+We are interested to experiment with additional graph layouts that have the potential of highlighting different properties of the 
 retrieved set of documents. For example, we plan to implement a chronological layout, in which nodes are presented on a single chronological 
-line. Edges will come in the form of arcs. Such representation has the potential of revealing time related information that is not 
-directly visible in the current layout. 
+line. Edges will come in the form of arcs. Such representation has the potential of unvieling time related information that is not 
+directly visible in the current layout. Another possibility would be arranging the documents according to their location, possibly on the background
+of a map. 
 
-As our representation comes in the form of a graph, a natural direction for futher exploration would be to examine the usefulness of 
-graph algorithms for inferring interpretable information. One of the possibilities is to experiment with automatic clustering algorithm 
-that would enable highligting clusters in the graph. 
+Currently, we present a table in which each line contains meta-data informtaion about a certain document. This representation can be extended
+to include Google style text sniplets of each document, with highlighted query terms.
 
-Finally, we plan to perform several optimizations that would improve the real-time performance of our graphical user interface.  
+As our main visual representation comes in the form of a graph, a natural direction for further exploration would be to examine the usefulness of 
+graph algorithms for inferring interpretable information. One of the possibilities is to apply clustering algorithms 
+that would enable automatic highlighting of cliques in the graph. This possibility can be particulary relevant when working with graphs that 
+contain a large number of documents, a setup in which clusters may be difficult to identify manually. 
 
-We believe that enhancing the system in the proposed directions can further establish the relevance and usefulness of our tool for historians.  
+An important extension that would increase the generality and usefulness of the system, 
+is an option for loading and switching between several databases. This will allow the user to work with several collections. Querying options
+would then have to be adjusted to the meta-data avaliable for each collection.
+
+In addition to the major planned extensions, we keep experimenting with different designs and features that are meant to make the
+system more intuitive and simple to use. 
+
+\subsubsection{Performance Optimization and Scalability}
+Our system is designed to be a practical application that history students and historians can use in their daily study and research activities.
+For this goal to be achieved, the system has to be optimal in terms of loading time and GUI performance and be scalable for collections 
+of very large size. We have already done several optimizations that improved the system performance as compared to
+previous versions. Among others, we optimaized the graph components by elimination of unnecessary graph redrawing. 
+Index files and and similarity matrixes files were converted to a binarry format which optimizes loading time and space requirments. 
+To enhance the performance of the application further, we intend to make use of multi-threading techniques. 
+
+Our final goal is to achieve fast loading time of the application, fast retrieval times of the documents and completely 
+smooth performance of all GUI components. We will test performance on collections larger then the Castro Speech Database to ensure
+that the system is indeed scalable.    
+
+\subsubsection{Evaluation}
+
+We have currently performed a relatively small scale, and mostly qualitative evaluation of our system. We would like to 
+expand and systematize the evaluation process in order to be able to identify more easily sources of problems and further improvements.
+
+One of the central aspects of our future evaluation scheme will be user evaluation and feedback. We intend to introduce our system
+to students and researchers in history departments and receive feedback on their experiences with the system.
+To this end we will design questionnaires that will guide the users with the testing of the application and help us organize their feedback.\\
+ 
+We believe that evaluating and enhancing the system in the proposed directions can further establish the relevance and usefulness 
+of our tool for historians.  
 
