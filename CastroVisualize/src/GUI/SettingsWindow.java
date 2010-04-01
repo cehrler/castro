@@ -50,8 +50,8 @@ public class SettingsWindow implements ActionListener {
 	public static Double maxEdgeThreshold = 1.0;
 
 	public static String currIndex = "TFIDF";
-	public static boolean smoothedIndex = true;
-	public static boolean smoothedSimMatrix = true;
+	public static boolean smoothedIndex = false;
+	public static boolean smoothedSimMatrix = false;
 	
 	public static Double personsCoef = 0.3;
 	public static Double locationsCoef = 0.3;

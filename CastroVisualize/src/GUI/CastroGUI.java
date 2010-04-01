@@ -843,6 +843,7 @@ public class CastroGUI implements ActionListener, ChangeListener,
 
 	private void visualizeGraph() {
 		// -198, -270
+		//DataModule.EvaluateClustering(2, 5);
 		visu = new Visualize(bigGraph, 800, 800);
 
 		if (graph_component != null) {

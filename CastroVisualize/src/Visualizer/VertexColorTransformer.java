@@ -69,7 +69,16 @@ public class VertexColorTransformer implements Transformer<Functionality.Node, P
 			}
 			else
 			{
-				return Color.RED;
+				if (arg0.GetCluster() == -1)
+					return Color.RED;
+				else if (arg0.GetCluster() == 0)
+					return Color.PINK;
+				else if (arg0.GetCluster() == 1)
+					return Color.ORANGE;
+				else if (arg0.GetCluster() == 2)
+					return Color.GREEN;
+				else
+					return Color.CYAN;
 			}
 		}
 	}

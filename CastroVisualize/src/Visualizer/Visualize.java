@@ -219,6 +219,28 @@ public class Visualize implements ItemListener, MouseListener {
 			vv.repaint();
 	}
 	
+	private void InitializeClusterGraphLayout()
+	{
+		int numClusters = myGraph.GetNumberOfClusters();
+		double radius = Math.min(layout_width, layout_height) / 3;
+		double angleShift = (2 * Math.PI) / numClusters;
+		
+		List<Functionality.Node> ln = myGraph.getNodes();
+		
+		Node n;
+		int clusterID;		
+		for (int i = 0; i < ln.size(); i++)
+		{
+			n = ln.get(i);
+			clusterID = n.GetCluster();
+			
+			double xnew = (layout_width / 2) + Math.cos(angleShift * clusterID) * radius + (50 - Math.random() * 100);
+			double ynew = (layout_height / 2) + Math.sin(angleShift * clusterID) * radius + (50 - Math.random() * 100);
+			
+			layout.setLocation(n, xnew, ynew);
+		}
+	}
+	
 	public JComponent drawGraph() {
 		// System.out.println("The graph qt"+qt.toString()); // DEBUG
 		// ISOMLayout
@@ -253,6 +275,12 @@ public class Visualize implements ItemListener, MouseListener {
 		
 		//layout = new SpringLayout2<Functionality.Node, Functionality.Edge>(this.qt);
 		layout.initialize();
+		
+		if (myGraph.GetNumberOfClusters() > 1)
+		{
+			InitializeClusterGraphLayout();
+		}
+		
 	    layout.step();
 		layout.step();
 		layout.step();

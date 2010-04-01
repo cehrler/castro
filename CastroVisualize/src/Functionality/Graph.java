@@ -35,6 +35,21 @@ public class Graph {
 		return thickEdgeThreshold;
 	}
 	
+	public int GetNumberOfClusters()
+	{
+		int maxID = -1;
+		
+		for (int i = 0; i < nodes.size(); i++)
+		{
+			if (nodes.get(i).GetCluster() > maxID)
+			{
+				maxID = nodes.get(i).GetCluster();
+			}
+		}
+		
+		return maxID + 1;
+	}
+	
 	public void SetEdgeParams(SimMatrix _simMatrix, double _dottedEdgeThreshold, double _normalEdgeThreshold, double _thickEdgeThreshold)
 	{
 		dottedEdgeThreshold = _dottedEdgeThreshold;
@@ -175,6 +190,10 @@ public class Graph {
 		gr.thickEdgeThreshold = _normalEdgeThreshold * _thickEdgeAbsoluteMultiplier;
 		
 		gr.simMatrix = _simMatrix;
+		gr.createEdgesDensity(ln.size() * 3);
+		ChineseWhisperClustering.Evaluate(gr, 3, 5);
+		
+		
 		gr.createEdgesThreshold();
 		
 		return gr;
@@ -235,6 +254,10 @@ public class Graph {
 		}
 
 		gr.simMatrix = _simMatrix;
+		
+		gr.createEdgesDensity(ln.size() * 3);
+		ChineseWhisperClustering.Evaluate(gr, 3, 5);
+		
 		gr.ChangeEdgeDensities(_edgeDensity, _normalEdgeRelativeMultiplier, _thickEdgeRelativeMultiplier);
 		
 		//System.err.println("dottedEdgeThreshold: " + gr.dottedEdgeThreshold);

@@ -789,4 +789,19 @@ public class DataModule {
 
 	}
 	
+	public static void EvaluateClustering(int numClusters, int numSteps)
+	{
+		System.err.println("Kmeans start");
+		
+		KMeansCluster kmeans = new KMeansCluster(personsIndexSmooth, locationsIndexSmooth, organizationsIndexSmooth, displayedGraph.getNodes(), numClusters);
+			
+		for (int i = 0; i < numSteps; i++)
+		{
+			kmeans.NextStep();
+		}
+		
+		kmeans.Evaluate();
+		System.err.println("Kmeans stop");
+	}
+	
 }
