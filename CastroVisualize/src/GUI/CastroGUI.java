@@ -139,7 +139,7 @@ public class CastroGUI implements ActionListener, ChangeListener,
 	private static int frame_height = 700;
 
 	public static Double edgeDensity = 2.5;
-	private static Double normalEdgeThreshold = 0.25;
+	private static Double normalEdgeThreshold = 0.20;
 
 	private boolean lockLayout = true;
 
