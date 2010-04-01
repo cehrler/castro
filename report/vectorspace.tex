@@ -3,6 +3,16 @@
 \note{description of the 4 different representations, tf/tfidf with motivation and
 interpretation for each, examples}
 
+Vector model is the model of representing text document or any other data. In vector model for information retrieval both documents and queries are represented as a vector of numbers. Number at each position of the vector corresponds to the term importance for the representation of the query or document. The main advantage of the vector model is that it has easy algebraic formulation. It's also not that strict as the boolean model. In boolean model document either completely fits to the query or it doesn't fit at all. In real word the situation is different, the relevance of the document for the user is rathed continuous quantity and the same applies to the vector model.
+
+The coefficients are usually normalised in order to have the same length. We don't want documents with a lot of words to be advantaged. What is important is the density of the term in the document. That's the reason why the vector representations of the documents are often normalised in the way that the sum of all indices sum up to one. 
+
+The favourite normalization in vector model are TF and TFIDF score. TF stands for term frequency. It is computed directly using the counts of the terms in the document. Weight of the term 
+
+ Each vector dimension corresponds to distinct search term 
+
+ Eeach item is represented by the vector. In the context of information retrieval, . T
+
 \subsubsection {Aliasing with String Kernels}
 \label{sec:aliasing_string_kernel}
 \note{motivation, description of the algorithm to create similarity matrixes between NE's,
