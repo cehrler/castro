@@ -19,6 +19,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 import Functionality.DataModule;
 
@@ -58,7 +59,6 @@ public class SettingsWindow implements ActionListener {
 	public static Double locationsCoef = 0.33;
 	public static Double organizationsCoef = 0.34;
 	public static Double lexicalSimilarityCoef = 0.0;
-	public static int maxNumClusters = 0;
 	
 	private static int similarityMeasureType = 0;
 	
@@ -67,7 +67,13 @@ public class SettingsWindow implements ActionListener {
 	private static Double customOrganizationsCoef = 0.3;
 	private static Double customLexicalSimilarityCoef = 0.1;
 	
-	public  static Boolean useDifferentColorsForClusters = true;
+	public static Boolean useDifferentColorsForClusters = true; //ok
+	public static int maxNumClusters = 0; //ok
+	public static int ChineseWhisperClusteringAdjusted_numMasterEdges = 8;
+	public static double ChineseWhisperClusteringAdjusted_activationThresholdMultiplier = 3.0;
+	public static double ChineseWhisperClustering_tempGraphDensity = 3.0;
+	public static int ChineseWhisperClusteringAdjusted_numberEdgesForMeanComputation = 10000000; //Means that all of them are used!
+	public static int ChineseWhisperClustering_minimalSizeOfCluster = 3;
 	
 	public SettingsWindow()
 	{
@@ -122,14 +128,14 @@ public class SettingsWindow implements ActionListener {
 				if (similarityMeasureCB.getSelectedIndex() == 2)
 				{
 					matrixLowerPanel.setVisible(true);
-					matrixLowerBoxEmpty.setVisible(false);
+					//matrixLowerBoxEmpty.setVisible(false);
 				}
 				else
 				{
 					matrixLowerPanel.setVisible(false);
-					matrixLowerBoxEmpty.setVisible(true);
+					//matrixLowerBoxEmpty.setVisible(true);
 				}
-				
+				frame.pack();
 			}
 		});
 		
@@ -145,29 +151,33 @@ public class SettingsWindow implements ActionListener {
 		matrixLowerPanel.add(new JLabel("Persons:"));
 		
 		personsInterpCoefTF = new JTextField(customPersonsCoef.toString());
+		personsInterpCoefTF.setHorizontalAlignment(SwingConstants.TRAILING);
 		matrixLowerPanel.add(personsInterpCoefTF);
 
 		matrixLowerPanel.add(new JLabel("Locations:"));
 
 		locationsInterpCoefTF = new JTextField(customLocationsCoef.toString());
+		locationsInterpCoefTF.setHorizontalAlignment(SwingConstants.TRAILING);
 		matrixLowerPanel.add(locationsInterpCoefTF);
 
 		matrixLowerPanel.add(new JLabel("Organizations:"));
 
 		organizationsInterpCoefTF = new JTextField(customOrganizationsCoef.toString());
+		organizationsInterpCoefTF.setHorizontalAlignment(SwingConstants.TRAILING);
 		matrixLowerPanel.add(organizationsInterpCoefTF);
 
 		matrixLowerPanel.add(new JLabel("Lexical similarity:"));
 
 		lexicalSimilarityInterpCoefTF = new JTextField(customLexicalSimilarityCoef.toString());
+		lexicalSimilarityInterpCoefTF.setHorizontalAlignment(SwingConstants.TRAILING);
 		matrixLowerPanel.add(lexicalSimilarityInterpCoefTF);
 		matrixLowerPanel.setVisible(false);
 		
 		matrixBox.add(matrixLowerPanel);
 		
-		matrixLowerBoxEmpty = Box.createVerticalBox();
+		/*matrixLowerBoxEmpty = Box.createVerticalBox();
 		matrixLowerBoxEmpty.add(Box.createVerticalStrut(matrixLowerPanel.getPreferredSize().height));
-		matrixBox.add(matrixLowerBoxEmpty);
+		matrixBox.add(matrixLowerBoxEmpty);*/
 		
 		matrixBox.add(Box.createVerticalStrut(5));
 		

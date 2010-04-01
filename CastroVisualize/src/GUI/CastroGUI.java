@@ -999,6 +999,7 @@ public class CastroGUI implements ActionListener, ChangeListener,
 			String Author = "NULL";
 			String DocType = sqStd.DocType;
 			String Place = "NULL";
+			int maxNumNodes = sqStd.MaxNumDocs;
 			List<String> queryTerms = sqStd.QueryTerms;
 	
 			List<Double> termWeights = new ArrayList<Double>();
@@ -1050,6 +1051,7 @@ public class CastroGUI implements ActionListener, ChangeListener,
 			}
 			
 			NE_textField.setText(pomS);
+			//search_year_start.setSelectedItem(arg0)
 		}
 		else
 		{

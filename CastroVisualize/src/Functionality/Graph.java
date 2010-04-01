@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
 
+import GUI.SettingsWindow;
+
 public class Graph {
 	
 	private List<Node> nodes;
@@ -193,8 +195,8 @@ public class Graph {
 
 		if (maxClusters > 0)
 		{
-			gr.createEdgesDensity(ln.size() * 3);
-			ChineseWhisperClustering.Evaluate(gr, 3, 5);
+			gr.createEdgesDensity((int)(Math.round(ln.size() * SettingsWindow.ChineseWhisperClustering_tempGraphDensity)));
+			ChineseWhisperClustering.GetImplementation().Evaluate(gr, 3, 5);
 		}
 		else
 		{
@@ -268,8 +270,8 @@ public class Graph {
 		
 		if (maxClusters > 0)
 		{
-			gr.createEdgesDensity(ln.size() * 3);
-			ChineseWhisperClustering.Evaluate(gr, 3, 5);
+			gr.createEdgesDensity((int)(Math.round(ln.size() * SettingsWindow.ChineseWhisperClustering_tempGraphDensity)));
+			ChineseWhisperClustering.GetImplementation().Evaluate(gr, 3, 5);
 		}
 		else
 		{
