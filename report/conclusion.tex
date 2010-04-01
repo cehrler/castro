@@ -7,13 +7,12 @@ Most importantly, our approach aims at helping historians to formalize research 
 
 We achieve that by using NLP and IR techniques to extract historically relevant information about the documents and by exploiting
 this information for determining potential links between documents. We organize the data and present it graphically,
-in a unique way that can reveal hidden patterns and connections between the documents.
+in a way that can reveal hidden patterns and connections between the documents.
  
 It is important to stress that though our current version of the system is dedicated solely to the Castro Speech Database, 
-it can be relatively easily extended to other collections of historical data. Moreover, we believe that our core idea of
-extracting domain relevant information and organizing documents by similarity according to this information, can be tailored
-to collections of texts in other domains. For example, one could use our approach to organize articles in a scientific field 
-according to citation similarity. 
+it can be relatively easily extended to other collections of historical data. Moreover, Domain Knowledge Visualization literature
+provides us with promising indications that our core idea of extracting domain relevant information and organizing documents by similarity 
+according to this information, can be tailored to collections of texts in other domains. 
 
 Having said that, our current focus still lies in the realm of historical texts. In the following section we elaborate on
 our ideas for making this system maximally relevant and usable for this domain. 
@@ -32,13 +31,14 @@ This direction can be further expanded with automatic extraction of events and o
 document similarity in a historically motivated way.  
 
 As described previously, the string kernel based aliasing method works on the characters level. 
-This leads to over-generation which can be only partially reduced by raising the inter-entity similarity threshold. 
+This leads to over-generation which can be only partially reduced by raising the inter-entity similarity threshold.   
 A further improvement of the aliasing precision might come in the form of incorporating knowledge about the structure of the named entities. 
 For example, a name could be tagged
 with labels such as \emph{first name, last name, role} and others. This knowledge can then be integrated as tree kernels
 that would further constrain the acceptable name variations. The feasibility of this direction is exemplified in \cite{string_kernel_coref}.
 We could further rely on their approach to expand our mechanism to include referring expressions by using expletive and binding kernels.
-Such improvements are extremely important as they are expected to have a positive impact on the reliability of the similarity measurements. 
+Such improvements are extremely important as they are expected to have a positive impact on the reliability of the similarity measurements, and
+the quality of the resulting inter-document linking. 
 Reliable aliasing is also important for our query expansion mechanism, and hence has impact on the quality of the retrieval.
 As an alternative to kernels co-referencing, we also intend to experiment with an off-the-shelf co-reference resolution system such as 
 BART and compare the results of both approaches. 
