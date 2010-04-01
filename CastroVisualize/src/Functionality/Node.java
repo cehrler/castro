@@ -29,7 +29,7 @@ public class Node implements Comparable<Object> {
 	
 	public int visited = 0;
 	public int depth = 0;
-	private int clusterID = 1;
+	private int clusterID = -1;
 	
 	public int GetCluster()
 	{
