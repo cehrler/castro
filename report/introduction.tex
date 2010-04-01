@@ -46,7 +46,7 @@ Several processing tasks were performed in the course of implementation of the p
 \emph{NE Recognition:} A robust NE recognizer was used to identify persons, locations and organizations in each document.\\
 \emph{Document Indexing:} documents were indexed in four different manners and transformed to vector space matrices in order to support document retrieval and serve as input for similarity calculations. Three indexes were based on the three types of identified named entities. The fourth indexing method was based on global vocabulary. Both tf/idf scores and simple counts were computed.\\
 \emph{Co-reference Resolution:} In order to avoid treating name variations as different entities, 
-we implemented an approximation of a novel co-reference resolution system, focusing on aliasing.
+we implemented an approximation of a co-reference resolution system, focusing on aliasing - identification of name variations.
 First, similarity matrices between all named entities of the same type in the Castro collection were calculated using p-spectrum string kernel.
 Then, the similarity matrices were multiplied by the documents matrix. As a result, each document representation was boosted by all name 
 variations of the named entities that it contains.\\
