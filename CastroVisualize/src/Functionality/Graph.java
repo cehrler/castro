@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
 
+import GUI.SettingsWindow;
+
 public class Graph {
 	
 	private List<Node> nodes;
@@ -33,6 +35,21 @@ public class Graph {
 	public double getThickEdgeThreshold()
 	{
 		return thickEdgeThreshold;
+	}
+	
+	public int GetNumberOfClusters()
+	{
+		int maxID = -1;
+		
+		for (int i = 0; i < nodes.size(); i++)
+		{
+			if (nodes.get(i).GetCluster() > maxID)
+			{
+				maxID = nodes.get(i).GetCluster();
+			}
+		}
+		
+		return maxID + 1;
 	}
 	
 	public void SetEdgeParams(SimMatrix _simMatrix, double _dottedEdgeThreshold, double _normalEdgeThreshold, double _thickEdgeThreshold)
@@ -159,7 +176,7 @@ public class Graph {
 
 	}
 	
-	public static Graph createGraphThreshold(List<Node> ln, SimMatrix _simMatrix, double _normalEdgeThreshold, double _dottedEdgeAbsoluteMultiplier, double _thickEdgeAbsoluteMultiplier)
+	public static Graph createGraphThreshold(List<Node> ln, SimMatrix _simMatrix, double _normalEdgeThreshold, double _dottedEdgeAbsoluteMultiplier, double _thickEdgeAbsoluteMultiplier, int maxClusters)
 	{
 		Graph gr = new Graph();
 		gr.nodes = ln;
@@ -175,6 +192,21 @@ public class Graph {
 		gr.thickEdgeThreshold = _normalEdgeThreshold * _thickEdgeAbsoluteMultiplier;
 		
 		gr.simMatrix = _simMatrix;
+
+		if (maxClusters > 0)
+		{
+			gr.createEdgesDensity((int)(Math.round(ln.size() * SettingsWindow.ChineseWhisperClustering_tempGraphDensity)));
+			ChineseWhisperClustering.GetImplementation().Evaluate(gr, 3, 5);
+		}
+		else
+		{
+			for (int i = 0; i < ln.size(); i++)
+			{
+				ln.get(i).SetCluster(-1);
+			}
+		}
+		
+		
 		gr.createEdgesThreshold();
 		
 		return gr;
@@ -223,7 +255,7 @@ public class Graph {
 		
 	}
 	
-	public static Graph createGraphDensity(List<Node> ln, SimMatrix _simMatrix, double _edgeDensity, double _normalEdgeRelativeMultiplier, double _thickEdgeRelativeMultiplier) {
+	public static Graph createGraphDensity(List<Node> ln, SimMatrix _simMatrix, double _edgeDensity, double _normalEdgeRelativeMultiplier, double _thickEdgeRelativeMultiplier, int maxClusters) {
 		
 		Graph gr = new Graph();
 		gr.nodes = ln;
@@ -235,6 +267,20 @@ public class Graph {
 		}
 
 		gr.simMatrix = _simMatrix;
+		
+		if (maxClusters > 0)
+		{
+			gr.createEdgesDensity((int)(Math.round(ln.size() * SettingsWindow.ChineseWhisperClustering_tempGraphDensity)));
+			ChineseWhisperClustering.GetImplementation().Evaluate(gr, 3, 5);
+		}
+		else
+		{
+			for (int i = 0; i < ln.size(); i++)
+			{
+				ln.get(i).SetCluster(-1);
+			}
+		}
+		
 		gr.ChangeEdgeDensities(_edgeDensity, _normalEdgeRelativeMultiplier, _thickEdgeRelativeMultiplier);
 		
 		//System.err.println("dottedEdgeThreshold: " + gr.dottedEdgeThreshold);

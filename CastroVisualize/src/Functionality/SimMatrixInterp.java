@@ -61,6 +61,8 @@ public class SimMatrixInterp extends SimMatrix {
 		{
 			e.printStackTrace();
 		}
+		
+		numSpeeches = _lMatrix.get(0).getNumDocs();
 	}
 
 }

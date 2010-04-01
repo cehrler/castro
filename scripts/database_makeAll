@@ -13,6 +13,7 @@ $run_mysql --execute="source ./NE.sql;"
 $run_mysql --execute="source ./getNE.sql;"
 $run_mysql --execute="source ./getNEperSpeech.sql;"
 $run_mysql --execute="source ./getNodes.sql;"
+$run_mysql --execute="source ./getNode.sql;"
 $run_mysql --execute="source ./getSpeechText.sql;"
 $run_mysql --execute="source ./getDictionary.sql;"
 

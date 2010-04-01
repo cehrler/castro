@@ -36,6 +36,7 @@ public class KMeansCluster {
 		
 		numClusters = _numClusters;
 		r = new Random(System.currentTimeMillis());
+		clVec = new ArrayList<ClusterVector>();
 		
 		for (int i = 0; i < numClusters; i++)
 		{

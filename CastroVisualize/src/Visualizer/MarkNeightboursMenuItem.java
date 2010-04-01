@@ -47,6 +47,7 @@ public class MarkNeightboursMenuItem extends JMenuItem implements VertexListener
 		this.vertex = v;
 		this.visComp = visComp;
 		this.setText("Mark Neightbours");
+		System.err.println("Mark neightboursMenuItem!!!!!!");
 
 
 	}

@@ -1,4 +1,4 @@
-\documentclass[a4paper,draft]{scrartcl}
+\documentclass[a4paper,final]{scrartcl}
 \usepackage[english]{babel}
 
 \usepackage{apacite}
@@ -46,7 +46,7 @@
 % declare non-metalanguage data
 \newcommand{\lingform}[1]{\emph{#1}}
 \newcommand{\term}[1]{{\bf #1}}
-\newcommand{\scare}[1]{`#1'}
+\newcommand{\scare}[1]{``#1''}
 \newcommand{\meta}[1]{\textsc{#1}}
 \newcommand{\code}[1]{{\tt #1}}
 
@@ -64,40 +64,28 @@
 
 \maketitle
 \tableofcontents
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{abstract}
 \end{abstract}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Introduction} % (fold)
 \label{sec:introduction}
 \input{introduction}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \section{Main Part}
 \label{sec:main_part}
 \input{mainpart}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Evaluation}
 \label{sec:evaluation}
 \input{evaluation}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \section{Conclusion}
 \label{sec:conclusion}
 \input{conclusion}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \section{Appendix}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{apacite}
 \bibliography{bib}
 \end{document}
