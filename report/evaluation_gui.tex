@@ -18,7 +18,12 @@ However, all these documents contain the NE \lingform{Central Committee} or an N
 
 It seems then that the document clustering is more relevant than first observed: All the documents contain references to \code{Fidel Castro}. However, this is still of little practical use, as the NE \code{Fidel Castro} is in the vast majority of the documents in the corpus: This clustering does not distinguish a document or group of documents in a way which is of great use to a user browsing the corpus.
 
-However, querying more specific terms revealed different results: Querying \code{"Giron"}, and \code{"Kennedy"} produced a graph of documents which are much more similar to each other in a qualitative sense than that produced by the previous query, for example:
+However, querying more specific terms revealed different results: A query was entered using the terms \code{Giron}, and \code{Kennedy}, retrieving the 10 most relevant documents and enabling Chinese Whisper Clustering (set to a maximum of four clusters). Two distinct clusters of documents were produced: One was of documents directly related to the 1961 Bay of Pigs Invasion (a.k.a.\ Playa Gir\'{o}n), e.g.\ speeches on the anniversary of the event, or victory speeches. However, the other cluster was composed largely of documents in which \lingform{Playa Giron} was mentioned but the document was not directly related to the event. Most featured political and/or economic topics as well as the topic of US--Cuban relations or aggression.
+
+While all of these documents could be retrieved with a simple keyword-based search, the clustering of documents into similar themes is 
+
+
+produced a graph of documents which are much more similar to each other in a qualitative sense than that produced by the previous query, for example:
 
 \begin{enumerate}
 \item ``Castro marks 5th anniversary of [Bay of Pigs] invasion'' \label{eval:doc274}
