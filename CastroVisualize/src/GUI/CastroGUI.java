@@ -74,7 +74,7 @@ import GUI.SettingsWindow;
 public class CastroGUI implements ActionListener, ChangeListener,
 		ComponentListener {
 
-	private static JFrame frame;
+	public static JFrame frame;
 	private Container content;
 
 	private JComboBox search_year_start;
@@ -118,8 +118,12 @@ public class CastroGUI implements ActionListener, ChangeListener,
 	private JCheckBox normalEdgeChB;
 	private JCheckBox thickEdgeChB;
 
-	private JMenuItem settingsMenuItem;
-
+	private JMenuItem dataStructuresMenuItem;
+	private JMenuItem clusteringMenuItem;
+	private JMenuItem edgesMenuItem;
+	
+	
+	
 	private JButton layoutStartStopBtn;
 
 	private Integer maxNumNodes = 25;
@@ -240,20 +244,56 @@ public class CastroGUI implements ActionListener, ChangeListener,
 
 		JMenuBar menuBar = new JMenuBar();
 
-		JMenu menu = new JMenu("Menu");
+		JMenu fileMenu = new JMenu("File");
+		
+		JMenuItem exitMenuItem = new JMenuItem("Exit");
+		
+		exitMenuItem.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
+		
+		fileMenu.add(exitMenuItem);
+		menuBar.add(fileMenu);
+		
+		JMenu setupMenu = new JMenu("Setup");
 
-		settingsMenuItem = new JMenuItem("Settings...");
+		dataStructuresMenuItem = new JMenuItem("Index and Similarity matrix");
 
-		settingsMenuItem.addActionListener(new ActionListener() {
+		dataStructuresMenuItem.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent arg0) {
 				SettingsWindow.Show();
 			}
 
 		});
+		
+		edgesMenuItem = new JMenuItem("Links setting");
+		
+		edgesMenuItem.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				EdgesSettings.Show();	
+			}
+		});
 
-		menu.add(settingsMenuItem);
-		menuBar.add(menu);
+		clusteringMenuItem = new JMenuItem("Graph clustering setting");
+		
+		clusteringMenuItem.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				ClusteringSettings.Show();
+				
+			}
+		});
+		
+		setupMenu.add(dataStructuresMenuItem);
+		setupMenu.add(edgesMenuItem);
+		setupMenu.add(clusteringMenuItem);
+		
+		menuBar.add(setupMenu);
 		frame.setJMenuBar(menuBar);
 
 		String[][] data = {};
@@ -801,13 +841,13 @@ public class CastroGUI implements ActionListener, ChangeListener,
 				System.err.println("Edge mode: absolute");
 			}
 		} else if (e.getSource().equals(layoutStartStopBtn)) {
-			if (layoutStartStopBtn.getText().equals("Arange Graph")) {
+			if (layoutStartStopBtn.getText().equals("Arrange Graph")) {
 				lockLayout = false;
 				layoutStartStopBtn.setText("Stop");
 				visu.LayoutStart();
 			} else {
 				lockLayout = true;
-				layoutStartStopBtn.setText("Arange Graph");
+				layoutStartStopBtn.setText("Arrange Graph");
 				visu.LayoutStop();
 			}
 		}

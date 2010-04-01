@@ -174,7 +174,7 @@ public class Graph {
 
 	}
 	
-	public static Graph createGraphThreshold(List<Node> ln, SimMatrix _simMatrix, double _normalEdgeThreshold, double _dottedEdgeAbsoluteMultiplier, double _thickEdgeAbsoluteMultiplier)
+	public static Graph createGraphThreshold(List<Node> ln, SimMatrix _simMatrix, double _normalEdgeThreshold, double _dottedEdgeAbsoluteMultiplier, double _thickEdgeAbsoluteMultiplier, int maxClusters)
 	{
 		Graph gr = new Graph();
 		gr.nodes = ln;
@@ -190,8 +190,19 @@ public class Graph {
 		gr.thickEdgeThreshold = _normalEdgeThreshold * _thickEdgeAbsoluteMultiplier;
 		
 		gr.simMatrix = _simMatrix;
-		gr.createEdgesDensity(ln.size() * 3);
-		ChineseWhisperClustering.Evaluate(gr, 3, 5);
+
+		if (maxClusters > 0)
+		{
+			gr.createEdgesDensity(ln.size() * 3);
+			ChineseWhisperClustering.Evaluate(gr, 3, 5);
+		}
+		else
+		{
+			for (int i = 0; i < ln.size(); i++)
+			{
+				ln.get(i).SetCluster(-1);
+			}
+		}
 		
 		
 		gr.createEdgesThreshold();
@@ -242,7 +253,7 @@ public class Graph {
 		
 	}
 	
-	public static Graph createGraphDensity(List<Node> ln, SimMatrix _simMatrix, double _edgeDensity, double _normalEdgeRelativeMultiplier, double _thickEdgeRelativeMultiplier) {
+	public static Graph createGraphDensity(List<Node> ln, SimMatrix _simMatrix, double _edgeDensity, double _normalEdgeRelativeMultiplier, double _thickEdgeRelativeMultiplier, int maxClusters) {
 		
 		Graph gr = new Graph();
 		gr.nodes = ln;
@@ -255,8 +266,18 @@ public class Graph {
 
 		gr.simMatrix = _simMatrix;
 		
-		gr.createEdgesDensity(ln.size() * 3);
-		ChineseWhisperClustering.Evaluate(gr, 3, 5);
+		if (maxClusters > 0)
+		{
+			gr.createEdgesDensity(ln.size() * 3);
+			ChineseWhisperClustering.Evaluate(gr, 3, 5);
+		}
+		else
+		{
+			for (int i = 0; i < ln.size(); i++)
+			{
+				ln.get(i).SetCluster(-1);
+			}
+		}
 		
 		gr.ChangeEdgeDensities(_edgeDensity, _normalEdgeRelativeMultiplier, _thickEdgeRelativeMultiplier);
 		

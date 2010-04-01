@@ -222,7 +222,7 @@ public class Visualize implements ItemListener, MouseListener {
 	private void InitializeClusterGraphLayout()
 	{
 		int numClusters = myGraph.GetNumberOfClusters();
-		double radius = Math.min(layout_width, layout_height) / 3;
+		double radius = Math.min(layout_width, layout_height) / 3.5;
 		double angleShift = (2 * Math.PI) / numClusters;
 		
 		List<Functionality.Node> ln = myGraph.getNodes();
@@ -286,6 +286,10 @@ public class Visualize implements ItemListener, MouseListener {
 		layout.step();
 		layout.step();
 	    layout.step();
+		layout.step();
+		layout.step();
+		layout.step();
+		layout.step();
 		layout.step();
 		layout.step();
 		layout.step();
