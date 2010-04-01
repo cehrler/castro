@@ -4,107 +4,16 @@ why did you choose this approach?
 did you encounter specific problems that you had to solve? 
 how did you solve them?}
 
-\subsection {Data}
-\label{sec:data}
+\subsection{Data}\label{sec:data}
+\subsubsection{Corpus Description}\label{sec:description_of_the_castro_archive}
+\input{castrodb}
+\subsubsection{Reading and Storing the Data}\label{sec:reading_and_storing_the_data}
+\input{datasetup}
+\subsubsection{The Stanford Named Entity Recognizer}\label{sec:stanford_named_entity_recognizer}
+\input{ner}
 
-\subsubsection{Description of the Castro Archive}
-\label{sec:description_of_the_castro_archive}
-\input{description_castrodb}
+\subsection{Representing Documents in Vector Space}\label{sec:representing_documents_in_vector_space}
+\input{vectorspace}
 
-\subsubsection{Reading and Storing the Data}
-\label{sec:reading_and_storing_the_data}
-\note{reading the data, creating MySQL database, creating data model}
-
-At a first step we used a \texttt{shell}\footnote{http://tiswww.case.edu/php/chet/bash/bashtop.html}
-script and \texttt{wget}\footnote{http://www.gnu.org/software/wget/} to download the complete castro
-speech database. The actual speech data consists of a set of static webpages sorted by year into
-folders. In a second processing step we parsed these html-files and extracted the actual content of
-each file and its meta-information into textual format. To this end, several \texttt{shell} and
-\texttt{python}\footnote{http://www.python.org/} scripts have been written.
-
-The extracted information serves as the basis for the consecutive analysis and processing steps. In
-order to provide structured access to the meta-information we developed a
-\texttt{perl}\footnote{http://www.perl.org/} script to convert the meta-information for each
-document into an entry in a \texttt{mysql}\footnote{http://www.mysql.de/products/enterprise/}
-database. For every document, the database provides the following information
-\begin{itemize}
- \item{\textsc{Author:} Name of the author of the document.}
- \item{\textsc{Location:} The place the document orginated.}
- \item{\textsc{Headline:} The headline of the document.}
- \item{\textsc{Date:} The date the document orginated.}
- \item{\textsc{ReportDate:} The date th3e content of the document appeared in written from.}
- \item{\textsc{Type:} There are several different types of documents in the databse. E.g.
- \texttt{SPEECH}, \texttt{INTERVIEW}, \texttt{ARTICLE}, etc.}
- \item{\textsc{Header:} Additional meta-information}
- \item{\textsc{Source:} The source where this document appeared in written form the first time.}
-\end{itemize}
-In addition to this information, we later enriched the database with the extracted named entities
-(see \ref{sec:named_entity_recognition}) for each document. The columns \textsc{Persons},
-\textsc{Places}, \textsc{Organizations} have been added and each field contains the bulk information
-of the identified named entities as a comma separated list. Although this representation is is not
-the most elegant and optimal solution, the derived database provides sufficient performance and
-usability for the task at hand.
-
-\subsection {Named Entity Recognition}
-\label{sec:named_entity_recognition}
-Please recall, that our ultimate goal is to come up with a cross-document recommendation system for
-the castro speech database. Therefore, we need an appropriate metric on between document
-similarity that serves as a basis for the recommendation software.
-
-Our first idea was to use proper \textit{co-reference resolution}, e.g. provided by
-\texttt{BART}\footnote{http://www.bart-coref.org/} software \cite{bart}. In this case, document
-similarity is a function of the number of co-references that appear between two docuemnts. However,
-in the end we decided to drop this approach because of the overall complexity and the tight time
-constraints. In general, between document co-reference resolution far from an easy task. The castro
-database though has some nice properties that allow for a more straightforward solution. For this
-dataset, the domain is rather limited and the number of distinct topics should be small. Hence, we
-came up with the idea to base the similarity measure on smoothed co-occurences of named entities.
-
-The next step in the pre-processing chain is thus the execution of named entity recognition followed
-by a smooting of the features in the vector space induced by the named entities using kernel
-methods (see \ref{sec:string_kernel}) \cite{string_kernel_coref}.
-
-\subsubsection{The Stanford Named Entity Recognizer}
-\label{sec:stanford_named_entity_recognizer}
-\note{details on the tool}
-
-\subsubsection{Recognizing Named Entities in the Castro Archive}
-\label{sec:recognizing_named_enitiies_in_the_castro_archive}
-\note{identifying names, locations and organizations in the Castro documents,
-input/output examples, evaluation??}
-
-\subsection {Representing Documents in Vector Space}
-\label{sec:representing_documents_in_vector_space}
-
-\subsubsection{Indexing and Term Weighting}
-\label{sec:indexing_term_weighting}
-\note{description of the 4 different representations, tf/tfidf with motivation and
-interpretation for each, examples}
-
-\subsubsection {Aliasing with String Kernels}
-\label{sec:aliasing_string_kernel}
-\note{motivation, description of the algorithm to create similarity matrixes between NE's,
-smoothing document representations with Kernel matrix as aliasing}
-
-\subsection {Information Retrieval}
-\label{sec:information_retrieval}
-
-\subsubsection{Keyword Search}
-\label{sec:keyword_search}
-\note{description of the functionality, use of string kernels for query expansion }
-
-\subsubsection{Metadata Search}
-\label{sec:metadata_search}
-\note{general description of the functionality}
-
-\subsection {Computing Similarity between Documents}
-\label{sec:computing_similarity_between_documents}
-\note{calculating similarity matrice.}
-
-\subsection {Graphical Representation}
-\label{sec:graphical_representation}
-\input{representation}
-	
-\subsection {Combining It All: User Interface} 
-\label{sec:combining_it_all:_user_interface}
-\input{gui}
+\subsection{Information Retrieval}\label{sec:information_retrieval}
+\input{ir}
