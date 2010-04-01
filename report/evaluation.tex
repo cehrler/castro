@@ -8,17 +8,11 @@ describe how it could be improved (error analysis)}
 
 \subsection {Named Entity Recognition}
 \label{sec:named_entity_recognition}
-While the Stanford CRF-based NER system is highly accurate and recognizes the majority of named entities in any given document, it does not always correctly recognize the full and exact substring corresponding to the named entity in question: For example, the location \lingform{Santiago de Cuba} was often recognized as e.g.\ \lingform{Santiago} \lingform{Santiago de} or \lingform{Santiago de Cuba-is}, and may even be recognized as two NEs--- as \lingform{Santiago} and \lingform{Cuba}. Similarly, the type of NE recognized may be incorrect. For example, \lingform{Lenin} was recognized as \meta{Location} on more than one occasion. These problems can also occur concurrently: Just as with \lingform{Santiago de Cuba}, \lingform{Fidel Castro} may not be recognized in its entirety as a single NE, and more than once was recognized as two separate NEs of different types: \lingform{Fidel} as \meta{Organization} and \lingform{Castro} as \meta{Person}.
-
-\input{nererrors}
-
-In conclusion, while the NER is mostly accurate, the errors made in NER are propagated to all downstream components and to the end result.
+\input{evaluation_ner}
 
 \subsection {String Kernels and Co-reference Resolution}
 \label{sec:string_kernels_and_co-reference_resolution}
-As mentioned in the introduction, true CR in a traditional sense was foregone in the beginning of the project in favour of a string kernel-based approach \note{CITATION NEEDED}. Similarly to CRR, the string kernel-based similarity measure allowed many permutations of a similar named entity to be correlated (e.g.\ \textbf{\lingform{Castro}} $\rightarrow$ \{\lingform{Fidel Castro}, \lingform{Dr. Fidel}, \lingform{DrFidel} \ldots\}). However, the the string kernel method as it is currently implemented overgenerates such similarities--- for example, \textbf{\lingform{State Technical University}} $\rightarrow$ \{\lingform{Socialist Youth}, \lingform{API}, \lingform{Socialist Party}, \lingform{State Committee}, \lingform{forTechnical}, \lingform{Catholicism} \ldots\}.
-
-In effect, the string kernel method often associates unrelated NEs, unrelated documents are erroneously related with each other, causing recall to be relatively high in comparison to the precision obtained through the method. This in turn causes a large amount of noise in the graph, making it harder for the user to discern relationships between documents which may be useful to the user.
+\input{evaluation_aliasing}
 
 \subsection {Document Similarity}
 \label{sec:document_similarity}
