@@ -4,12 +4,18 @@ public class SearchQuerySimilarNodes implements SearchQuery {
 	public int CentralNodeID;
 	public int maxNumNodes;
 	public String CentralNodeHeadline;
+	public String YearFrom;
+	public String YearUntil;
+	public String SpeechType;
 	
-	public SearchQuerySimilarNodes(int _centralNodeID, int _maxNumNodes, String _centralNodeHeadline)
+	public SearchQuerySimilarNodes(int _centralNodeID, int _maxNumNodes, String _centralNodeHeadline, String _yearFrom, String _yearUntil, String _speechType)
 	{
 		CentralNodeID = _centralNodeID;
 		maxNumNodes = _maxNumNodes;
 		CentralNodeHeadline = _centralNodeHeadline;
+		YearFrom = _yearFrom;
+		YearUntil = _yearUntil;
+		SpeechType = _speechType;
 	}
 	
 	@Override

@@ -74,6 +74,7 @@ public class ClusteringSettings {
 		clusteringAlgorithmCB.setAlignmentX(Component.LEFT_ALIGNMENT);
 		mainPanel.add(clusteringAlgorithmCB);
 		
+		
 		mainPanel.add(new JLabel("Maximal number of clusters:"));
 		
 		maxNumClustersTF = new JTextField(new Integer(SettingsWindow.maxNumClusters).toString());

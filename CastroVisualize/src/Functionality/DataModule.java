@@ -489,6 +489,8 @@ public class DataModule {
 
 			System.err.println("...done");
 		}
+		
+		//getGraphNewQueryDensity(new SearchQuerySimilarNodes(100, 15, "asdsdaf"), 3, 0.8, 1.2);
 	}
 	
 	private static void similarityUpdate(List<Node> nodes, VMindex currIndex, Integer termCol, Double weight)
@@ -586,11 +588,11 @@ public class DataModule {
 
 	private static List<Node> getNodesForStandardQuery(String SinceDate, String TillDate, String Place, String Author, String DocType, List<String> queryTerms , List<Double> termWeights, Integer maxNumNodes)
 	{
-		if (SinceDate != "NULL") SinceDate = "\"" + SinceDate + "\"";
-		if (TillDate != "NULL") TillDate = "\"" + TillDate + "\"";
-		if (Place != "NULL") Place = "\"" + Place + "\"";
-		if (Author != "NULL") Author = "\"" + Author + "\"";
-		if (DocType != "NULL") DocType = "\"" + DocType + "\"";
+		if (! SinceDate.equals("NULL")) SinceDate = "\"" + SinceDate + "\"";
+		if (! TillDate.equals("NULL")) TillDate = "\"" + TillDate + "\"";
+		if (! Place.equals("NULL")) Place = "\"" + Place + "\"";
+		if (! Author.equals("NULL")) Author = "\"" + Author + "\"";
+		if (! DocType.equals("NULL")) DocType = "\"" + DocType + "\"";
 
 		List<Node> ln = new ArrayList<Node>();
 
@@ -621,13 +623,30 @@ public class DataModule {
 		return sn;
 	}
 	
+	private static Map<Integer, Double> mapIdToSimilarity;
+	
 	private static List<Node> getNodesForSimilarNodesQuery(SearchQuerySimilarNodes sq)
 	{
+
+		String SinceDate = sq.YearFrom;
+		String TillDate = sq.YearUntil;
+		String DocType = sq.SpeechType;
+		String Place = "NULL";
+		String Author = "NULL";
+		
+		if (! SinceDate.equals("NULL")) SinceDate = "\"" + SinceDate + "\"";
+		if (! TillDate.equals("NULL")) TillDate = "\"" + TillDate + "\"";
+		if (! Place.equals("NULL")) Place = "\"" + Place + "\"";
+		if (! Author.equals("NULL")) Author = "\"" + Author + "\"";
+		if (! DocType.equals("NULL")) DocType = "\"" + DocType + "\"";
+
+				
 		int docID = sq.CentralNodeID;
 		int numNodes = sq.maxNumNodes;
 		double sim;
 		
-		final Map<Integer, Double> mapIdToSimilarity = new HashMap<Integer, Double>();
+		
+		mapIdToSimilarity = new HashMap<Integer, Double>();
 		for (int i = 0; i < smCurrent.getNumDocs(); i++)
 		{
 			if (i == docID) continue;
@@ -639,8 +658,12 @@ public class DataModule {
 				mapIdToSimilarity.put(i, sim);
 			}
 		}
-		
+
+		mapIdToSimilarity.put(docID, 1.0);
+		System.err.println("Jsem tu!");
+
 		List<Integer> si = new ArrayList<Integer>(mapIdToSimilarity.keySet());
+		si.add(docID);
 		
 		Collections.sort(si, new Comparator<Integer>() {
 			public int compare(Integer o1, Integer o2) {
@@ -659,8 +682,7 @@ public class DataModule {
 
 				java.sql.Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
 	                    ResultSet.CONCUR_READ_ONLY);	
-				ResultSet srs = stmt.executeQuery("SELECT SPEECH_ID, AUTHOR_NAME, HEADLINE, REPORT_DATE, " +
-						"SOURCE_NAME, PLACE_NAME, DOCTYPE_NAME, SPEECH_NAME FROM speech WHERE SPEECH_ID = " + si.get(i));
+				ResultSet srs = stmt.executeQuery("CALL getNode(" + si.get(i) + ");");
 				
 				if (srs.next()) 
 				{
@@ -681,12 +703,27 @@ public class DataModule {
 		}
 
 		
+		Node n;
+		for (int i = 0; i < ln.size(); i++)
+		{
+			n = ln.get(i);
+			if (n.getSpeech_id() == docID)
+			{
+				n.SetRelevance(1.0);
+			}
+			else
+			{
+				n.SetRelevance(smCurrent.getSimilarity_byID(docID, n.getSpeech_id()));
+			}
+		}
+		
 
 		return ln;
 	}
 	
 	public static Graph getGraphNewQueryThreshold(SearchQuerySimilarNodes sq, double _normalEdgeThreshold, double _dottedEdgeAbsoluteMultiplier, double _thickEdgeAbsoluteMultiplier)
 	{
+		System.err.println("Jsem tady!");
 		List<Node> ln = getNodesForSimilarNodesQuery(sq);
 		
 		normalEdgeThreshold = _normalEdgeThreshold;

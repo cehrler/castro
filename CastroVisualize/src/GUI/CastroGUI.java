@@ -257,6 +257,9 @@ public class CastroGUI implements ActionListener, ChangeListener,
 
 		JMenu fileMenu = new JMenu("File");
 		
+		JMenuItem saveHistoryMenuItem = new JMenuItem("Save History");
+		JMenuItem loadHistoryMenuItem = new JMenuItem("Load History");
+		
 		JMenuItem exitMenuItem = new JMenuItem("Exit");
 		
 		exitMenuItem.addActionListener(new ActionListener() {
@@ -266,6 +269,8 @@ public class CastroGUI implements ActionListener, ChangeListener,
 			}
 		});
 		
+		fileMenu.add(saveHistoryMenuItem);
+		fileMenu.add(loadHistoryMenuItem);
 		fileMenu.add(exitMenuItem);
 		menuBar.add(fileMenu);
 		
@@ -1032,25 +1037,6 @@ public class CastroGUI implements ActionListener, ChangeListener,
 			tableSearchSetColumnWidth();
 			visualizeGraph();
 
-			String pomS = "";
-			String term;
-			for (int i = 0; i < queryTerms.size(); i++)
-			{
-				if (i > 0) pomS += " ";
-				
-				term = queryTerms.get(i);
-				if (term.contains(" "))
-				{
-					pomS += "\"" + term + "\"";
-				}
-				else
-				{
-					pomS += term;
-				}
-				
-			}
-			
-			NE_textField.setText(pomS);
 			//search_year_start.setSelectedItem(arg0)
 		}
 		else
@@ -1073,5 +1059,40 @@ public class CastroGUI implements ActionListener, ChangeListener,
 		
 		currentQuery = sq;
 
+	}
+	
+	public static void SetQueryControls(List<String> searchTerms, String yearFrom, String yearUntil, String docType)
+	{
+		String pomS = "";
+		String term;
+		for (int i = 0; i < searchTerms.size(); i++)
+		{
+			if (i > 0) pomS += " ";
+			
+			term = searchTerms.get(i);
+			if (term.contains(" "))
+			{
+				pomS += "\"" + term + "\"";
+			}
+			else
+			{
+				pomS += term;
+			}
+			
+		}
+		
+		try
+		{
+			gui.NE_textField.setText(pomS);
+			gui.search_year_start.setSelectedItem(yearFrom);
+			gui.search_year_end.setSelectedItem(yearUntil);
+			gui.search_type.setSelectedItem(docType);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		
 	}
 }
