@@ -58,7 +58,7 @@ public class SettingsWindow implements ActionListener {
 	public static Double locationsCoef = 0.33;
 	public static Double organizationsCoef = 0.34;
 	public static Double lexicalSimilarityCoef = 0.0;
-	public static int maxNumClusters = 4;
+	public static int maxNumClusters = 0;
 	
 	private static int similarityMeasureType = 0;
 	
@@ -259,7 +259,7 @@ public class SettingsWindow implements ActionListener {
 
 		waitLabel.setVisible(true);
 		DataModule.Init(currIndex, smoothedIndex, smoothedSimMatrix, personsCoef, locationsCoef, organizationsCoef, lexicalSimilarityCoef);
-		CastroGUI.gui.performSearch();
+		CastroGUI.gui.performSearch(CastroGUI.GetCurrentSearchQuery(), true);
 		waitLabel.setVisible(false);
 		frame.dispose();
 		

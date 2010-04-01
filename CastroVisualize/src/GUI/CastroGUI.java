@@ -64,6 +64,9 @@ import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
 import Functionality.DataModule;
 import Functionality.EdgeTypeEnum;
 import Functionality.IndexTypeEnum;
+import Functionality.SearchQuery;
+import Functionality.SearchQuerySimilarNodes;
+import Functionality.SearchQueryStandard;
 import Functionality.SimMatrixEnum;
 import Functionality.VertexDisplayPredicateMode;
 import Visualizer.CastroTableModel;
@@ -82,6 +85,7 @@ public class CastroGUI implements ActionListener, ChangeListener,
 	private JComboBox search_type;
 
 	private JButton search_button;
+	private JButton history_button;
 
 	private JTextField NE_textField;
 	private JTable table_search;
@@ -135,12 +139,14 @@ public class CastroGUI implements ActionListener, ChangeListener,
 	private static int frame_height = 700;
 
 	public static Double edgeDensity = 2.5;
-	private static Double normalEdgeThreshold = 0.5;
+	private static Double normalEdgeThreshold = 0.25;
 
 	private boolean lockLayout = true;
 
 	private static SelectionListener listener;
 	public static CastroGUI gui;
+	
+	private static SearchQuery currentQuery;
 
 	public CastroGUI() {
 
@@ -155,6 +161,11 @@ public class CastroGUI implements ActionListener, ChangeListener,
 		gui.init();
 	}
 
+	public static SearchQuery GetCurrentSearchQuery()
+	{
+		return currentQuery;
+	}
+	
 	private String getEdgeMode() {
 		return (String) (edgeDisplayTypeCB.getSelectedItem());
 	}
@@ -405,54 +416,17 @@ public class CastroGUI implements ActionListener, ChangeListener,
 		search_button.setMnemonic(KeyEvent.VK_S);
 		search_button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				String SinceDate = (String) search_year_start.getSelectedItem()
-						+ "-01-01";
-				String TillDate = (String) search_year_end.getSelectedItem()
-						+ "-12-31";
+				
+				String SinceDate = (String) search_year_start.getSelectedItem() + "-01-01";
+				String TillDate = (String) search_year_end.getSelectedItem() + "-12-31";
 				String Author = "NULL";
 				String DocType = (String) search_type.getSelectedItem();
 				String Place = "NULL";
-				List<String> queryTerms = processQueryString(NE_textField
-						.getText());
-				List<Double> termWeights = new ArrayList<Double>();
-
-				if (DocType == "All") {
-					DocType = "NULL";
-				}
-
-				/*
-				 * if (!((String)indexCB.getSelectedItem()).equals(currIndex)) {
-				 * currIndex = (String)indexCB.getSelectedItem(); if
-				 * (currIndex.equals("TF")) { DataModule.Init(IndexTypeEnum.TF);
-				 * } else { DataModule.Init(IndexTypeEnum.TFIDF); } }
-				 */
-
-				for (int i = 0; i < queryTerms.size(); i++) {
-					termWeights.add(1.0);
-				}
-
+				List<String> queryTerms = processQueryString(NE_textField.getText());
 				Integer maxNumNodes = Integer.parseInt(maxDocsTB.getText());
 
-				if (getEdgeMode() == "relative") {
-
-					bigGraph = DataModule.getGraphDensity(SinceDate, TillDate,
-							Place, Author, DocType, queryTerms, termWeights,
-							maxNumNodes, edgeDensity,
-							SettingsWindow.normalEdgeRelativeMultiplier,
-							SettingsWindow.thickEdgeRelativeMultiplier);
-				} else {
-
-					bigGraph = DataModule.getGraphThreshold(SinceDate,
-							TillDate, Place, Author, DocType, queryTerms,
-							termWeights, maxNumNodes, normalEdgeThreshold,
-							SettingsWindow.dottedEdgeAbsoluteMultiplier,
-							SettingsWindow.thickEdgeAbsoluteMultiplier);
-
-				}
-				table_search.setModel(new CastroTableModel(bigGraph));
-				tableSearchSetColumnWidth();
-				visualizeGraph();
-
+				SearchQueryStandard sq = new SearchQueryStandard(queryTerms, SinceDate, TillDate, DocType, maxNumNodes);
+				performSearch(sq, true);
 			}
 		});
 
@@ -466,6 +440,19 @@ public class CastroGUI implements ActionListener, ChangeListener,
 		search_button.setAlignmentX(Component.LEFT_ALIGNMENT);
 		smallVB5.add(search_button);
 
+		Box smallVB6 = Box.createVerticalBox();
+		bleLabel = new JLabel("    ");
+		bleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		smallVB6.add(bleLabel);
+		smallVB6.add(Box.createVerticalStrut(5));
+		history_button = new JButton("History");
+		history_button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				QueryHistoryWindow.Show();
+			}
+		});
+		smallVB6.add(history_button);
+		
 		horizontal_box.add(smallVB1);
 		Component strut1 = Box.createHorizontalStrut(10);
 		horizontal_box.add(strut1);
@@ -483,7 +470,9 @@ public class CastroGUI implements ActionListener, ChangeListener,
 		Component strut4 = Box.createHorizontalStrut(10);
 		horizontal_box.add(strut4);
 		horizontal_box.add(smallVB5);
-
+		horizontal_box.add(Box.createHorizontalStrut(10));
+		horizontal_box.add(smallVB6);
+		
 		frameNorthBox.add(horizontal_box);
 
 		content.add(frameNorthBox, BorderLayout.NORTH);
@@ -686,80 +675,24 @@ public class CastroGUI implements ActionListener, ChangeListener,
 		Box centralBox = Box.createVerticalBox();
 		graphPanel = new JPanel();
 		graphPanel.setLayout(new BorderLayout());
-		bleLabel = new JLabel("Similarity graph panel:");
+		bleLabel = new JLabel("Similarity graph:");
 		bleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		centralBox.add(bleLabel);
 		graphPanel.setBorder(new LineBorder(Color.BLACK, 1));
 		graphPanel.setBackground(Color.WHITE);
-
+		graphPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		centralBox.add(graphPanel);
 		centralPanel.add(centralBox, BorderLayout.CENTER);
 
-		/*
-		 * JPanel leftRightGraphPanel = new JPanel(new BorderLayout()); JButton
-		 * translateLeftBtn = new JButton("L"); JButton translateRightBtn = new
-		 * JButton("R");
-		 * 
-		 * translateLeftBtn.addActionListener(new ActionListener() { public void
-		 * actionPerformed(ActionEvent arg0) { visu.graphTranslation(-25, 0);
-		 * 
-		 * } });
-		 * 
-		 * translateRightBtn.addActionListener(new ActionListener() { public
-		 * void actionPerformed(ActionEvent arg0) { visu.graphTranslation(25,
-		 * 0);
-		 * 
-		 * } });
-		 * 
-		 * translateLeftBtn.setPreferredSize(new Dimension(50,20));
-		 * translateRightBtn.setPreferredSize(new Dimension(50, 20));
-		 * leftRightGraphPanel.add(translateLeftBtn, BorderLayout.WEST);
-		 * 
-		 * Box pomVBox = Box.createHorizontalBox();
-		 * pomVBox.add(translateRightBtn);
-		 * pomVBox.add(Box.createHorizontalStrut(43));
-		 * 
-		 * leftRightGraphPanel.add(pomVBox, BorderLayout.EAST);
-		 * //leftRightGraphPanel.setPreferredSize(new Dimension(10000, 60));
-		 * centralPanel.add(leftRightGraphPanel, BorderLayout.SOUTH);
-		 * 
-		 * JPanel upDownGraphPanel = new JPanel(new BorderLayout()); JButton
-		 * translateUpBtn = new JButton("U");
-		 * 
-		 * translateUpBtn.addActionListener(new ActionListener() { public void
-		 * actionPerformed(ActionEvent arg0) { visu.graphTranslation(0, -25);
-		 * 
-		 * } });
-		 * 
-		 * JButton translateDownBtn = new JButton("D");
-		 * translateUpBtn.setPreferredSize(new Dimension(50,20));
-		 * translateDownBtn.setPreferredSize(new Dimension(50, 20));
-		 * 
-		 * translateDownBtn.addActionListener(new ActionListener() { public void
-		 * actionPerformed(ActionEvent arg0) { visu.graphTranslation(0, +25);
-		 * 
-		 * } });
-		 * 
-		 * upDownGraphPanel.add(translateUpBtn, BorderLayout.NORTH);
-		 * upDownGraphPanel.add(translateDownBtn, BorderLayout.SOUTH);
-		 * //leftRightGraphPanel.setPreferredSize(new Dimension(10000, 60));
-		 * centralPanel.add(upDownGraphPanel, BorderLayout.EAST);
-		 */
 
 		content.add(centralPanel, BorderLayout.CENTER);
-
-		/*
-		 * int graphLeft = 10 + insets.left + 170; int graphTop = search_top +
-		 * 60; int graphWidth = frame_width - (10 + insets.left + 185 + 200);
-		 * int graphHeight = frame_height - 260;
-		 */
-		// graphPanel.setBounds(graphLeft, graphTop, graphWidth, graphHeight);
 
 		JEditorPane jep = new JEditorPane();
 		jep.setEditable(true);
 
 		jep.setToolTipText(GuiConst.jep_tooltip);
 		JScrollPane jepScroll = new JScrollPane(jep);
+		jepScroll.setAlignmentX(Component.LEFT_ALIGNMENT);
 		
 		Box jepBox = Box.createVerticalBox();
 		//jepBox.add(Box.createVerticalStrut(5));
@@ -1047,7 +980,96 @@ public class CastroGUI implements ActionListener, ChangeListener,
 
 	}
 
-	public void performSearch() {
+	/*public void performSearch() {
 		search_button.doClick();
+	}*/
+	
+	public void performSearch(SearchQuery sq, boolean addToHistory)
+	{		
+		if (addToHistory)
+		{
+			QueryHistoryWindow.AddQueryToList(sq);
+		}
+		
+		if (sq instanceof SearchQueryStandard)
+		{
+			SearchQueryStandard sqStd = (SearchQueryStandard)sq;
+			String SinceDate = sqStd.YearFrom;
+			String TillDate =  sqStd.YearUntil;
+			String Author = "NULL";
+			String DocType = sqStd.DocType;
+			String Place = "NULL";
+			List<String> queryTerms = sqStd.QueryTerms;
+	
+			List<Double> termWeights = new ArrayList<Double>();
+	
+			if (DocType == "All") {
+				DocType = "NULL";
+			}
+	
+			for (int i = 0; i < queryTerms.size(); i++) {
+				termWeights.add(1.0);
+			}
+			
+			if (getEdgeMode() == "relative") {
+	
+				bigGraph = DataModule.getGraphDensity(SinceDate, TillDate,
+						Place, Author, DocType, queryTerms, termWeights,
+						maxNumNodes, edgeDensity,
+						SettingsWindow.normalEdgeRelativeMultiplier,
+						SettingsWindow.thickEdgeRelativeMultiplier);
+			} else {
+	
+				bigGraph = DataModule.getGraphThreshold(SinceDate,
+						TillDate, Place, Author, DocType, queryTerms,
+						termWeights, maxNumNodes, normalEdgeThreshold,
+						SettingsWindow.dottedEdgeAbsoluteMultiplier,
+						SettingsWindow.thickEdgeAbsoluteMultiplier);
+	
+			}
+			table_search.setModel(new CastroTableModel(bigGraph));
+			tableSearchSetColumnWidth();
+			visualizeGraph();
+
+			String pomS = "";
+			String term;
+			for (int i = 0; i < queryTerms.size(); i++)
+			{
+				if (i > 0) pomS += " ";
+				
+				term = queryTerms.get(i);
+				if (term.contains(" "))
+				{
+					pomS += "\"" + term + "\"";
+				}
+				else
+				{
+					pomS += term;
+				}
+				
+			}
+			
+			NE_textField.setText(pomS);
+		}
+		else
+		{
+			if (getEdgeMode() == "relative")
+			{
+				bigGraph = DataModule.getGraphNewQueryDensity((SearchQuerySimilarNodes)sq, edgeDensity, SettingsWindow.normalEdgeRelativeMultiplier, SettingsWindow.thickEdgeRelativeMultiplier);
+			}
+			else
+			{
+				bigGraph = DataModule.getGraphNewQueryThreshold((SearchQuerySimilarNodes)sq, normalEdgeThreshold, SettingsWindow.dottedEdgeAbsoluteMultiplier, SettingsWindow.thickEdgeAbsoluteMultiplier);
+			}
+			
+			table_search.setModel(new CastroTableModel(bigGraph));
+			tableSearchSetColumnWidth();
+			visualizeGraph();
+			NE_textField.setText("");
+
+		}
+		
+		currentQuery = sq;
+
 	}
 }
