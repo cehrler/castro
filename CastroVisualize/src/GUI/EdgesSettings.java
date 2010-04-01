@@ -15,6 +15,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 public class EdgesSettings {
 
@@ -47,14 +48,17 @@ public class EdgesSettings {
 		
 		relativePanel.add(new JLabel("Maximum edge density:"));
 		maximumEdgeDensityTF = new JTextField(SettingsWindow.maxEdgeDensity.toString());
+		maximumEdgeDensityTF.setHorizontalAlignment(SwingConstants.TRAILING);
 		relativePanel.add(maximumEdgeDensityTF);
 		
 		relativePanel.add(new JLabel("dotted edge const:"));
 		relativeDottedEdgeRatioTF = new JTextField(SettingsWindow.normalEdgeRelativeMultiplier.toString());
+		relativeDottedEdgeRatioTF.setHorizontalAlignment(SwingConstants.TRAILING);
 		relativePanel.add(relativeDottedEdgeRatioTF);
 		
 		relativePanel.add(new JLabel("thick edge const:"));
 		relativeThickEdgeRatioTF = new JTextField(SettingsWindow.thickEdgeRelativeMultiplier.toString());
+		relativeThickEdgeRatioTF.setHorizontalAlignment(SwingConstants.TRAILING);
 		relativePanel.add(relativeThickEdgeRatioTF);
 		
 		vbox.add(relativePanel);
@@ -67,10 +71,12 @@ public class EdgesSettings {
 		
 		absolutePanel.add(new JLabel("dotted edge const:"));
 		absoluteDottedEdgeRatioTF = new JTextField(SettingsWindow.dottedEdgeAbsoluteMultiplier.toString());
+		absoluteDottedEdgeRatioTF.setHorizontalAlignment(SwingConstants.TRAILING);
 		absolutePanel.add(absoluteDottedEdgeRatioTF);
 
 		absolutePanel.add(new JLabel("thick edge const:"));
 		absoluteThickEdgeRatioTF = new JTextField(SettingsWindow.thickEdgeAbsoluteMultiplier.toString());
+		absoluteThickEdgeRatioTF.setHorizontalAlignment(SwingConstants.TRAILING);
 		absolutePanel.add(absoluteThickEdgeRatioTF);
 		
 		vbox.add(absolutePanel);
