@@ -95,7 +95,7 @@ public class EdgesSettings {
 
 				SettingsWindow.maxEdgeDensity = Double.parseDouble(maximumEdgeDensityTF.getText());
 				
-				CastroGUI.gui.performSearch();
+				CastroGUI.gui.performSearch(CastroGUI.GetCurrentSearchQuery(), true);
 
 				
 				frame.dispose();

@@ -73,7 +73,7 @@ public class ClusteringSettings {
 			public void actionPerformed(ActionEvent e) {
 				SettingsWindow.maxNumClusters = Integer.parseInt(maxNumClustersTF.getText());
 				SettingsWindow.useDifferentColorsForClusters = differentColorsChB.isSelected();
-				CastroGUI.gui.performSearch();
+				CastroGUI.gui.performSearch(CastroGUI.GetCurrentSearchQuery(), true);
 				frame.dispose();
 				
 			}

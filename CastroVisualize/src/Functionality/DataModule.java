@@ -15,6 +15,7 @@ package Functionality;
 
 import java.sql.*;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -283,9 +284,18 @@ public class DataModule {
 			organizationsIndex = new VMindex(organizationsIndexFile);
 			dictionaryIndex = new VMindex(dictionaryIndexFile);
 			
-			personsIndexSmooth = new VMindex(personsIndexSmoothFile);
-			locationsIndexSmooth = new VMindex(locationsIndexSmoothFile);
-			organizationsIndexSmooth = new VMindex(organizationsIndexSmoothFile);
+			if (indexSmooth == true)
+			{
+				personsIndexSmooth = new VMindex(personsIndexSmoothFile);
+				locationsIndexSmooth = new VMindex(locationsIndexSmoothFile);
+				organizationsIndexSmooth = new VMindex(organizationsIndexSmoothFile);
+			}
+			else
+			{
+				personsIndexSmooth = personsIndex;
+				locationsIndexSmooth = locationsIndex;
+				organizationsIndexSmooth = organizationsIndex;				
+			}
 
 			
 		}
@@ -574,6 +584,133 @@ public class DataModule {
 		return "";
 	}
 
+	private static List<Node> getNodesForStandardQuery(String SinceDate, String TillDate, String Place, String Author, String DocType, List<String> queryTerms , List<Double> termWeights, Integer maxNumNodes)
+	{
+		if (SinceDate != "NULL") SinceDate = "\"" + SinceDate + "\"";
+		if (TillDate != "NULL") TillDate = "\"" + TillDate + "\"";
+		if (Place != "NULL") Place = "\"" + Place + "\"";
+		if (Author != "NULL") Author = "\"" + Author + "\"";
+		if (DocType != "NULL") DocType = "\"" + DocType + "\"";
+
+		List<Node> ln = new ArrayList<Node>();
+
+		try {
+			java.sql.Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_READ_ONLY);	
+			System.err.println("CALL getNodes(" + SinceDate + ", " + TillDate + ", " + Place + ", " + Author + ", " + DocType + ");");
+			ResultSet srs = stmt.executeQuery("CALL getNodes(" + SinceDate + ", " + TillDate + ", " + Place + ", " + Author + ", " + DocType + ");");
+			
+			while (srs.next()) 
+			{
+		        	Node nod = new Node(srs.getInt("SPEECH_ID"), srs.getString("AUTHOR_NAME"), 
+		        			srs.getString("HEADLINE"), srs.getString("REPORT_DATE"), 
+		        			srs.getString("SOURCE_NAME"), srs.getString("PLACE_NAME"), srs.getString("DOCTYPE_NAME"),
+		        			srs.getString("SPEECH_DATE"));
+		        	
+		        	ln.add(nod);
+			}
+			
+			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		List<Node> sn = sortNodes(ln, queryTerms, termWeights, maxNumNodes);
+
+		return sn;
+	}
+	
+	private static List<Node> getNodesForSimilarNodesQuery(SearchQuerySimilarNodes sq)
+	{
+		int docID = sq.CentralNodeID;
+		int numNodes = sq.maxNumNodes;
+		double sim;
+		
+		final Map<Integer, Double> mapIdToSimilarity = new HashMap<Integer, Double>();
+		for (int i = 0; i < smCurrent.getNumDocs(); i++)
+		{
+			if (i == docID) continue;
+			
+			sim = smCurrent.getSimilarity_byID(docID, i);
+			
+			if (sim >= 0.0001)
+			{
+				mapIdToSimilarity.put(i, sim);
+			}
+		}
+		
+		List<Integer> si = new ArrayList<Integer>(mapIdToSimilarity.keySet());
+		
+		Collections.sort(si, new Comparator<Integer>() {
+			public int compare(Integer o1, Integer o2) {
+				return mapIdToSimilarity.get(o1).compareTo(mapIdToSimilarity.get(o2));
+			}
+		});
+		
+		Collections.reverse(si);
+		
+		List<Node> ln = new ArrayList<Node>();
+		
+		try {
+			
+			for (int i = 0; i < Math.min(si.size(), numNodes); i++)
+			{
+
+				java.sql.Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+	                    ResultSet.CONCUR_READ_ONLY);	
+				ResultSet srs = stmt.executeQuery("SELECT SPEECH_ID, AUTHOR_NAME, HEADLINE, REPORT_DATE, " +
+						"SOURCE_NAME, PLACE_NAME, DOCTYPE_NAME, SPEECH_NAME FROM speech WHERE SPEECH_ID = " + si.get(i));
+				
+				if (srs.next()) 
+				{
+			        	Node nod = new Node(srs.getInt("SPEECH_ID"), srs.getString("AUTHOR_NAME"), 
+			        			srs.getString("HEADLINE"), srs.getString("REPORT_DATE"), 
+			        			srs.getString("SOURCE_NAME"), srs.getString("PLACE_NAME"), srs.getString("DOCTYPE_NAME"),
+			        			srs.getString("SPEECH_DATE"));
+			        	
+			        	ln.add(nod);
+				}
+			
+			}
+			
+			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		
+
+		return ln;
+	}
+	
+	public static Graph getGraphNewQueryThreshold(SearchQuerySimilarNodes sq, double _normalEdgeThreshold, double _dottedEdgeAbsoluteMultiplier, double _thickEdgeAbsoluteMultiplier)
+	{
+		List<Node> ln = getNodesForSimilarNodesQuery(sq);
+		
+		normalEdgeThreshold = _normalEdgeThreshold;
+		dottedEdgeAbsoluteMultiplier = _dottedEdgeAbsoluteMultiplier;
+		thickEdgeAbsoluteMultiplier = _thickEdgeAbsoluteMultiplier;
+						
+		displayedGraph = Graph.createGraphThreshold(ln, smCurrent, normalEdgeThreshold, dottedEdgeAbsoluteMultiplier, thickEdgeAbsoluteMultiplier, SettingsWindow.maxNumClusters); 
+		return displayedGraph;
+
+	}
+	
+	public static Graph getGraphNewQueryDensity(SearchQuerySimilarNodes sq, double _edgeDensity, double _normalEdgeRelativeMultiplier, double _thickEdgeRelativeMultiplier)
+	{
+		List<Node> ln = getNodesForSimilarNodesQuery(sq);
+		
+		edgeDensity = _edgeDensity;
+		normalEdgeRelativeMultiplier = _normalEdgeRelativeMultiplier;
+		thickEdgeRelativeMultiplier = _thickEdgeRelativeMultiplier;
+			
+		displayedGraph = Graph.createGraphDensity(ln, smCurrent, edgeDensity, normalEdgeRelativeMultiplier, thickEdgeRelativeMultiplier, SettingsWindow.maxNumClusters); 
+		return displayedGraph;
+		
+	}
+	
 	public static Graph getGraphThreshold(String SinceDate, String TillDate, String Place, String Author, String DocType, List<String> queryTerms , List<Double> termWeights, Integer maxNumNodes, double _normalEdgeThreshold, double _dottedEdgeAbsoluteMultiplier, double _thickEdgeAbsoluteMultiplier)
 	{
 	
@@ -581,43 +718,12 @@ public class DataModule {
 		dottedEdgeAbsoluteMultiplier = _dottedEdgeAbsoluteMultiplier;
 		thickEdgeAbsoluteMultiplier = _thickEdgeAbsoluteMultiplier;
 				
-		if (SinceDate != "NULL") SinceDate = "\"" + SinceDate + "\"";
-		if (TillDate != "NULL") TillDate = "\"" + TillDate + "\"";
-		if (Place != "NULL") Place = "\"" + Place + "\"";
-		if (Author != "NULL") Author = "\"" + Author + "\"";
-		if (DocType != "NULL") DocType = "\"" + DocType + "\"";
-
-		List<Node> ln = new ArrayList<Node>();
-
-		try {
-			java.sql.Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
-                    ResultSet.CONCUR_READ_ONLY);	
-			System.err.println("CALL getNodes(" + SinceDate + ", " + TillDate + ", " + Place + ", " + Author + ", " + DocType + ");");
-			ResultSet srs = stmt.executeQuery("CALL getNodes(" + SinceDate + ", " + TillDate + ", " + Place + ", " + Author + ", " + DocType + ");");
-			
-			while (srs.next()) 
-			{
-		        	Node nod = new Node(srs.getInt("SPEECH_ID"), srs.getString("AUTHOR_NAME"), 
-		        			srs.getString("HEADLINE"), srs.getString("REPORT_DATE"), 
-		        			srs.getString("SOURCE_NAME"), srs.getString("PLACE_NAME"), srs.getString("DOCTYPE_NAME"),
-		        			srs.getString("SPEECH_DATE"));
-		        	
-		        	ln.add(nod);
-			}
-			
-			
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-		List<Node> sn = sortNodes(ln, queryTerms, termWeights, maxNumNodes);
+		List<Node> sn = getNodesForStandardQuery(SinceDate, TillDate, Place, Author, DocType, queryTerms, termWeights, maxNumNodes);
 		
 		displayedGraph = Graph.createGraphThreshold(sn, smCurrent, normalEdgeThreshold, dottedEdgeAbsoluteMultiplier, thickEdgeAbsoluteMultiplier, SettingsWindow.maxNumClusters); 
 		return displayedGraph;
 		
 	}
-
 	
 	public static Graph getGraphDensity(String SinceDate, String TillDate, String Place, String Author, String DocType, List<String> queryTerms , List<Double> termWeights, Integer maxNumNodes, double _edgeDensity, double _normalEdgeRelativeMultiplier, double _thickEdgeRelativeMultiplier)
 	{
@@ -625,38 +731,8 @@ public class DataModule {
 		edgeDensity = _edgeDensity;
 		normalEdgeRelativeMultiplier = _normalEdgeRelativeMultiplier;
 		thickEdgeRelativeMultiplier = _thickEdgeRelativeMultiplier;
-				
-		if (SinceDate != "NULL") SinceDate = "\"" + SinceDate + "\"";
-		if (TillDate != "NULL") TillDate = "\"" + TillDate + "\"";
-		if (Place != "NULL") Place = "\"" + Place + "\"";
-		if (Author != "NULL") Author = "\"" + Author + "\"";
-		if (DocType != "NULL") DocType = "\"" + DocType + "\"";
-
-		List<Node> ln = new ArrayList<Node>();
-
-		try {
-			java.sql.Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
-                    ResultSet.CONCUR_READ_ONLY);	
-			System.err.println("CALL getNodes(" + SinceDate + ", " + TillDate + ", " + Place + ", " + Author + ", " + DocType + ");");
-			ResultSet srs = stmt.executeQuery("CALL getNodes(" + SinceDate + ", " + TillDate + ", " + Place + ", " + Author + ", " + DocType + ");");
-			
-			while (srs.next()) 
-			{
-		        	Node nod = new Node(srs.getInt("SPEECH_ID"), srs.getString("AUTHOR_NAME"), 
-		        			srs.getString("HEADLINE"), srs.getString("REPORT_DATE"), 
-		        			srs.getString("SOURCE_NAME"), srs.getString("PLACE_NAME"), srs.getString("DOCTYPE_NAME"),
-		        			srs.getString("SPEECH_DATE"));
-		        	
-		        	ln.add(nod);
-			}
-			
-			
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-		List<Node> sn = sortNodes(ln, queryTerms, termWeights, maxNumNodes);
+	
+		List<Node> sn = getNodesForStandardQuery(SinceDate, TillDate, Place, Author, DocType, queryTerms, termWeights, maxNumNodes);
 		
 		displayedGraph = Graph.createGraphDensity(sn, smCurrent, edgeDensity, normalEdgeRelativeMultiplier, thickEdgeRelativeMultiplier, SettingsWindow.maxNumClusters); 
 		return displayedGraph;

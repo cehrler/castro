@@ -206,6 +206,14 @@ public class Visualize implements ItemListener, MouseListener {
 		
 		double xcoef = (layout_width - borderSpacing * 2) / (double)layout_width;
 		double ycoef = (layout_height - borderSpacing * 2) / (double)layout_height;
+
+		for (int i = 0; i < ln.size(); i++)
+		{
+			double xnew = layout.getX(ln.get(i)) + (layout_width / 2 - xmean);
+			double ynew = layout.getY(ln.get(i)) + (layout_height / 2 - ymean);
+			
+			layout.setLocation(ln.get(i), xnew, ynew);
+		}
 		
 		for (int i = 0; i < ln.size(); i++)
 		{
