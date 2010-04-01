@@ -11,6 +11,7 @@ import java.util.Set;
 import org.apache.commons.collections15.Transformer;
 
 import Functionality.Node;
+import GUI.SettingsWindow;
 
 public class VertexColorTransformer implements Transformer<Functionality.Node, Paint>{
 
@@ -69,7 +70,23 @@ public class VertexColorTransformer implements Transformer<Functionality.Node, P
 			}
 			else
 			{
-				return Color.RED;
+				if (SettingsWindow.useDifferentColorsForClusters == false)
+				{
+					return Color.red;
+				}
+				
+				if (arg0.GetCluster() == -1)
+					return Color.RED;
+				else if (arg0.GetCluster() == 0)
+					return Color.PINK;
+				else if (arg0.GetCluster() == 1)
+					return Color.MAGENTA;
+				else if (arg0.GetCluster() == 2)
+					return Color.GREEN;
+				else if (arg0.GetCluster() == 3)
+					return Color.CYAN;
+				else
+					return Color.BLUE;
 			}
 		}
 	}

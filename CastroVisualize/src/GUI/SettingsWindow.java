@@ -3,7 +3,9 @@ package GUI;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -12,6 +14,7 @@ import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -21,7 +24,7 @@ import Functionality.DataModule;
 
 public class SettingsWindow implements ActionListener {
 
-	private JFrame frame;
+	private JDialog frame;
 	private static SettingsWindow settingsWindow;
 	private JComboBox indexTypeCB;
 	private JCheckBox smoothedIndexChB;
@@ -30,14 +33,12 @@ public class SettingsWindow implements ActionListener {
 	private JTextField locationsInterpCoefTF;
 	private JTextField organizationsInterpCoefTF;
 	private JTextField lexicalSimilarityInterpCoefTF;
-	private JTextField maximumEdgeDensityTF;
-	private JTextField relativeDottedEdgeRatioTF;
-	private JTextField relativeThickEdgeRatioTF;
-	private JTextField absoluteDottedEdgeRatioTF;
-	private JTextField absoluteThickEdgeRatioTF;
+	private JComboBox similarityMeasureCB;
 	private JButton okBtn;
 	private JButton cancelBtn;
 	private JLabel waitLabel;
+	private JPanel matrixLowerPanel;
+	private Box matrixLowerBoxEmpty;
 
 	public static Double dottedEdgeAbsoluteMultiplier = 0.7;
 	public static Double thickEdgeAbsoluteMultiplier = 1.3;
@@ -50,171 +51,128 @@ public class SettingsWindow implements ActionListener {
 	public static Double maxEdgeThreshold = 1.0;
 
 	public static String currIndex = "TFIDF";
-	public static boolean smoothedIndex = true;
-	public static boolean smoothedSimMatrix = true;
+	public static boolean smoothedIndex = false;
+	public static boolean smoothedSimMatrix = false;
 	
-	public static Double personsCoef = 0.3;
-	public static Double locationsCoef = 0.3;
-	public static Double organizationsCoef = 0.3;
-	public static Double lexicalSimilarityCoef = 0.1;
+	public static Double personsCoef = 0.33;
+	public static Double locationsCoef = 0.33;
+	public static Double organizationsCoef = 0.34;
+	public static Double lexicalSimilarityCoef = 0.0;
+	public static int maxNumClusters = 4;
+	
+	private static int similarityMeasureType = 0;
+	
+	private static Double customPersonsCoef = 0.3;
+	private static Double customLocationsCoef = 0.3;
+	private static Double customOrganizationsCoef = 0.3;
+	private static Double customLexicalSimilarityCoef = 0.1;
+	
+	public  static Boolean useDifferentColorsForClusters = true;
 	
 	public SettingsWindow()
 	{
-		frame = new JFrame("Castro Settings");
+		frame = new JDialog(CastroGUI.frame, "Index and Similarity matrix", Dialog.ModalityType.APPLICATION_MODAL);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 		Container content = frame.getContentPane();
 		content.setLayout(new BorderLayout());
 		
-		JPanel northPanel = new JPanel(new BorderLayout());
+		Box vbox = Box.createVerticalBox();
+		vbox.add(Box.createVerticalStrut(10));
 		
-		Box leftBox = Box.createVerticalBox();
-		leftBox.setBorder(BorderFactory.createLineBorder(Color.black));
-		
-		Box hbox = Box.createHorizontalBox();
-		hbox.add(Box.createHorizontalStrut(5));
-		hbox.add(new JLabel("Index Type:"));
+		JPanel indexPanel = new JPanel();
+		indexPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), "Index:"));
+		indexPanel.setLayout(new GridLayout(2, 2));
+				
+		indexPanel.add(new JLabel("Index Type:"));
 
-		hbox.add(Box.createHorizontalStrut(5));		
 		indexTypeCB = new JComboBox();
 		indexTypeCB.addItem("TF");
 		indexTypeCB.addItem("TFIDF");
 		indexTypeCB.setSelectedItem(currIndex);
-		hbox.add(indexTypeCB);
+		indexPanel.add(indexTypeCB);
 
-		leftBox.add(hbox);
-		
-		hbox = Box.createHorizontalBox();
-		hbox.add(Box.createHorizontalStrut(5));
-		hbox.add(new JLabel("Use smoothed index:"));
 
-		hbox.add(Box.createHorizontalStrut(5));		
+		indexPanel.add(new JLabel("Use smoothed index:"));
 		smoothedIndexChB = new JCheckBox("", smoothedIndex);
-		hbox.add(smoothedIndexChB);
-
-		leftBox.add(hbox);
-
-		Box simVBox = Box.createVerticalBox();
-		simVBox.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), "Similarity matrix:"));
+		indexPanel.add(smoothedIndexChB);
 		
-		hbox = Box.createHorizontalBox();
-		hbox.add(Box.createHorizontalStrut(5));
-		hbox.add(new JLabel("Use smoothed similarity matrix:"));
+		vbox.add(indexPanel);
+		
+		vbox.add(Box.createVerticalStrut(10));
+		
+		Box matrixBox = Box.createVerticalBox();
+		matrixBox.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), "Similarity matrix:"));
+		
+		JPanel matrixUpperPanel = new JPanel();
+		matrixUpperPanel.setLayout(new GridLayout(2, 2));
+		
+		matrixUpperPanel.add(new JLabel("Use smoothed similarity measure:"));
 
-		hbox.add(Box.createHorizontalStrut(5));		
 		smoothedSimilarityMatrixChB = new JCheckBox("", smoothedSimMatrix);
-		hbox.add(smoothedSimilarityMatrixChB);
-		simVBox.add(hbox);
-		simVBox.add(Box.createVerticalStrut(10));
-		simVBox.add(new JLabel("Interpolations coefficients:"));
+		matrixUpperPanel.add(smoothedSimilarityMatrixChB);
+
+		matrixUpperPanel.add(new JLabel("Similarity measure:"));
+
+		similarityMeasureCB = new JComboBox(new String[] { "named entity", "lexical", "custom" } );
+		similarityMeasureCB.setSelectedItem(similarityMeasureType);
+		similarityMeasureCB.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				if (similarityMeasureCB.getSelectedIndex() == 2)
+				{
+					matrixLowerPanel.setVisible(true);
+					matrixLowerBoxEmpty.setVisible(false);
+				}
+				else
+				{
+					matrixLowerPanel.setVisible(false);
+					matrixLowerBoxEmpty.setVisible(true);
+				}
+				
+			}
+		});
 		
-		hbox = Box.createHorizontalBox();
-		hbox.add(Box.createHorizontalStrut(5));
-		hbox.add(new JLabel("Persons:"));
-
-		hbox.add(Box.createHorizontalStrut(5));		
-		personsInterpCoefTF = new JTextField(personsCoef.toString());
-		hbox.add(personsInterpCoefTF);
-
-		simVBox.add(hbox);
-
-		hbox = Box.createHorizontalBox();
-		hbox.add(Box.createHorizontalStrut(5));
-		hbox.add(new JLabel("Locations:"));
-
-		hbox.add(Box.createHorizontalStrut(5));		
-		locationsInterpCoefTF = new JTextField(locationsCoef.toString());
-		hbox.add(locationsInterpCoefTF);
-
-		simVBox.add(hbox);
-
-		hbox = Box.createHorizontalBox();
-		hbox.add(Box.createHorizontalStrut(5));
-		hbox.add(new JLabel("Organizations:"));
-
-		hbox.add(Box.createHorizontalStrut(5));		
-		organizationsInterpCoefTF = new JTextField(organizationsCoef.toString());
-		hbox.add(organizationsInterpCoefTF);
-
-		simVBox.add(hbox);
-
-		hbox = Box.createHorizontalBox();
-		hbox.add(Box.createHorizontalStrut(5));
-		hbox.add(new JLabel("Lexical similarity:"));
-
-		hbox.add(Box.createHorizontalStrut(5));		
-		lexicalSimilarityInterpCoefTF = new JTextField(lexicalSimilarityCoef.toString());
-		hbox.add(lexicalSimilarityInterpCoefTF);
-
-		simVBox.add(hbox);
+		matrixUpperPanel.add(similarityMeasureCB);
 		
-		leftBox.add(simVBox);
+		matrixBox.add(matrixUpperPanel);
+		matrixBox.add(Box.createVerticalStrut(10));
 		
-		northPanel.add(leftBox, BorderLayout.WEST);
+		matrixLowerPanel = new JPanel();
+		matrixLowerPanel.setLayout(new GridLayout(4, 2));
+		matrixLowerPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), "Interpolation coefficients:"));
 		
-		Box rightBox = Box.createVerticalBox();
-
-		Box edgeRelativeBox = Box.createVerticalBox();
-		edgeRelativeBox.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), "Edges - relative mode:"));
+		matrixLowerPanel.add(new JLabel("Persons:"));
 		
-		hbox = Box.createHorizontalBox();
-		hbox.add(Box.createHorizontalStrut(5));
-		hbox.add(new JLabel("Maximum edge density:"));
+		personsInterpCoefTF = new JTextField(customPersonsCoef.toString());
+		matrixLowerPanel.add(personsInterpCoefTF);
 
-		hbox.add(Box.createHorizontalStrut(5));		
-		maximumEdgeDensityTF = new JTextField(maxEdgeDensity.toString());
-		hbox.add(maximumEdgeDensityTF);
-		edgeRelativeBox.add(hbox);
-		edgeRelativeBox.add(Box.createVerticalStrut(10));
+		matrixLowerPanel.add(new JLabel("Locations:"));
 
-		hbox = Box.createHorizontalBox();
-		hbox.add(Box.createHorizontalStrut(5));
-		hbox.add(new JLabel("dotted edge const:"));
+		locationsInterpCoefTF = new JTextField(customLocationsCoef.toString());
+		matrixLowerPanel.add(locationsInterpCoefTF);
 
-		hbox.add(Box.createHorizontalStrut(5));		
-		relativeDottedEdgeRatioTF = new JTextField(normalEdgeRelativeMultiplier.toString());
-		hbox.add(relativeDottedEdgeRatioTF);
-		edgeRelativeBox.add(hbox);
-		edgeRelativeBox.add(Box.createVerticalStrut(10));
+		matrixLowerPanel.add(new JLabel("Organizations:"));
 
-		hbox = Box.createHorizontalBox();
-		hbox.add(Box.createHorizontalStrut(5));
-		hbox.add(new JLabel("thick edge const:"));
+		organizationsInterpCoefTF = new JTextField(customOrganizationsCoef.toString());
+		matrixLowerPanel.add(organizationsInterpCoefTF);
 
-		hbox.add(Box.createHorizontalStrut(5));		
-		relativeThickEdgeRatioTF = new JTextField(thickEdgeRelativeMultiplier.toString());
-		hbox.add(relativeThickEdgeRatioTF);
-		edgeRelativeBox.add(hbox);
+		matrixLowerPanel.add(new JLabel("Lexical similarity:"));
 
-		rightBox.add(edgeRelativeBox);
+		lexicalSimilarityInterpCoefTF = new JTextField(customLexicalSimilarityCoef.toString());
+		matrixLowerPanel.add(lexicalSimilarityInterpCoefTF);
+		matrixLowerPanel.setVisible(false);
 		
-		Box edgeAbsoluteBox = Box.createVerticalBox();
-		edgeAbsoluteBox.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), "Edges - absolute mode:"));
+		matrixBox.add(matrixLowerPanel);
 		
-		hbox = Box.createHorizontalBox();
-		hbox.add(Box.createHorizontalStrut(5));
-		hbox.add(new JLabel("dotted edge const:"));
-
-		hbox.add(Box.createHorizontalStrut(5));		
-		absoluteDottedEdgeRatioTF = new JTextField(dottedEdgeAbsoluteMultiplier.toString());
-		hbox.add(absoluteDottedEdgeRatioTF);
-		edgeAbsoluteBox.add(hbox);
-		edgeAbsoluteBox.add(Box.createVerticalStrut(10));
-
-		hbox = Box.createHorizontalBox();
-		hbox.add(Box.createHorizontalStrut(5));
-		hbox.add(new JLabel("thick edge const:"));
-
-		hbox.add(Box.createHorizontalStrut(5));		
-		absoluteThickEdgeRatioTF = new JTextField(thickEdgeAbsoluteMultiplier.toString());
-		hbox.add(absoluteThickEdgeRatioTF);
-		edgeAbsoluteBox.add(hbox);
+		matrixLowerBoxEmpty = Box.createVerticalBox();
+		matrixLowerBoxEmpty.add(Box.createVerticalStrut(matrixLowerPanel.getPreferredSize().height));
+		matrixBox.add(matrixLowerBoxEmpty);
 		
-		rightBox.add(edgeAbsoluteBox);
+		matrixBox.add(Box.createVerticalStrut(5));
 		
-		northPanel.add(rightBox, BorderLayout.EAST);
+		vbox.add(matrixBox);
 		
-		content.add(northPanel, BorderLayout.NORTH);
 		
 		Box southBox = Box.createHorizontalBox();
 		
@@ -238,13 +196,23 @@ public class SettingsWindow implements ActionListener {
 		waitLabel.setVisible(false);
 		southBox.add(waitLabel);
 		
-		content.add(southBox, BorderLayout.SOUTH);
+		vbox.add(southBox);
+
+		
+		content.add(vbox, BorderLayout.SOUTH);
 		
 		//frame.setSize(new Dimension(500, 500));
+	
+		frame.setLocationRelativeTo(CastroGUI.frame);
+		
+		frame.setLocation(CastroGUI.frame.getWidth() / 2 - frame.getPreferredSize().width / 2, CastroGUI.frame.getHeight() / 2 - frame.getPreferredSize().height / 2);
+
+		
 		frame.pack();
 		frame.setResizable(false);
 		frame.setVisible(true);
-		
+
+
 	}
 	
 	public static void Show()
@@ -253,25 +221,41 @@ public class SettingsWindow implements ActionListener {
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-		dottedEdgeAbsoluteMultiplier = Double.parseDouble(absoluteDottedEdgeRatioTF.getText());
-		
-		
-		thickEdgeAbsoluteMultiplier = Double.parseDouble(absoluteThickEdgeRatioTF.getText());
-		
-		normalEdgeRelativeMultiplier = Double.parseDouble(relativeDottedEdgeRatioTF.getText());
-		thickEdgeRelativeMultiplier = Double.parseDouble(relativeThickEdgeRatioTF.getText());
-		
-
-		maxEdgeDensity = Double.parseDouble(maximumEdgeDensityTF.getText());
 
 		currIndex = (String)(indexTypeCB.getSelectedItem());
 		smoothedIndex = smoothedIndexChB.isSelected();
 		smoothedSimMatrix = smoothedSimilarityMatrixChB.isSelected();
+
+		customPersonsCoef = Double.parseDouble(personsInterpCoefTF.getText());
+		customLocationsCoef = Double.parseDouble(locationsInterpCoefTF.getText());
+		customOrganizationsCoef = Double.parseDouble(organizationsInterpCoefTF.getText());
+		customLexicalSimilarityCoef = Double.parseDouble(lexicalSimilarityInterpCoefTF.getText());
+
+		similarityMeasureType = similarityMeasureCB.getSelectedIndex();
 		
-		personsCoef = Double.parseDouble(personsInterpCoefTF.getText());
-		locationsCoef = Double.parseDouble(locationsInterpCoefTF.getText());
-		organizationsCoef = Double.parseDouble(organizationsInterpCoefTF.getText());
-		lexicalSimilarityCoef = Double.parseDouble(lexicalSimilarityInterpCoefTF.getText());
+		if (similarityMeasureType == 2)
+		{
+			personsCoef = customPersonsCoef;
+			locationsCoef = customLocationsCoef;
+			organizationsCoef = customOrganizationsCoef;
+			lexicalSimilarityCoef = customLexicalSimilarityCoef; 
+		}
+		else if (similarityMeasureType == 1)
+		{
+			personsCoef = 0.0;
+			locationsCoef = 0.0;
+			organizationsCoef = 0.0;
+			lexicalSimilarityCoef = 1.0;
+		}
+		else
+		{
+			personsCoef = 0.33;
+			locationsCoef = 0.33;
+			organizationsCoef = 0.34;
+			lexicalSimilarityCoef = 0.0;
+		}
+		
+		System.err.println("personsCoef = " + personsCoef + ", locationsCoef = " + locationsCoef + ", organizationsCoef = " + organizationsCoef + ", lexicalSimilarityCoef = " + lexicalSimilarityCoef);
 
 		waitLabel.setVisible(true);
 		DataModule.Init(currIndex, smoothedIndex, smoothedSimMatrix, personsCoef, locationsCoef, organizationsCoef, lexicalSimilarityCoef);

@@ -25,6 +25,8 @@ import java.util.Set;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+
+import GUI.SettingsWindow;
 public class DataModule {
 
 	//sample use:
@@ -611,7 +613,7 @@ public class DataModule {
 		
 		List<Node> sn = sortNodes(ln, queryTerms, termWeights, maxNumNodes);
 		
-		displayedGraph = Graph.createGraphThreshold(sn, smCurrent, normalEdgeThreshold, dottedEdgeAbsoluteMultiplier, thickEdgeAbsoluteMultiplier); 
+		displayedGraph = Graph.createGraphThreshold(sn, smCurrent, normalEdgeThreshold, dottedEdgeAbsoluteMultiplier, thickEdgeAbsoluteMultiplier, SettingsWindow.maxNumClusters); 
 		return displayedGraph;
 		
 	}
@@ -656,7 +658,7 @@ public class DataModule {
 		
 		List<Node> sn = sortNodes(ln, queryTerms, termWeights, maxNumNodes);
 		
-		displayedGraph = Graph.createGraphDensity(sn, smCurrent, edgeDensity, normalEdgeRelativeMultiplier, thickEdgeRelativeMultiplier); 
+		displayedGraph = Graph.createGraphDensity(sn, smCurrent, edgeDensity, normalEdgeRelativeMultiplier, thickEdgeRelativeMultiplier, SettingsWindow.maxNumClusters); 
 		return displayedGraph;
 		
 	}
@@ -787,6 +789,21 @@ public class DataModule {
 		
 		return ret;
 
+	}
+	
+	public static void EvaluateClustering(int numClusters, int numSteps)
+	{
+		System.err.println("Kmeans start");
+		
+		KMeansCluster kmeans = new KMeansCluster(personsIndexSmooth, locationsIndexSmooth, organizationsIndexSmooth, displayedGraph.getNodes(), numClusters);
+			
+		for (int i = 0; i < numSteps; i++)
+		{
+			kmeans.NextStep();
+		}
+		
+		kmeans.Evaluate();
+		System.err.println("Kmeans stop");
 	}
 	
 }

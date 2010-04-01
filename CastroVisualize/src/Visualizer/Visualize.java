@@ -188,6 +188,59 @@ public class Visualize implements ItemListener, MouseListener {
 		
 	}
 	
+	public void CenterGraph(int borderSpacing, boolean _repaint)
+	{
+		List<Functionality.Node> ln = myGraph.getNodes();
+		
+		double xsum = 0;
+		double ysum = 0;
+		
+		for (int i = 0; i < ln.size(); i++)
+		{
+			xsum += layout.getX(ln.get(i));
+			ysum += layout.getY(ln.get(i));
+		}
+		
+		double xmean = xsum / ln.size();
+		double ymean = ysum / ln.size();
+		
+		double xcoef = (layout_width - borderSpacing * 2) / (double)layout_width;
+		double ycoef = (layout_height - borderSpacing * 2) / (double)layout_height;
+		
+		for (int i = 0; i < ln.size(); i++)
+		{
+			double xnew = borderSpacing + layout.getX(ln.get(i)) * xcoef;
+			double ynew = borderSpacing + layout.getY(ln.get(i)) * ycoef;
+			
+			layout.setLocation(ln.get(i), xnew, ynew);
+		}
+		
+		if (_repaint == true)
+			vv.repaint();
+	}
+	
+	private void InitializeClusterGraphLayout()
+	{
+		int numClusters = myGraph.GetNumberOfClusters();
+		double radius = Math.min(layout_width, layout_height) / 3.5;
+		double angleShift = (2 * Math.PI) / numClusters;
+		
+		List<Functionality.Node> ln = myGraph.getNodes();
+		
+		Node n;
+		int clusterID;		
+		for (int i = 0; i < ln.size(); i++)
+		{
+			n = ln.get(i);
+			clusterID = n.GetCluster();
+			
+			double xnew = (layout_width / 2) + Math.cos(angleShift * clusterID) * radius + (50 - Math.random() * 100);
+			double ynew = (layout_height / 2) + Math.sin(angleShift * clusterID) * radius + (50 - Math.random() * 100);
+			
+			layout.setLocation(n, xnew, ynew);
+		}
+	}
+	
 	public JComponent drawGraph() {
 		// System.out.println("The graph qt"+qt.toString()); // DEBUG
 		// ISOMLayout
@@ -222,12 +275,26 @@ public class Visualize implements ItemListener, MouseListener {
 		
 		//layout = new SpringLayout2<Functionality.Node, Functionality.Edge>(this.qt);
 		layout.initialize();
+		
+		if (myGraph.GetNumberOfClusters() > 1)
+		{
+			InitializeClusterGraphLayout();
+		}
+		
 	    layout.step();
 		layout.step();
 		layout.step();
 		layout.step();
+	    layout.step();
+		layout.step();
+		layout.step();
+		layout.step();
+		layout.step();
+		layout.step();
+		layout.step();
+		layout.step();
 		layout.lock(true);
-		
+		CenterGraph(10, false);
 		
 		// Create a graph mouse and add it to the visualization component
 		//DefaultModalGraphMouse gm = new DefaultModalGraphMouse();
@@ -257,7 +324,7 @@ public class Visualize implements ItemListener, MouseListener {
 		EdgeWeightStrokeFunction<Functionality.Edge> ewsf = new EdgeWeightStrokeFunction<Functionality.Edge>(_normalEdgeThreshold, _thickEdgeThreshold);
 		vv.getRenderContext().setEdgeStrokeTransformer(ewsf);
 		vv.repaint();
-		System.err.println("edge stroke fc: " + _normalEdgeThreshold + ", " + _thickEdgeThreshold);
+		//System.err.println("edge stroke fc: " + _normalEdgeThreshold + ", " + _thickEdgeThreshold);
 	}
 	
 	public void setEdgeFilter(boolean dotted, boolean normal, boolean thick)
