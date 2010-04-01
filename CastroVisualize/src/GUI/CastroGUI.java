@@ -523,11 +523,13 @@ public class CastroGUI implements ActionListener, ChangeListener,
 		vbEdgesRelative = Box.createVerticalBox();
 
 		bleLabel = new JLabel("link density:");
+		bleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
 		vbEdgesRelative.add(bleLabel);
 		vbEdgesRelative.add(Box.createVerticalStrut(5));
 
 		edgeDensitySlider = new JSlider(0, edgeDensitySliderNumberOfValues);
+		edgeDensitySlider.setAlignmentX(Component.LEFT_ALIGNMENT);
 		edgeDensitySlider.setPaintTicks(true);
 		edgeDensitySlider.setToolTipText(GuiConst.edgeDensitySlider_tooltip);
 		// dottedEdgeSlider.setPaintLabels(true);
@@ -761,6 +763,7 @@ public class CastroGUI implements ActionListener, ChangeListener,
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		
 		if (e.getSource().equals(filterCB)) {
 			if (filterCB.getSelectedItem().equals("distance filter")) {
 				vbFilterNone.setVisible(false);
@@ -786,6 +789,7 @@ public class CastroGUI implements ActionListener, ChangeListener,
 						SettingsWindow.normalEdgeRelativeMultiplier,
 						SettingsWindow.thickEdgeRelativeMultiplier);
 				redrawGraph();
+				System.err.println("Edge mode: relative");
 			} else {
 				vbEdgesAbsolute.setVisible(true);
 				vbEdgesRelative.setVisible(false);
@@ -794,6 +798,7 @@ public class CastroGUI implements ActionListener, ChangeListener,
 						SettingsWindow.dottedEdgeAbsoluteMultiplier,
 						SettingsWindow.thickEdgeAbsoluteMultiplier);
 				redrawGraph();
+				System.err.println("Edge mode: absolute");
 			}
 		} else if (e.getSource().equals(layoutStartStopBtn)) {
 			if (layoutStartStopBtn.getText().equals("Arange Graph")) {
@@ -805,6 +810,11 @@ public class CastroGUI implements ActionListener, ChangeListener,
 				layoutStartStopBtn.setText("Arange Graph");
 				visu.LayoutStop();
 			}
+		}
+		
+		if (e.getSource() instanceof JSlider)
+		{
+			System.err.println("Slider command: " + e.getActionCommand());
 		}
 
 	}
@@ -894,34 +904,51 @@ public class CastroGUI implements ActionListener, ChangeListener,
 		return terms;
 	}
 
+	private int edgeDensitySliderPreviousValue = -1;
+	private int edgeThresholdSliderPreviousValue = -1;
+	
 	public void stateChanged(ChangeEvent arg0) {
 
+		
 		if (arg0.getSource() == distanceSlider) {
 			// System.err.println(distanceFilterTypeCB.getSelectedItem());
 			setDistanceFilter();
 		} else if (arg0.getSource() == edgeDensitySlider) {
 			// double newVal = getEdgeSliderValue(dottedEdgeSlider);
-
+			if (edgeDensitySlider.getValueIsAdjusting())
+				return;
+			
+			if (edgeDensitySlider.getValue() == edgeDensitySliderPreviousValue)
+				return;
+			
+			edgeDensitySliderPreviousValue = edgeDensitySlider.getValue();
 			edgeDensity = getEdgeDensitySliderValue(edgeDensitySlider);
-
+			
 			if (DataModule.displayedGraph != null) {
 				DataModule.displayedGraph.ChangeEdgeDensities(edgeDensity,
 						SettingsWindow.normalEdgeRelativeMultiplier,
 						SettingsWindow.thickEdgeRelativeMultiplier);
-
+				System.err.println("BLEBLEBLEBLEBLE!!!!");
 				redrawGraph();
 				// visualizeGraph();
 			}
 		} else if (arg0.getSource() == edgeThresholdSlider) {
 			normalEdgeThreshold = getEdgeThresholdSliderValue(edgeThresholdSlider);
-
+			
+			if (edgeThresholdSlider.getValueIsAdjusting())
+				return;
+			if (edgeThresholdSliderPreviousValue == edgeThresholdSlider.getValue())
+				return;
+			
+			edgeThresholdSliderPreviousValue = edgeThresholdSlider.getValue();
+			
 			if (DataModule.displayedGraph != null) {
 				// System.err.println("bleble!!!");
 				DataModule.displayedGraph.ChangeEdgeThresholds(
 						normalEdgeThreshold,
 						SettingsWindow.dottedEdgeAbsoluteMultiplier,
 						SettingsWindow.thickEdgeAbsoluteMultiplier);
-
+				System.err.println("BLEBLEBLEBLEBLE!!!!");
 				redrawGraph();
 			}
 		} else if (arg0.getSource() == dottedEdgeChB

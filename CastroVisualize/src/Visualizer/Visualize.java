@@ -188,6 +188,37 @@ public class Visualize implements ItemListener, MouseListener {
 		
 	}
 	
+	public void CenterGraph(int borderSpacing, boolean _repaint)
+	{
+		List<Functionality.Node> ln = myGraph.getNodes();
+		
+		double xsum = 0;
+		double ysum = 0;
+		
+		for (int i = 0; i < ln.size(); i++)
+		{
+			xsum += layout.getX(ln.get(i));
+			ysum += layout.getY(ln.get(i));
+		}
+		
+		double xmean = xsum / ln.size();
+		double ymean = ysum / ln.size();
+		
+		double xcoef = (layout_width - borderSpacing * 2) / (double)layout_width;
+		double ycoef = (layout_height - borderSpacing * 2) / (double)layout_height;
+		
+		for (int i = 0; i < ln.size(); i++)
+		{
+			double xnew = borderSpacing + layout.getX(ln.get(i)) * xcoef;
+			double ynew = borderSpacing + layout.getY(ln.get(i)) * ycoef;
+			
+			layout.setLocation(ln.get(i), xnew, ynew);
+		}
+		
+		if (_repaint == true)
+			vv.repaint();
+	}
+	
 	public JComponent drawGraph() {
 		// System.out.println("The graph qt"+qt.toString()); // DEBUG
 		// ISOMLayout
@@ -226,8 +257,12 @@ public class Visualize implements ItemListener, MouseListener {
 		layout.step();
 		layout.step();
 		layout.step();
+	    layout.step();
+		layout.step();
+		layout.step();
+		layout.step();
 		layout.lock(true);
-		
+		CenterGraph(10, false);
 		
 		// Create a graph mouse and add it to the visualization component
 		//DefaultModalGraphMouse gm = new DefaultModalGraphMouse();
@@ -257,7 +292,7 @@ public class Visualize implements ItemListener, MouseListener {
 		EdgeWeightStrokeFunction<Functionality.Edge> ewsf = new EdgeWeightStrokeFunction<Functionality.Edge>(_normalEdgeThreshold, _thickEdgeThreshold);
 		vv.getRenderContext().setEdgeStrokeTransformer(ewsf);
 		vv.repaint();
-		System.err.println("edge stroke fc: " + _normalEdgeThreshold + ", " + _thickEdgeThreshold);
+		//System.err.println("edge stroke fc: " + _normalEdgeThreshold + ", " + _thickEdgeThreshold);
 	}
 	
 	public void setEdgeFilter(boolean dotted, boolean normal, boolean thick)

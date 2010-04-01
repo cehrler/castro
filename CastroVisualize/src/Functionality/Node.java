@@ -29,6 +29,17 @@ public class Node implements Comparable<Object> {
 	
 	public int visited = 0;
 	public int depth = 0;
+	private int clusterID = 1;
+	
+	public int GetCluster()
+	{
+		return clusterID;
+	}
+	
+	public void SetCluster(int _clusterID)
+	{
+		clusterID = _clusterID;
+	}
 	
 	public void SetRelevance(Double rel)
 	{
