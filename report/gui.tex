@@ -116,7 +116,9 @@ If the strength of the edge lies between the normal edge threshold and the thick
 
 The threshold value for normal edges is determined by the slider in the main control panel. The dotted-edge threshold value is then computed as a product of the normal edge threshold and the dotted edge constant. Likewise, the thick-edge threshold value is computed as a product of the normal edge threshold and the thick edge constant.
 \item[\scare{Clustering Settings}] \hfill \\
-The user can enable Chinese Whispering (CW) automatic document clustering (disabled by default), and specify the maximum number of clusters formed, the minimum size of each cluster, as well as the temporary graph density.
+The user can enable Chinese Whispering (CW) automatic document clustering (disabled by default), and specify the maximum number of clusters formed, the minimum size of each cluster, as well as the temporary graph density. Temporary graph is the data structure that is used for computation of the clusters. For the purpose of the clustering algorithm it's better to have dense graph, while users preffer rather sparser graph. That's the reason why there is a temporary graph structure for the purpose of the clustering algorithm. 
+Clustering can be enabled by setting the maximum number of clusters to the positive value.
+We implemented the cus
 \end{description}
 
 All of these features combine to create a powerful interface for searching the corpus and visualizing the results which is both highly automated and highly customizable. In turn, the system is designed to accommodate both basic and advanced users.
