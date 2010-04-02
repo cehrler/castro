@@ -34,6 +34,9 @@ public class VMindex {
 	
 	private Map<Integer, Double> sparseMat;
 	private List<Set<Integer> > neCells;
+	private List<Double> docLengths;
+	
+	private static boolean newVersion = false;
 	
 	//just because there is no standard Pair class in java
 	private Integer dummyMap(int a, int b)
@@ -51,6 +54,11 @@ public class VMindex {
 		return numNEs;
 	}
 	
+	public Double GetDocLength(int docID)
+	{
+		return docLengths.get(docID);
+	}
+	
 	public Double GetValue(Integer docID, Integer termID)
 	{
 		Integer ind = dummyMap(docID, termID);
@@ -61,7 +69,14 @@ public class VMindex {
 		}
 		else
 		{
-			return sparseMat.get(ind);
+			if (newVersion)
+			{
+				return sparseMat.get(ind) / docLengths.get(docID);
+			}
+			else
+			{
+				return sparseMat.get(ind);
+			}
 		}
 	}
 	
@@ -132,6 +147,25 @@ public class VMindex {
 		{
 			e.printStackTrace();
 		}
+		
+		int index;
+		double pomSum;
+		docLengths = new ArrayList<Double>();
+		for (int i = 0; i < numSpeeches; i++)
+		{
+			docLengths.add(0.0);
+			pomSum = 0;
+			for (Iterator<Integer> it = neCells.get(i).iterator(); it.hasNext(); )
+			{
+				index = it.next();
+				pomSum += (this.GetValue(i, index)) * (this.GetValue(i, index)); 
+			}
+			
+			docLengths.set(i, Math.sqrt(pomSum));
+		}
+		
+		
+		
 	}
 	
 	public static void ConvertTextToBin(String inputfile, String outputfile)

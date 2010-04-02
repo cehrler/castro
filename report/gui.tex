@@ -1,13 +1,13 @@
 The query functions, graph and display functions are integrated into a single graphical front-end relying primarily on the mouse for user input. The graph representation is dynamic and interactive, able to be navigated through by the user in order to obtain detailed information regarding the document database.
 
-\begin{figure}[h]
+\begin{figure}[ht]
 \centering
 \caption{GUI}
 \includegraphics[width=160mm]{gui.png}
 \end{figure}
 
 \subsubsection{Search Function}
-\begin{figure}[h]
+\begin{figure}[ht]
 \centering
 \caption{Search query}
 \includegraphics[width=160mm]{search.png}
@@ -19,7 +19,7 @@ Search terms are entered in the query form (item 1 in the figure above)\footnote
 The results of the current query are displayed both in a table of results and in a graph displayed in the main window.
 
 \subsubsection{Results}
-\begin{figure}[h]
+\begin{figure}[ht]
 \centering
 \caption{Query Results Table}
 \includegraphics[width=160mm]{table.png}
@@ -28,7 +28,7 @@ The results of the current query are displayed both in a table of results and in
 In the table, the documents are displayed in rows sorted by their relevance to the query in descending order. The metadata associated with each document is displayed in columns. If there was no metadata retrieved for a document, the entry for the data is empty or \code{NULL}.
 
 \subsubsection{Results}
-\begin{figure}[h]
+\begin{figure}[ht]
 \centering
 \caption{Document Similarity Graph}
 \includegraphics[width=80mm]{nodecloseup.png}
@@ -39,7 +39,7 @@ In the graph, each document is represented by a node (item 6). The relevance of 
 \paragraph{Navigation}
 Selecting a document either through its corresponding entry in the table or node in the graph with the mouse or keyboard highlights it and displays the NEs in the document in a sidebar. The NEs in a particular document and their string kernel-based aliases are displayed in the sidebar: Boldface entries represent NEs in the given document, while the non-boldface entries represent NEs similar to the boldface NEs in the document according to the string kernel similarity measure. For example, the NE \textbf{\lingform{Castro}} may also return the similar NEs \lingform{Fidel}, \lingform{Fidel Castro} and \lingform{Dr.\ Fidel}. The type of the NE (e.g.\ \code{Person} or \code{Organization}) is represented by the color of the text, e.g.\ red for \meta{Persons}, green for \meta{Organizations} and blue for \meta{Locations}. It also is possible to select multiple documents, e.g.\ by holding SHIFT and clicking on multiple nodes/table entries, or by clicking and dragging the mouse to create a selection box encompassing the nodes/table entries to be selected. When multiple documents are selected, the entries displayed in the sidebar are those that are common to all selected documents.
 
-\begin{figure}[h]
+\begin{figure}[ht]
 \centering
 \caption{Node Context Menu}
 \subfloat[][~\hfill{\tiny Version $<$\code{2010-04-02}}]{\includegraphics[width=80mm]{nodeclick.png}}
@@ -50,7 +50,7 @@ In addition to viewing document metadata in the query results table, the user ma
 \paragraph{\scare{Mark Nearest Neighbors} Function}
 Lastly, it is possible through the context menu to automatically select the nearest neighbors of the selected node(s), i.e.\ to select the nodes which share a NE directly with the said node.
 
-\begin{figure}[h]
+\begin{figure}[ht]
 \centering
 \caption{\scare{Mark Nearest Neighbors} Function}
 \subfloat[][Before]{\includegraphics[width=80mm]{markneighbors_before.png}}
@@ -62,7 +62,7 @@ Each nearest neighbor is automatically shaded in a range from black to white to 
 \paragraph{Display Options}
 \subparagraph{Edge/Node Filtering}
 
-\begin{figure}[h]
+\begin{figure}[ht]
 \centering
 \caption{Display Options}
 \includegraphics[height=80mm]{displayopts.png}
