@@ -22,6 +22,8 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import Functionality.DataModule;
+import Functionality.SimMatrixElem;
+import Functionality.SimMatrixEnum;
 
 public class SettingsWindow implements ActionListener {
 
@@ -40,6 +42,7 @@ public class SettingsWindow implements ActionListener {
 	private JLabel waitLabel;
 	private JPanel matrixLowerPanel;
 	private Box matrixLowerBoxEmpty;
+	private JComboBox similarityMeasure_algorithmCB;
 
 	public static Double dottedEdgeAbsoluteMultiplier = 0.7;
 	public static Double thickEdgeAbsoluteMultiplier = 1.3;
@@ -74,6 +77,8 @@ public class SettingsWindow implements ActionListener {
 	public static double ChineseWhisperClustering_tempGraphDensity = 3.0;
 	public static int ChineseWhisperClusteringAdjusted_numberEdgesForMeanComputation = 10000000; //Means that all of them are used!
 	public static int ChineseWhisperClustering_minimalSizeOfCluster = 3;
+	
+	public static SimMatrixElem.SimilarityMeasure similarityMeasure = SimMatrixElem.SimilarityMeasure.manhattan;
 	
 	public SettingsWindow()
 	{
@@ -111,14 +116,20 @@ public class SettingsWindow implements ActionListener {
 		matrixBox.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), "Similarity matrix:"));
 		
 		JPanel matrixUpperPanel = new JPanel();
-		matrixUpperPanel.setLayout(new GridLayout(2, 2));
+		matrixUpperPanel.setLayout(new GridLayout(3, 2));
+
+		matrixUpperPanel.add(new JLabel("Similarity measure:"));
+		
+		similarityMeasure_algorithmCB = new JComboBox(new SimMatrixElem.SimilarityMeasure[] { SimMatrixElem.SimilarityMeasure.manhattan, SimMatrixElem.SimilarityMeasure.cosine });
+		similarityMeasure_algorithmCB.setSelectedItem(similarityMeasure);
+		matrixUpperPanel.add(similarityMeasure_algorithmCB);
 		
 		matrixUpperPanel.add(new JLabel("Use smoothed similarity measure:"));
 
 		smoothedSimilarityMatrixChB = new JCheckBox("", smoothedSimMatrix);
 		matrixUpperPanel.add(smoothedSimilarityMatrixChB);
 
-		matrixUpperPanel.add(new JLabel("Similarity measure:"));
+		matrixUpperPanel.add(new JLabel("Similarity matrix:"));
 
 		similarityMeasureCB = new JComboBox(new String[] { "named entity", "lexical", "custom" } );
 		similarityMeasureCB.setSelectedItem(similarityMeasureType);
@@ -140,6 +151,7 @@ public class SettingsWindow implements ActionListener {
 		});
 		
 		matrixUpperPanel.add(similarityMeasureCB);
+		
 		
 		matrixBox.add(matrixUpperPanel);
 		matrixBox.add(Box.createVerticalStrut(10));
@@ -241,6 +253,7 @@ public class SettingsWindow implements ActionListener {
 		customOrganizationsCoef = Double.parseDouble(organizationsInterpCoefTF.getText());
 		customLexicalSimilarityCoef = Double.parseDouble(lexicalSimilarityInterpCoefTF.getText());
 
+		similarityMeasure = (SimMatrixElem.SimilarityMeasure)(similarityMeasure_algorithmCB.getSelectedItem());
 		similarityMeasureType = similarityMeasureCB.getSelectedIndex();
 		
 		if (similarityMeasureType == 2)
@@ -267,10 +280,11 @@ public class SettingsWindow implements ActionListener {
 		
 		System.err.println("personsCoef = " + personsCoef + ", locationsCoef = " + locationsCoef + ", organizationsCoef = " + organizationsCoef + ", lexicalSimilarityCoef = " + lexicalSimilarityCoef);
 
-		waitLabel.setVisible(true);
 		DataModule.Init(currIndex, smoothedIndex, smoothedSimMatrix, personsCoef, locationsCoef, organizationsCoef, lexicalSimilarityCoef);
-		CastroGUI.gui.performSearch(CastroGUI.GetCurrentSearchQuery(), true);
-		waitLabel.setVisible(false);
+		if (CastroGUI.GetCurrentSearchQuery() != null)
+		{
+			CastroGUI.gui.performSearch(CastroGUI.GetCurrentSearchQuery(), true);
+		}
 		frame.dispose();
 		
 	}

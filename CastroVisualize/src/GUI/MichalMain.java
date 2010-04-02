@@ -23,7 +23,7 @@ public class MichalMain {
 
 	public static void main(String[] args) {
 		//makeBinIndexes();
-		makeSimMatrices(SimMatrixElem.SimilarityMeasure.cosine);
+		makeSimMatrices(SimMatrixElem.SimilarityMeasure.euclidean);
 		
 		//RunTest();
 		

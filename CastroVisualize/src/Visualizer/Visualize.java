@@ -616,7 +616,7 @@ public class Visualize implements ItemListener, MouseListener {
         {
         	for (int i = 0; i < graphIn.getNodes().size(); i++)
         	{
-        		if (graphIn.getNodes().get(i).GetRelevance() > maxRelevance) maxRelevance = graphIn.getNodes().get(i).GetRelevance();
+        		if (graphIn.getNodes().get(i).GetRelevance() > maxRelevance && graphIn.getNodes().get(i).GetRelevance() < 1.1) maxRelevance = graphIn.getNodes().get(i).GetRelevance();
         	}
         	
         	this.graph = graphIn;
@@ -626,7 +626,13 @@ public class Visualize implements ItemListener, MouseListener {
 		            if (scale)
 		            {
 		            	//return 20;
-		            	int retScale = (int)( (((Functionality.Node)v).GetRelevance() / maxRelevance) * 30) + 20;
+		            	double rel = ((Functionality.Node)v).GetRelevance();
+		            	if (rel > 1.1) rel = 1.1;
+		            	int retScale = (int)( (rel / maxRelevance) * 30) + 20;
+		            	if (retScale > 80)
+		            	{
+		            		retScale = 80;
+		            	}
 		                return retScale;
 		            }
 		            else

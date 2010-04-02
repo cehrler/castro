@@ -103,6 +103,7 @@ public class DataModule {
 	private static IndexTypeEnum currentIndexType = IndexTypeEnum.NULL;
 	private static boolean currentIndexSmooth = false;
 	private static boolean currentSimMatrixSmooth = false;
+	private static SimMatrixElem.SimilarityMeasure currentSimMatrixMeasure = SimMatrixElem.SimilarityMeasure.none;
 	
 	private static double simEpsilon = 0.000001;
 	
@@ -199,6 +200,7 @@ public class DataModule {
 		if (currentIndexType != indexType)
 		{
 
+			currentSimMatrixMeasure = SettingsWindow.similarityMeasure;
 			switch (indexType)
 			{
 				case TF: personsIndexFile = "../DataModuleData/PERSONS.tf.bin";
@@ -219,17 +221,17 @@ public class DataModule {
 						 }
 						 if (simMatrixSmooth)
 						 {
-							 smPersonsFile = "../DataModuleData/PERSONS-smooth.tf.sim";
-							 smLocationsFile = "../DataModuleData/LOCATIONS-smooth.tf.sim";
-							 smOrganizationsFile = "../DataModuleData/ORGANIZATIONS-smooth.tf.sim";
+							 smPersonsFile = "../DataModuleData/PERSONS-smooth." + currentSimMatrixMeasure.toString() +".tf.sim";
+							 smLocationsFile = "../DataModuleData/LOCATIONS-smooth." + currentSimMatrixMeasure.toString() +".tf.sim";
+							 smOrganizationsFile = "../DataModuleData/ORGANIZATIONS-smooth." + currentSimMatrixMeasure.toString() +".tf.sim";
 						 }
 						 else
 						 {
-							 smPersonsFile = "../DataModuleData/PERSONS.tf.sim";
-							 smLocationsFile = "../DataModuleData/LOCATIONS.tf.sim";
-							 smOrganizationsFile = "../DataModuleData/ORGANIZATIONS.tf.sim";						 
+							 smPersonsFile = "../DataModuleData/PERSONS." + currentSimMatrixMeasure.toString() +".tf.sim";
+							 smLocationsFile = "../DataModuleData/LOCATIONS." + currentSimMatrixMeasure.toString() +".tf.sim";
+							 smOrganizationsFile = "../DataModuleData/ORGANIZATIONS." + currentSimMatrixMeasure.toString() +".tf.sim";						 
 						 }
-						 smDictionaryFile = "../DataModuleData/GENERAL.tf.sim";
+						 smDictionaryFile = "../DataModuleData/GENERAL." + currentSimMatrixMeasure.toString() +".tf.sim";
 						 break;
 				
 				case TFIDF: personsIndexFile = "../DataModuleData/PERSONS.tfidf.bin";
@@ -251,17 +253,17 @@ public class DataModule {
 							 
 							 if (simMatrixSmooth)
 							 {
-								 smPersonsFile = "../DataModuleData/PERSONS-smooth.tfidf.sim";
-								 smLocationsFile = "../DataModuleData/LOCATIONS-smooth.tfidf.sim";
-								 smOrganizationsFile = "../DataModuleData/ORGANIZATIONS-smooth.tfidf.sim";
+								 smPersonsFile = "../DataModuleData/PERSONS-smooth." + currentSimMatrixMeasure.toString() +".tfidf.sim";
+								 smLocationsFile = "../DataModuleData/LOCATIONS-smooth." + currentSimMatrixMeasure.toString() +".tfidf.sim";
+								 smOrganizationsFile = "../DataModuleData/ORGANIZATIONS-smooth." + currentSimMatrixMeasure.toString() +".tfidf.sim";
 							 }
 							 else
 							 {
-								 smPersonsFile = "../DataModuleData/PERSONS.tfidf.sim";
-								 smLocationsFile = "../DataModuleData/LOCATIONS.tfidf.sim";
-								 smOrganizationsFile = "../DataModuleData/ORGANIZATIONS.tfidf.sim";						 
+								 smPersonsFile = "../DataModuleData/PERSONS." + currentSimMatrixMeasure.toString() +".tfidf.sim";
+								 smLocationsFile = "../DataModuleData/LOCATIONS." + currentSimMatrixMeasure.toString() +".tfidf.sim";
+								 smOrganizationsFile = "../DataModuleData/ORGANIZATIONS." + currentSimMatrixMeasure.toString() +".tfidf.sim";						 
 							 }
-							 smDictionaryFile = "../DataModuleData/GENERAL.tfidf.sim";
+							 smDictionaryFile = "../DataModuleData/GENERAL." + currentSimMatrixMeasure.toString() +".tfidf.sim";
 				 			break;
 
 				/*case NoNormalization: personsIndexFile = "../DataModuleData/PERSONS.nonorm.bin";
@@ -329,46 +331,54 @@ public class DataModule {
 
 			}
 			
-			if (currentSimMatrixSmooth != simMatrixSmooth)
+			if (currentSimMatrixSmooth != simMatrixSmooth || currentSimMatrixMeasure != SettingsWindow.similarityMeasure)
 			{
-	
+				currentSimMatrixMeasure = SettingsWindow.similarityMeasure;
+				
 				if (indexType == IndexTypeEnum.TFIDF)
 				{
 					 
 					 if (simMatrixSmooth)
 					 {
-						 smPersonsFile = "../DataModuleData/PERSONS-smooth.tfidf.sim";
-						 smLocationsFile = "../DataModuleData/LOCATIONS-smooth.tfidf.sim";
-						 smOrganizationsFile = "../DataModuleData/ORGANIZATIONS-smooth.tfidf.sim";
+						 smPersonsFile = "../DataModuleData/PERSONS-smooth." + currentSimMatrixMeasure.toString() +".tfidf.sim";
+						 smLocationsFile = "../DataModuleData/LOCATIONS-smooth." + currentSimMatrixMeasure.toString() +".tfidf.sim";
+						 smOrganizationsFile = "../DataModuleData/ORGANIZATIONS-smooth." + currentSimMatrixMeasure.toString() +".tfidf.sim";
 					 }
 					 else
 					 {
-						 smPersonsFile = "../DataModuleData/PERSONS.tfidf.sim";
-						 smLocationsFile = "../DataModuleData/LOCATIONS.tfidf.sim";
-						 smOrganizationsFile = "../DataModuleData/ORGANIZATIONS.tfidf.sim";						 
+						 smPersonsFile = "../DataModuleData/PERSONS." + currentSimMatrixMeasure.toString() +".tfidf.sim";
+						 smLocationsFile = "../DataModuleData/LOCATIONS." + currentSimMatrixMeasure.toString() +".tfidf.sim";
+						 smOrganizationsFile = "../DataModuleData/ORGANIZATIONS." + currentSimMatrixMeasure.toString() +".tfidf.sim";						 
 					 }
+					 
+					 smDictionaryFile = "../DataModuleData/GENERAL." + currentSimMatrixMeasure.toString() +".tfidf.sim";
+
 
 				}
 				else
 				{
 					 if (simMatrixSmooth)
 					 {
-						 smPersonsFile = "../DataModuleData/PERSONS-smooth.tf.sim";
-						 smLocationsFile = "../DataModuleData/LOCATIONS-smooth.tf.sim";
-						 smOrganizationsFile = "../DataModuleData/ORGANIZATIONS-smooth.tf.sim";
+						 smPersonsFile = "../DataModuleData/PERSONS-smooth." + currentSimMatrixMeasure.toString() +".tf.sim";
+						 smLocationsFile = "../DataModuleData/LOCATIONS-smooth." + currentSimMatrixMeasure.toString() +".tf.sim";
+						 smOrganizationsFile = "../DataModuleData/ORGANIZATIONS-smooth." + currentSimMatrixMeasure.toString() +".tf.sim";
 					 }
 					 else
 					 {
-						 smPersonsFile = "../DataModuleData/PERSONS.tf.sim";
-						 smLocationsFile = "../DataModuleData/LOCATIONS.tf.sim";
-						 smOrganizationsFile = "../DataModuleData/ORGANIZATIONS.tf.sim";						 
+						 smPersonsFile = "../DataModuleData/PERSONS." + currentSimMatrixMeasure.toString() +".tf.sim";
+						 smLocationsFile = "../DataModuleData/LOCATIONS." + currentSimMatrixMeasure.toString() +".tf.sim";
+						 smOrganizationsFile = "../DataModuleData/ORGANIZATIONS." + currentSimMatrixMeasure.toString() +".tf.sim";						 
 					 }
+					 
+					 smDictionaryFile = "../DataModuleData/GENERAL." + currentSimMatrixMeasure.toString() +".tf.sim";
+
 					
 				}
 				
 				smPersons = SimMatrixElem.LoadFromFile(smPersonsFile);
 				smLocations = SimMatrixElem.LoadFromFile(smLocationsFile);
 				smOrganizations = SimMatrixElem.LoadFromFile(smOrganizationsFile);
+				smDictionary = SimMatrixElem.LoadFromFile(smDictionaryFile);
 			}
 		}
 			
@@ -697,11 +707,12 @@ public class DataModule {
 			}
 		}
 
+		
 		mapIdToSimilarity.put(docID, 1.0);
 		System.err.println("Jsem tu!");
 
 		List<Integer> si = new ArrayList<Integer>(mapIdToSimilarity.keySet());
-		si.add(docID);
+		//si.add(docID);
 		
 		Collections.sort(si, new Comparator<Integer>() {
 			public int compare(Integer o1, Integer o2) {
@@ -747,7 +758,7 @@ public class DataModule {
 			n = ln.get(i);
 			if (n.getSpeech_id() == docID)
 			{
-				n.SetRelevance(1.0);
+				n.SetRelevance(1.25);
 			}
 			else
 			{

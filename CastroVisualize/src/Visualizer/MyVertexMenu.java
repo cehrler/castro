@@ -12,7 +12,7 @@ public class MyVertexMenu extends JPopupMenu {
 		this.add(new InfoMenuItem<Functionality.Node>());
 		this.add(new OpenTextMenuItem<Functionality.Node>());
 		this.add(new MarkNeightboursMenuItem());
-		//this.add(new SearchVertexMenuItem());
+		this.add(new SearchVertexMenuItem());
 		
 		
 		this.addSeparator();

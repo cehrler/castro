@@ -26,7 +26,7 @@ public class SimMatrixElem extends SimMatrix {
 	
 	public enum SimilarityMeasure
 	{
-		manhattan, euclidean, cosine
+		manhattan, euclidean, cosine, none
 	}
 	
 	private List<List<Double> > matrix;
@@ -219,7 +219,7 @@ public class SimMatrixElem extends SimMatrix {
 		int pomI = (int)Math.round(Math.floor(d * 256));
 		if (pomI < 0 || pomI > 256)
 		{
-			throw new Exception("DoubleToByte doesn't work or nonstandard similarity matrix");
+			throw new Exception("DoubleToByte doesn't work or nonstandard similarity matrix: " + d + " >> " + pomI);
 		}
 		
 		if (pomI == 256) pomI = 255;
