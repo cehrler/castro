@@ -1,22 +1,7 @@
 The results of the document similarity visualization are mixed: While there are many relationships represented between documents, the qualitative value of these relationships is irregular.
 
-For example, a query including the NE \code{"Central Committe"} and the keyword \code{economy} for documents between the years of 1959 and 1984 produced a cluster of documents including the following headlines:
-
-\begin{enumerate}
-\item ``USSR--Cuban Fishing Base Pact Signed''\label{eval:doc179}
-\item ``Fidel Castro sends regrets to Dominican Olympic Committee''\label{eval:doc553}
-\item A meeting of Fidel Castro with Salim Rabay`l `Ali, assistant secretary of the Central Committee of the United Political Organization National Front\label{eval:doc682}
-\item A meeting of Fidel Castro with Jesse Jackson regarding US--Cuban normalization\label{eval:doc879}
-\item A meeting of Fidel Castro with Mrs. Nguyen Thi Binh, minister of foreign affairs of the Republic of South Vietnam\label{eval:doc643}
-\item An address by Fidel Castro to the people of Chile regarding Chilean--Cuban relations and working for a better future\label{eval:doc391}
-\item Fidel Castro visits the South Vietnamese embassy in Cuba to welcome ``the great victory \ldots in liberating Saigon'' and inquire about social, economic and political conditions in South Vietnam\label{eval:doc626}
-\end{enumerate} 
-
-This cluster was generated with a relative edge density of 2.52 (relatively high) while also applying a vertex distance filter of 1, selecting document \ref{eval:doc179} as a focal point. In other words, the graph was set to display many relations between all documents which shared at least one NE with the document in question. Of the six documents connected to this document in the resulting graph (shown above), only one--- \ref{eval:doc626}--- is qualitatively related to document \ref{eval:doc179} in a direct sense.
-
-However, all these documents contain the NE \lingform{Central Committee} or an NE similar to it according to the string kernel similarity measure. This is often realised as \lingform{First secretary of the \textbf{Central Committee} of the Communist Party of Cuba} or a variant of it--- which often co-refers to \lingform{Fidel Castro} or a variant of it.
-
-It seems then that the document clustering is more relevant than first observed: All the documents contain references to \code{Fidel Castro}. However, this is still of little practical use, as the NE \code{Fidel Castro} is in the vast majority of the documents in the corpus: This clustering does not distinguish a document or group of documents in a way which is of great use to a user browsing the corpus.
+For example, a query including the NE \code{"Central Committe"} and the keyword
+\note{add GENERAL QUERY}
 
 However, querying more specific terms revealed different results: A query was entered using the terms \code{Giron}, and \code{Kennedy}, retrieving the 10 most relevant documents and enabling Chinese Whisper Clustering (set to a maximum of four clusters). Two distinct clusters of documents were produced: One was of documents directly related to the 1961 Bay of Pigs Invasion (a.k.a.\ Playa Gir\'{o}n), e.g.\ speeches on the anniversary of the event, or victory speeches. However, the other cluster was composed largely of documents in which \lingform{Playa Giron} was mentioned but the document was not directly related to the event. Most featured political and/or economic topics as well as the topic of US--Cuban relations or aggression.
 
