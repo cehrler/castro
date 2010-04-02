@@ -1,0 +1,6 @@
+\subsection {Index_and_similarity_matrix_representation}
+\label{sec:Index_and_similarity_matrix_representation}
+
+Index is the data structure that stores the vector representation of the documents in the vector model. It is a matrix. Each row stores the vector representation of a single document. Each column stores the weights for one distinct term in for all the documents. The index matrix is usually very sparse. In our implementation it is represented as a sparse matrix. In the memory we store only coordinations of nonzero cells and their values. All the document representation vectors were normalized in advance. Which allows us to compute cosine similarities of documents and queries faster.
+
+Similarity matrix stores the similarity for each pair of documents. They are not sparse and each cell is represented in the memory. Similarity matrices To decrease the size of the files storing the similarity matrices, 
