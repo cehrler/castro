@@ -5,13 +5,31 @@ interpretation for each, examples}
 
 Vector model is the model of representing text document or any other data. In vector model for information retrieval both documents and queries are represented as a vector of numbers. Number at each position of the vector corresponds to the term importance for the representation of the query or document. The main advantage of the vector model is that it has easy algebraic formulation. It's also not that strict as the boolean model. In boolean model document either completely fits to the query or it doesn't fit at all. In real word the situation is different, the relevance of the document for the user is rathed continuous quantity and the same applies to the vector model.
 
-The coefficients are usually normalised in order to have the same length. We don't want documents with a lot of words to be advantaged. What is important is the density of the term in the document. That's the reason why the vector representations of the documents are often normalised in the way that the sum of all indices sum up to one. 
+The coefficients are usually normalised in order to have the same length, otherwise the model would favor the documents with greater length. What is important is the density of the term in the document.
 
-The favourite normalization in vector model are TF and TFIDF score. TF stands for term frequency. It is computed directly using the counts of the terms in the document. Weight of the term 
+There are several measures beeing used which express the importance of the index term for the document. The most widely used are TF and TF-IDF. 
+TF stands for term frequency, it measures directly how many times the word occured in the document, TF score grows linearly with the number of occurences of the term in the document. The TF score of term j in document i is defined as follows:
 
- Each vector dimension corresponds to distinct search term 
+\note{Someone who can work with latex please add the following: TF(i,j) = n(i,j) / SUM(k over all terms) n(i,k) }
 
- Eeach item is represented by the vector. In the context of information retrieval, . T
+n(i,j) stands for the number of counts term j occured in document i.
+
+TF-IDF stands for term frequency - inverse document frequency. This measure is based on the notion that the terms which occur in a lot of documents are not very useful for searching purposes. The terms which occur in a few documents only have greater discrimination power. The TF-IDF score of term j in document is is defined as follows.
+
+\note{Someone who can work with latex please add the following: TF-IDF(i,j) = TF(i,j) * log( |D| / \{d: t(j) "is member of sign" d\} }
+
+The TF-IDF score of term j drops according to the logarithm of the number of document that contain term j. The TF-IDF score of the term which is contained in every single document is always equal to zero.
+
+\note{The indexes in brackets should be written in foot-script, I hope you show me tomorrow how to write formulas:) }  
+
+In vector model we need to measure the similarity between vectors. The similarity is usually expressed by the cosine similarity measure:
+
+\note{ cosim(q,d) = [SUM(k over all terms) q(k) * d(k)] / [ |q| * |d| ] }
+
+It express the cosin angle between the vectors q and d. This measure is equal to 1 for the paralell vectors and it's equal to zero for the perpendicular vectors.
+
+In vector model the searching proceeds as follows. The search query is transformed into its vector representation in the same manner as it is done for the document. The cosine similarity between the query vector and the vector representation of each document is computed. The search results are ordered according to their similarity to the user query.  
+
 
 \subsubsection {Aliasing with String Kernels}
 \label{sec:aliasing_string_kernel}
