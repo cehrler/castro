@@ -24,7 +24,7 @@ strings over $\Sigma$ of length $p$. The p-spectrum string kernel can be efficie
 \subsubsection{Co-reference Resolution by String Kernels}
 \label{sec:co_reference_resolution_by_string_kernels}
 Co-refernce resolution by kernel methods is an active research area and several methods have been proposed for the task. These include string and tree based kernel methods \cite{string_kernel_coref}.
-The advantage of tree based methods is due to the possibilty to encode additional structure and information about syntactic and semantic properties of the text, which renders these methods superior to string based methods.
+The advantage of tree based methods is due to the possibility to encode additional structure and information about syntactic and semantic properties of the text, which renders these methods superior to string based methods.
 
 For our project, we only need co-reference resolution based on the extracted named entities. This essentially comes down to the task of \textit{aliasing} named entities for each type of named entity. To this end, we applied a two-spectrum string kernel. \note{explain this a little more}
 
@@ -56,9 +56,9 @@ and queries.}
 \note{how we did coref}
 \note{cpp implementation, simmatrix as sparse matrix... approximation...}
 
-The first implementation of the two-spectrum kernel function was done in \texttt{python} but we  later reimplemented it in \textt{C++} for performance reasons. For all three types of named entities we computed the complete kernel matrix $\textbf{K}$, where $\textbf{K_{i,j}}$ is the similarity of the named entities $i$ and $j$. Since many of the entries in $\textbf{K}$ are near zero, thresholding with a fixed value was applied after the computation and the resulting sparse matrix was then stored.
+The first implementation of the two-spectrum kernel function was done in \texttt{python} but we  later reimplemented it in \texttt{C++} for performance reasons. For all three types of named entities we computed the complete kernel matrix $\textbf{K}$, where $\textbf{K_{i,j}}$ is the similarity of the named entities $i$ and $j$. Since many of the entries in $\textbf{K}$ are near zero, thresholding with a fixed value was applied after the computation and the resulting sparse matrix was then stored.
 
-Now given the kernel matrix $\textbf{K}$, aliasing can be performed through multiplication of each document-vector with the kernel matrix. The scalor prodact on the resulting aliased document vectors yields the overall document similarity with respect to the named entities. In figure \ref{eq:example_string_sim} we give a short example on aliasing based on three different named entities.
+Now given the kernel matrix $\textbf{K}$, aliasing can be performed through multiplication of each document-vector with the kernel matrix. The scalar product on the resulting aliased document vectors yields the overall document similarity with respect to the named entities. In figure \ref{eq:example_string_sim} we give a short example on aliasing based on three different named entities.
 
 
 
