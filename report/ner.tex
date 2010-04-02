@@ -4,13 +4,13 @@ input/output examples, evaluation??}
 We chose the Stanford Named Entity Recognizer (SNER) \cite{sner} for the task of identifying named entities in the collection.
 The SNER is considered to be one of the best freely available tools for named entity recognition.
 It recognizes locations, persons and organizations which, as suggested previously, are all relevant for the historical domain. 
-It comes with models pre-trained on CoNLL, MUC-6, MUC-7 and ACE named entity corpora and is which presumably make it robust across domains.
+It comes with models pre-trained on CoNLL, MUC-6, MUC-7 and ACE named entity corpora, which presumably make it robust across domains.
 
 The pre-trained modules are very valuable for us, as we do not have NE annotated data for the Castro collection, and manual annotation of NE's is a labor intensive task. As discussed in the evaluation section \ref{sec:named_entity_recognition}, the domain robustness of the tool is reflected in the quality of the NE tagging for our collection, which contains a variety of different genres. 
 
 The Stanford Named Entity Recognizer implements linear chain Conditional Random Field sequence models, proposed by \cite{lafferty2001conditional}.
 CRF is a discriminative model for finding the most probable sequence of labels (NE types) given a sequence of observations (words). 
-It does not assume independence between features, and enables conditioning each random variable of the any part of the input sequence. The features used for the recognizer implementation include word features, orthographic features and label sequences. It is also possible to integrate ID's of word clusters computed according to distributional similarity as features of the classifier.
+It does not assume independence between features, and enables conditioning each random variable any part of the input sequence. The features used for the recognizer implementation include word features, orthographic features and label sequences. It is also possible to integrate ID's of word clusters computed according to distributional similarity as features of the classifier.
 
 We used vesion $1.1.1$ of the SNER. The named entity recognition was performed with the
 \texttt{ner-eng-ie.crf-3-all2008-distsim.ser.gz} model - a three class classifier with the additional
