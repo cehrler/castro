@@ -10,7 +10,9 @@ The query functions, graph and display functions are integrated into a single gr
 \begin{figure}[h]
 \centering
 \caption{Search query}
+\subfloat[][~\hfill{\tiny Version $<$\code{2010-04-02}}]{
 \includegraphics[width=160mm]{search.png}
+}
 \end{figure}
 
 Search terms are entered in the query form (item 1 in the figure above)\footnote{Unless otherwise mentioned, the version depicted is \code{2010-04-02}.}: Entering any term will return both NEs and also keywords sharing the exact form (not case-sensitive)--- For instance, entering \lingform{committee} will both return exact instances of \code{committee} in the document itself, and will return NEs similar to \lingform{committee} based on the string kernel similarity measure, e.g.\ \lingform{Central Committee} and \lingform{Central Committee of the Cuban Communist Party}. Multi-word terms are denoted in double quotes, e.g.\ \code{"Central Committee"}. The maximum amount of query results can be adjusted (item 2): For example, entering a value of \code{10} will return ten documents most relevant to the query. The set of years searched between is also modifiable specified by (item 3), as well as the type(s) of documents searched (e.g.\ \code{Speech}, \code{Interview}) (item 5). Once the criteria are entered, the query is run by selecting item 5.
@@ -92,10 +94,29 @@ Finally, for even further control, the user may manually specify all display set
 \begin{description}
 \item[\scare{Index and Similarity Matrix}] \hfill \\
 The user can choose to have document similarities calculated with TF/IDF scores (default) or only TF scores. Additionally, similarities may be calculated with aliasing through the string kernel, or to calculate document similarities with aliasing disabled and associating only exact strings (default). Finally, the similarities can be calculated using only NEs (default), only lexical similarity, or may manually specify the weighting of each measure individually (\scare{custom}), e.g.\ of each type of NE compared to each other and to overall lexical similarity. 
-\item[\scare{Link Settings}] \hfill \\
-\note{MICHAL}
+\item[\scare{Link Settings}]\hfill \\
+The edge density slider on the left-hand control panel left corresponds to the edge density value in relative-similarity mode, or the edge threshold value in absolute-similarity mode. When the graph is constructed in the relative similarity mode, the number of edges is determined by multiplying the number of nodes by the the chosen edge density (slider value), and the strongest edges are displayed according to this value. After the set of edges is determined, the mean of the edge strength is computed. The strength of each edge is then compared with the mean of the edge strength. The ratio between the edge strength and the mean of the edge strength determines whether the edge will be dotted, normal or thick.
+
+\begin{itemize}
+\item \scare{Maximum edge density}: determines which density value corresponds to the right corner position of the density slider.
+
+\item \scare{Dotted edge const}: If the edge strength is lower than the mean of the edge strength multiplied by dotted edge constant, then the edge is dotted.
+
+\item \scare{Thick edge const} If the edge strength is higher then the mean of the edge strength multiplied by thick edge constant, then the edge is thick.
+\end{itemize}
+
+The following settings control the edge appearance in absolute-similarity mode:
+
+\begin{itemize}
+\item \scare{Dotted edge const}: If the strength of the edge lies between the dotted edge threshold and the normal edge threshold, then the edge is dotted.
+\item \scare{Thick edge const}: If the strength of the edge is greater than the thick edge threshold, then the edge is thick.
+\end{itemize}
+
+If the strength of the edge lies between the normal edge threshold and the thick edge threshold, then the edge is normal.
+
+The threshold value for normal edges is determined by the slider in the main control panel. The dotted-edge threshold value is then computed as a product of the normal edge threshold and the dotted edge constant. Likewise, the thick-edge threshold value is computed as a product of the normal edge threshold and the thick edge constant.
 \item[\scare{Clustering Settings}] \hfill \\
-The user can enable CW automatic document clustering (disabled by default), and specify the maximum number of clusters formed, the minimum size of each cluster, as well as the temporary graph density. \note{MICHAL}
+The user can enable CW automatic document clustering (disabled by default), and specify the maximum number of clusters formed, the minimum size of each cluster, as well as the temporary graph density.
 \end{description}
 
 All of these features combine to create a powerful interface for searching the corpus and visualizing the results which is both highly automated and highly customizable. In turn, the system is designed to accommodate both basic and advanced users.

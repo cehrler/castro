@@ -16,12 +16,12 @@ TF stands for term frequency, it measures directly how many times the word occur
 
 \[\text{TF}(i,j) = n(i,j) / \sum_{k \in \mathcal{T}}{n(i,k)}\]
 
+
 $n(i,j)$ stands for the number of counts term $j$ occurred in document $i$.
+
 
 TF-IDF stands for term frequency - inverse document frequency. This measure is motivated on the notion that the terms which occur in a lot of documents are not very useful for searching purposes. The terms which occur in a few documents only have greater discrimination power. The TF-IDF score of term $j$ in document is is defined as follows.
 
-\note{Someone who can work with latex please add the following: TF-IDF(i,j) = TF(i,j) * log( |D| /
-\{d: t(j) "is member of sign" d\} }
 \[\text{TF-IDF}(i,j) = \text{TF}(i,j)\log{(|D| |\lbrace d : t(j) \in d \rbrace|)}\]
 
 The TF-IDF score of term $j$ drops according to the logarithm of the number of documents that contain term $j$. The TF-IDF score of terms which are contained in every single document is always equal to zero.
