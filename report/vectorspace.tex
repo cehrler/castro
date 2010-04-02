@@ -16,11 +16,9 @@ The coefficients are usually normalised in order to have the same length, otherw
 There are several measures beeing used which express the importance of the index term for the document. The most widely used are TF and TF-IDF. 
 TF stands for term frequency, it measures directly how many times the word occured in the document, TF score grows linearly with the number of occurences of the term in the document. The TF score of term j in document i is defined as follows:
 
-\note{Someone who can work with latex please add the following: $text{TF}(i,j) = n(i,j)$ / SUM(k
+\note{Someone who can work with latex please add the following: $\text{TF}(i,j) = n(i,j) / SUM(k$
 over all terms) n(i,k) }
-\[\text{TF}(i,j) = n(i,j) / \sum_{k \in \mathcal{T}}{n(i,k)}\]
-
-$n(i,j)$ stands for the number of counts term $j$ occured in document $i$.
+\[\text{TF}(i,j) = n(i,j) / \sum_{k \in \mathcal{T}}{n(i,k)}\] $n(i,j)$ stands for the number of counts term $j$ occured in document $i$.
 
 TF-IDF stands for term frequency - inverse document frequency. This measure is based on the notion that the terms which occur in a lot of documents are not very useful for searching purposes. The terms which occur in a few documents only have greater discrimination power. The TF-IDF score of term $j$ in document is is defined as follows.
 
