@@ -1,55 +1,43 @@
-MICHAL 
+Vector Space Model (VSM) is a model for representing text document or any other data. In VSM for information retrieval both documents and queries are represented as vectors of numbers. The value of each element of the vector corresponds to the term importance for the representation of the query or the document. The main advantage of the VSM is that it has a convenient algebraic formulation. It is also more flexible than the boolean model. In boolean models documents that do not exactly match the query are rejected. However, in many real word scenarios the situation is different: the relevance of the document for the user is often graded rather then binary. The VSM can model this relevance scale.
+
+The vector coefficients are usually normalized in order to have the same length, otherwise the model would favor the documents with greater length. What is important is the density of the term in the document.
 
 \subsubsection{Indexing}
-\label{sec:indexing_term_weighting}
-\note{description and motication of the 4 different representations}
+\label{sec:indexing}
+Vector representations of the documents are stored in index matrices. Each row of an index matrix corresponds to the vector representation of a single document. 
+
+Our model contains several index matrices. We created an index matrix for each named entity type and a general index which indexes the non named entity terms. For all named entity types aliased or non-aliased index matrix can be used. Our current implementation of the VSM doesn't use TF-IDF measure for adjustment of query terms. We only use TF-IDF for adjusting the document representation. It means that all the values corresponding to the search terms in the query remain the same in the vector representation of the query. 
+
 
 \subsubsection{Term Weighting}
 \label{sec:term_weighting}
-\note{ tf/tfidf with motivation and
-interpretation for each, examples}
+There are several measures that can be used to express the importance of the index term for the document. The most widely used are TF and TF-IDF. 
+TF stands for term frequency, it measures directly how many times the word occurred in the document, TF score grows linearly with the number of occurrences of the term in the document. The TF score of term j in document i is defined as follows:
 
-Vector model is the model of representing text document or any other data. In vector model for information retrieval both documents and queries are represented as a vector of numbers. Value at each position of the vector corresponds to the term importance for the representation of the query or document. The main advantage of the vector model is that it has easy algebraic formulation. It's also not that strict as the boolean model. In boolean model document either completely fits to the query or it is rejected. In real word the situation is different, the relevance of the document for the user is rathed continuous quantity and the same applies to the vector model.
-
-The coefficients are usually normalised in order to have the same length, otherwise the model would favor the documents with greater length. What is important is the density of the term in the document.
-
-There are several measures beeing used which express the importance of the index term for the document. The most widely used are TF and TF-IDF. 
-TF stands for term frequency, it measures directly how many times the word occured in the document, TF score grows linearly with the number of occurences of the term in the document. The TF score of term j in document i is defined as follows:
-
-\note{Someone who can work with latex please add the following: $text{TF}(i,j) = n(i,j)$ / SUM(k
-over all terms) n(i,k) }
 \[\text{TF}(i,j) = n(i,j) / \sum_{k \in \mathcal{T}}{n(i,k)}\]
 
-$n(i,j)$ stands for the number of counts term $j$ occured in document $i$.
+$n(i,j)$ stands for the number of counts term $j$ occurred in document $i$.
 
-TF-IDF stands for term frequency - inverse document frequency. This measure is based on the notion that the terms which occur in a lot of documents are not very useful for searching purposes. The terms which occur in a few documents only have greater discrimination power. The TF-IDF score of term $j$ in document is is defined as follows.
+TF-IDF stands for term frequency - inverse document frequency. This measure is motivated on the notion that the terms which occur in a lot of documents are not very useful for searching purposes. The terms which occur in a few documents only have greater discrimination power. The TF-IDF score of term $j$ in document is is defined as follows.
 
 \note{Someone who can work with latex please add the following: TF-IDF(i,j) = TF(i,j) * log( |D| /
 \{d: t(j) "is member of sign" d\} }
 \[\text{TF-IDF}(i,j) = \text{TF}(i,j)\log{(|D| |\lbrace d : t(j) \in d \rbrace|)}\]
 
-The TF-IDF score of term $j$ drops according to the logarithm of the number of document that contain term $j$. The TF-IDF score of the term which is contained in every single document is always equal to zero.
+The TF-IDF score of term $j$ drops according to the logarithm of the number of documents that contain term $j$. The TF-IDF score of terms which are contained in every single document is always equal to zero.
 
-\note{The indexes in brackets should be written in foot-script, I hope you show me tomorrow how to write formulas:) }  
+In VSM we need to measure the similarity between vectors. The similarity can expressed by the cosine similarity measure:
 
-In vector model we need to measure the similarity between vectors. The similarity is usually expressed by the cosine similarity measure:
-
-\note{ cosim(q,d) = [SUM(k over all terms) q(k) * d(k)] / [ |q| * |d| ] }
 \[\text{cosim}(q,d) = \sum_{k \in \mathcal{T}}\frac{q(k)d(k)}{|q||d|}\]
 
-It express the cosin angle between the vectors q and d. This measure is equal to 1 for the paralell vectors and it's equal to zero for the perpendicular vectors.
+It expresses the cosine angle between the vectors q and d. This measure is equal to 1 for the paralell vectors and it's equal to zero for the perpendicular vectors.
 
-In vector model the searching proceeds as follows. The search query is transformed into its vector representation in the same manner as it is done for the document. The cosine similarity between the query vector and the vector representation of each document is computed. The search results are ordered according to their similarity to the user query.  
+\subsubsection{Keyword and Metadata Search}\label{sec:keyword_search}
 
-Vector representations of the documents are stored in the index matrix. Each row of the index matrix corresponds to the vector representation of a single document. 
+In VSM the searching proceeds as follows. The search query is transformed into its vector representation in the same manner as it is done for the document. The cosine similarity between the query vector and the vector representation of each document is computed. The search results are ordered according to their similarity to the user query. 
 
-Our model contains several index matrix. We created index matrix for each named entity type and also index matrix for general index which indexes the non named entity terms. For all named entity types aliased or non-aliased index matrix can be used. Our current implementation of vector model doesn't use TF-IDF measure for adjustment of query terms, we only use TF-IDF for adjusting of document representation. It means that all the values corresponding to the search terms in the query are the same in the vector representation of the query. In the future we would like to implement proper TF-IDF weighting of the query terms. \note{Check whether the TF-IDF weighting of query terms is common praxis} We would also like to implement query expansion using the string kernel. In current implementation query term must match exatly the named entity in the database otherwise the search term is not taken into the account. String kernel expansion would allow us to match query named entity with the named entity stored in the index file even when they don't match perfectly. In the current version query terms which are named entities must also have the proper capitalization.
+Document retrieval in our model consists of two steps. In the first step, documents that do not satisfy the conditions concerning the type and date of the document, are filtered out. In the second step, documents are sorted in descending order according to their cosine measure similarity with the query. If the search is only on meta data, documents are not sorted. Only the subset of the best results of the size specified by the user proceeds to the next stage.
 
-Document retrieval in our model consists of two steps. In the first step, document, that don't satisfy the condition concerning the type and date of the document, are filtered out. In the second step documents are sorted in descending order according to their cosine measure similarity with the query. Only the subset of the best results of the size specified by the user proceeds to the next stage.
-
-
-\subsubsection {Aliasing with String Kernels}
-\label{sec:aliasing_string_kernel}
-\note{motivation, description of the algorithm to create similarity matrixes between NE's,
-smoothing document representations with Kernel matrix as aliasing}
+\subsection{Computing Similarity between Documents}\label{sec:computing_similarity_between_documents}
+%\input{documentsimilarity}
 

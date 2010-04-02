@@ -61,9 +61,7 @@ functionalities described in the following section.
 \subsubsection{Functionalities of the Application}
 
 \emph{Document Retrieval Engine:} Using the data model and precomputed indexes, an engine for document retrieval was implemented. 
-The engine allows querying the database with keywords. Query document similarity is measured using the cosine measure. 
-For keywords that happen to be named entities, automatic query expansion is performed using the precomputed similarity matrix between 
-named entities.  The engine also allows filtering according to specifications on meta-data, e.g. a period of time, type of document and others.\\ 
+The engine allows querying the database with keywords. The engine also allows filtering according to specifications on meta-data, e.g. a period of time, type of document and others.\\ 
 \emph{Graphical Representation of Documents:} Documents retrieved from the database are presented as as nodes of a graph. The size of the node corresponds to its relevance for the query, its shape to the type of document.  We retrieve the similarity measure for each pair of documents, and link them with an edge if the similarity crosses a predefined threshold. Thickness of edges reflects the strength of the similarity between two documents.\\
 \emph{Functionalities for Exploration of the Collection:} We provide an interactive environment that enables the user to navigate through the documents in an effective way. Among the implemented features are, viewing the list of named entities of a particular document. Viewing common named entities for several documents. Presenting the content of a document with the named entities marked. Marking the most similar documents to a specific document. Isolating the neighbors of a document up to a specified depth. Manipulating edges representation for thresholds, absolute/relative similarity and others.
 
@@ -148,8 +146,7 @@ which we approximate using a p-spectrum string kernel \cite{kernels2004}. We des
 Our implementation of the document retrieval modules and linkage of documents according to similarity relies heavily on standard techniques 
 and measures used in Information Retrieval, and  specifically on the vector space model \cite{ir2008}. We adopt and adapt techniques for 
 document indexing \cite{indexing1999}, vector space term weighting \cite{jones2004}, \cite{salton1971} and determining query-document and 
-inter-document similarity. We use ideas from query expansion literature \cite{xu1996} to perform query expansion 
-as well as document smoothing for named entities. 
+inter-document similarity. 
 
 From a wider perspective, the project can be located within the field of Domain Knowledge Visualization. This field revolves around visualization
 techniques of domain structures, in particular for scientific domains. Its notable applications are mapping structures of domains and supporting
