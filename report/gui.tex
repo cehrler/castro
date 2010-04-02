@@ -1,13 +1,13 @@
 The query functions, graph and display functions are integrated into a single graphical front-end relying primarily on the mouse for user input. The graph representation is dynamic and interactive, able to be navigated through by the user in order to obtain detailed information regarding the document database.
 
-\begin{figure}[h]
+\begin{figure}[ht]
 \centering
 \caption{GUI}
 \includegraphics[width=160mm]{gui.png}
 \end{figure}
 
 \subsubsection{Search Function}
-\begin{figure}[h]
+\begin{figure}[ht]
 \centering
 \caption{Search query}
 \subfloat[][~\hfill{\tiny Version $<$\code{2010-04-02}}]{
@@ -78,12 +78,12 @@ By adjusting the edge threshold (for absolute similarity) or the edge density (f
 
 Likewise, a vertex filter may be applied, enabling the user to display only nodes of a specified distance $\leq x$ from a selected node or nodes, e.g.\ displaying only the nodes directly connected to the current node(s) (a distance of 1) or displaying nodes which are connected to the selected node through at most one other node (a distance of 2). When selecting multiple nodes, the user can select to display either the union of the neighbors, e.g.\ to display the nodes with a distance of $\leq x$ from \emph{any} selected node, or the intersection of the neighbors, e.g.\ to display only the nodes with a distance of $\leq x$ to \emph{all} selected nodes.
 
-This may be done in real-time, i.e.\ after applying a distance filter, the user may select a node in the graph to view an updated graph of all nodes satisfying the distance criterion for the newly-selected node. This feature allows the user to draw ``sub-graphs'' of the main graph in real time, allowing the user to focus on a particular cluster of documents and thus allowing the user even greater control over the search results.
+This may be done in real-time, i.e.\ after applying a distance filter, the user may select a node in the graph to view an updated graph of all nodes satisfying the distance criterion for the newly-selected node. This feature allows the user to explore ``sub-graphs'' of the main graph in real-time, allowing the user to focus on a particular cluster of documents and thus allowing the user even greater control over the search results.
 
 \subparagraph{Advanced Options}
 Finally, for even further control, the user may manually specify all display settings through the \scare{Setup} menu.
 
-\begin{figure}[h]
+\begin{figure}[ht]
 \centering
 \caption{Advanced Settings}
 \subfloat[][]{\includegraphics[scale=0.33]{menu_matrices.png}}\quad
@@ -116,7 +116,7 @@ If the strength of the edge lies between the normal edge threshold and the thick
 
 The threshold value for normal edges is determined by the slider in the main control panel. The dotted-edge threshold value is then computed as a product of the normal edge threshold and the dotted edge constant. Likewise, the thick-edge threshold value is computed as a product of the normal edge threshold and the thick edge constant.
 \item[\scare{Clustering Settings}] \hfill \\
-The user can enable CW automatic document clustering (disabled by default), and specify the maximum number of clusters formed, the minimum size of each cluster, as well as the temporary graph density.
+The user can enable Chinese Whispering (CW) automatic document clustering (disabled by default), and specify the maximum number of clusters formed, the minimum size of each cluster, as well as the temporary graph density.
 \end{description}
 
 All of these features combine to create a powerful interface for searching the corpus and visualizing the results which is both highly automated and highly customizable. In turn, the system is designed to accommodate both basic and advanced users.
