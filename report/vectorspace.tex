@@ -16,13 +16,17 @@ The coefficients are usually normalised in order to have the same length, otherw
 There are several measures beeing used which express the importance of the index term for the document. The most widely used are TF and TF-IDF. 
 TF stands for term frequency, it measures directly how many times the word occured in the document, TF score grows linearly with the number of occurences of the term in the document. The TF score of term j in document i is defined as follows:
 
-\note{Someone who can work with latex please add the following: TF(i,j) = n(i,j) / SUM(k over all terms) n(i,k) }
+\note{Someone who can work with latex please add the following: $text{TF}(i,j) = n(i,j)$ / SUM(k
+over all terms) n(i,k) }
+\[\text{TF}(i,j) = n(i,j) / \sum_{k \in \mathcal{T}}{n(i,k)}\]
 
-n(i,j) stands for the number of counts term j occured in document i.
+$n(i,j)$ stands for the number of counts term $j$ occured in document $i$.
 
 TF-IDF stands for term frequency - inverse document frequency. This measure is based on the notion that the terms which occur in a lot of documents are not very useful for searching purposes. The terms which occur in a few documents only have greater discrimination power. The TF-IDF score of term j in document is is defined as follows.
 
-\note{Someone who can work with latex please add the following: TF-IDF(i,j) = TF(i,j) * log( |D| / \{d: t(j) "is member of sign" d\} }
+\note{Someone who can work with latex please add the following: TF-IDF(i,j) = TF(i,j) * log( |D| /
+\{d: t(j) "is member of sign" d\} }
+\[\text{TF-IDF}(i,j) = \text{TF}(i,j)\log{(|D| |\lbrace d : t(j) \in d \rbrace|)}\]
 
 The TF-IDF score of term j drops according to the logarithm of the number of document that contain term j. The TF-IDF score of the term which is contained in every single document is always equal to zero.
 
@@ -31,6 +35,7 @@ The TF-IDF score of term j drops according to the logarithm of the number of doc
 In vector model we need to measure the similarity between vectors. The similarity is usually expressed by the cosine similarity measure:
 
 \note{ cosim(q,d) = [SUM(k over all terms) q(k) * d(k)] / [ |q| * |d| ] }
+\[\text{cosim}(q,d) = \sum_{k \in \mathcal{T}}\frac{q(k)d(k)}{|q||d|}\]
 
 It express the cosin angle between the vectors q and d. This measure is equal to 1 for the paralell vectors and it's equal to zero for the perpendicular vectors.
 
@@ -42,7 +47,6 @@ Our model contains several index matrix. We created index matrix for each named 
 
 Document retrieval in our model consists of two steps. In the first step, document, that don't satisfy the condition concerning the type and date of the document, are filtered out. In the second step documents are sorted in descending order according to their cosine measure similarity with the query. Only the subset of the best results of the size specified by the user proceeds to the next stage.
 
-It is possible to choose whether TF or TF-IDF score will be used. TF-IDF score is chosen by default.  In the current version of the application all the search terms are weighted equally - even when the application
 
 \subsubsection {Aliasing with String Kernels}
 \label{sec:aliasing_string_kernel}

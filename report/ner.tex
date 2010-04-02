@@ -13,6 +13,30 @@ CRF is a discriminative model for finding the most probable sequence of labels (
 It does not assume independence between features, and enables conditioning each random variable of the complete input sequence. The features used for the recognizer implementation include word features, orthographic features, label sequences, ID's of word clusters computed according to distributional similarity. 
 
 CARSTEN - PROVIDE STATISTICS TABLE, WRITE ON TECHNICALITIES WITH RUNNING THE NER AND STORING RESULTS
+\begin{figure}[ht]
+\centering
+\caption{Global statistics for the named entities. The table shows the number of distinct named
+entities found by the stanford named entity recognizer and the average number of occurences for
+each NE type per document.}
+\begin{tabular}{l|ll}
+  Named Entity Type      & Number & Average/Document\\
+  \hline
+  \textsc{Person}        & 6515   & 21.5\\
+  \textsc{Organizations} & 3667   & 44.7\\
+  \textsc{Locations}     & 6612   & 17.1\\
+\end{tabular}
+\label{fig:ne_statistics}
+\end{figure}
 
+For the subtask of named entity extraction we used the Stanford named entity recognizer (sNER)
+\cite{sner} version $1.1.1$. The package provides several pre-trained classifiers trained on both US
+and UK newswire data from CoNLL, MUC6, MUC7 and ACE.
 
+The named entity recognition was performed with the
+\texttt{ner-eng-ie.crf-3-all2008-distsim.ser.gz} model - a three class classifier for the named
+entities \textsc{Person}, \textsc{Organizations} and \textsc{Locations} with an additional
+``distributional similarity lexicon'' for improved performance. Processing was done by a
+\texttt{shell} script that runs sNER for each document in the castro database. The input is a
+textfile containing the content of a document without meta-information. For the output format we
+choose a XML dialect.
 
