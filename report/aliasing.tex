@@ -2,7 +2,7 @@ In general, the idea of kernel methods is to map objects of a
 distinct type $K$ into some \textit{Hilbert space} $\mathcal{H}$ using a mapping function $\Phi :
 K \rightarrow \mathcal{H}$. Here, $K$ can have an arbitrary structure, e.g. trees, strings,
 graphs, etc. Given such a mapping $\Phi$ the similarity of two objects $s,t \in K$ can be computed
-by using the scalar product defined on the Hilbert space:
+thorugh the ordinary scalar product defined on the Hilbert space:
 \[sim(s,t) = <\Phi(s),\Phi(t)>\]
 Instead of defining the mapping function $\Phi$ explicitly, a kernel function $k : K \times K
 \rightarrow \mathbb{R}$ can be used. Kernel functions are positive-semidefinite functions
@@ -23,10 +23,18 @@ strings over $\Sigma$ of length $p$. The p-spectrum string kernel can be efficie
 
 \subsubsection{Co-reference Resolution by String Kernels}
 \label{sec:co_reference_resolution_by_string_kernels}
+Co-reference resolution can be divided into three consecutive subtasks \cite{string_kernel_coref}:
+\begin{itemize}
+  \item Binding constrains
+  \item Expletive detection
+  \item Aliasing
+\end{itemize}
+For all of these subtasks tailored kernel methods have been proposed.
+
 Co-refernce resolution by kernel methods is an active research area and several methods have been proposed for the task. These include string and tree based kernel methods \cite{string_kernel_coref}.
 The advantage of tree based methods is due to the possibility to encode additional structure and information about syntactic and semantic properties of the text, which renders these methods superior to string based methods.
 
-For our project, we only need co-reference resolution based on the extracted named entities. This essentially comes down to the task of \textit{aliasing} named entities for each type of named entity. To this end, we applied a two-spectrum string kernel. \note{explain this a little more}
+For our project, we need co-reference resolution based on the extracted named entities. That is, we want to resolve references between different named entities. This essentially comes down to the task of \textit{aliasing} named entities for each type of named entity. To this end, we applied a two-spectrum string kernel, where the basic idea is to compute similarities between all named entities and based on that to group similar ones. Grouping is not done by hard clustering, i.e.\ we do not cluster the named entities in different groups but rather use a soft clustering based on the resulting kernel matrix.
 
 \begin{figure}[ht]
   \caption{Example for aliasing of document- or query-vectors by string kernel similarity.
@@ -53,22 +61,6 @@ and queries.}
   \label{eq:example_string_sim}
 \end{figure}
 
-\note{how we did coref}
-\note{cpp implementation, simmatrix as sparse matrix... approximation...}
+The first implementation of the two-spectrum kernel function was done in \texttt{python} but we  later reimplemented it in \texttt{C++} for performance reasons. For all three types of named entities we computed the complete kernel matrix $\textbf{K}$, where $\textbf{K}_{i,j}$ is the similarity of the named entities $i$ and $j$. Since many of the entries in $\textbf{K}$ are near zero, thresholding with a fixed value was applied after the computation and the resulting sparse matricies where then stored.
 
-The first implementation of the two-spectrum kernel function was done in \texttt{python} but we  later reimplemented it in \texttt{C++} for performance reasons. For all three types of named entities we computed the complete kernel matrix $\textbf{K}$, where $\textbf{K}_{i,j}$ is the similarity of the named entities $i$ and $j$. Since many of the entries in $\textbf{K}$ are near zero, thresholding with a fixed value was applied after the computation and the resulting sparse matrix was then stored.
-
-Now given the kernel matrix $\textbf{K}$, aliasing can be performed through multiplication of each document-vector with the kernel matrix. The scalar product on the resulting aliased document vectors yields the overall document similarity with respect to the named entities. In figure \ref{eq:example_string_sim} we give a short example on aliasing based on three different named entities.
-
-
-
-
-
-HOW IT RELATES TO FULL COREFF SESTEM, HOW IT RELATES TO OTHER STRING DISTANCE METHODS
-
-IMPLEMENTATION ASPECTS (which package, additional scripting etc.. )
-
-PROBLEMS, SOLUTIONS
-
-
-
+Given the kernel matrix $\textbf{K}$, aliasing can be performed through multiplication of each document-vector with the kernel matrix. The scalar product on the resulting aliased document vectors yields the overall document similarity with respect to the named entities. In figure \ref{eq:example_string_sim} we give a short example on aliasing based on three different named entities.
