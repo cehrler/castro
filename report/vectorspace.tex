@@ -42,7 +42,6 @@ Our model contains several index matrix. We created index matrix for each named 
 
 Document retrieval in our model consists of two steps. In the first step, document, that don't satisfy the condition concerning the type and date of the document, are filtered out. In the second step documents are sorted in descending order according to their cosine measure similarity with the query. Only the subset of the best results of the size specified by the user proceeds to the next stage.
 
-It is possible to choose whether TF or TF-IDF score will be used. TF-IDF score is chosen by default.  In the current version of the application all the search terms are weighted equally - even when the application
 
 \subsubsection {Aliasing with String Kernels}
 \label{sec:aliasing_string_kernel}
