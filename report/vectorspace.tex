@@ -22,7 +22,9 @@ n(i,j) stands for the number of counts term j occured in document i.
 
 TF-IDF stands for term frequency - inverse document frequency. This measure is based on the notion that the terms which occur in a lot of documents are not very useful for searching purposes. The terms which occur in a few documents only have greater discrimination power. The TF-IDF score of term j in document is is defined as follows.
 
-\note{Someone who can work with latex please add the following: TF-IDF(i,j) = TF(i,j) * log( |D| / \{d: t(j) "is member of sign" d\} }
+\note{Someone who can work with latex please add the following: TF-IDF(i,j) = TF(i,j) * log( |D| /
+\{d: t(j) "is member of sign" d\} }
+\[\text{TF-IDF}(i,j) = \text{TF}(i,j)\log{(|D| WHAT???)}\]
 
 The TF-IDF score of term j drops according to the logarithm of the number of document that contain term j. The TF-IDF score of the term which is contained in every single document is always equal to zero.
 
@@ -31,6 +33,7 @@ The TF-IDF score of term j drops according to the logarithm of the number of doc
 In vector model we need to measure the similarity between vectors. The similarity is usually expressed by the cosine similarity measure:
 
 \note{ cosim(q,d) = [SUM(k over all terms) q(k) * d(k)] / [ |q| * |d| ] }
+\[\text{cosim}(q,d) = \sum_{k \in \mathcal{T}}\frac{q(k)d(k)}{|q||d|}\]
 
 It express the cosin angle between the vectors q and d. This measure is equal to 1 for the paralell vectors and it's equal to zero for the perpendicular vectors.
 

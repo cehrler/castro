@@ -19,5 +19,14 @@ each NE type per document.}
 \label{fig:ne_statistics}
 \end{figure}
 
-For the subtask of named entity extraction we used the Stanford named entity recognizer (sNER) in
-version $1.1.1$.
+For the subtask of named entity extraction we used the Stanford named entity recognizer (sNER)
+\cite{sner} version $1.1.1$. The package provides several pre-trained classifiers trained on both US
+and UK newswire data from CoNLL, MUC6, MUC7 and ACE.
+
+The named entity recognition was performed with the
+\texttt{ner-eng-ie.crf-3-all2008-distsim.ser.gz} model - a three class classifier for the named
+entities \textsc{Person}, \textsc{Organizations} and \textsc{Locations} with an additional
+``distributional similarity lexicon'' for improved performance. Processing was done by a
+\texttt{shell} script that runs sNER for each document in the castro database. The input is a
+textfile containing the content of a document without meta-information. For the output format we
+choose a XML dialect.
