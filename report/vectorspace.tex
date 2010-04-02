@@ -4,9 +4,11 @@ The vectors in VSM are usually normalized in order to have the same length (e.g.
 
 \subsubsection{Indexing}
 \label{sec:indexing}
-Index is the data structure that stores the vector representation of the documents in a vector model. It is a matrix in which each row stores the vector representation of a single document. Each column stores the weights for one distinct term in all the documents. The index matrix is usually very sparse. In our implementation it is represented as a sparse matrix. In the memory we store only coordinates of nonzero cells and their values. All the document representation vectors were normalized in advance. Which allows us to compute cosine similarities of documents and queries faster.
+In information retrieval, the index is a data structure that stores the vector representation of documents in a vector model. Given a set of documents $\mathcal{D}$ together with a set of terms $\mathcal{T}$ the index is a matrix $D \in \mathbb{R}^{|\mathcal{D}|\times |\mathcal{T}|}$ where $D_{d,i}$ corresponds to the importance of term $i$ in document $d$. In each column if the index matrix the weights for one distinct term over all the documents is stored. 
 
-Our model contains several index matrices. We created an index matrix for each NE type and a general index which indexes the non named entity terms. For all NE types, either aliased or non-aliased, index matrices can be used. Our current implementation of the VSM does not use a TF-IDF measure for the adjustment of query terms. We only use TF-IDF for adjusting to the document representation. This means that all the values corresponding to the search terms in the query remain the same in the vector representation of the query.
+Index matrices are usually very sparse and in our implementation they is represented as a sparse matrix (e.g. linked lists). In memory we only store coordinates of the nonzero entries. All the document vectors were normalized in advance. This allows to compute cosine similarities for documents and queries without normalization effort.
+
+Our model contains several index matrices. We created an index matrix for each NE type and a general index for the non named entity terms (all terms occuring in the documents). Our current implementation of the VSM does not use a TF-IDF measure for the adjustment of query terms. We only use TF-IDF for adjusting to the document representation. This means that all the values corresponding to the search terms in the query remain the same in the vector representation of the query.
 
 \subsubsection{Term Weighting}
 \label{sec:term_weighting}
@@ -14,11 +16,11 @@ There are several measures that can be used to express the importance of the ind
 
 TF stands for term frequency and it measures directly how many times a word occurred in the document. Hence, TF scores grow linearly with the number of occurrences of a term in the document. The TF score of term $i$ in document $d$ is defined as follows:
 \[\text{TF}_d(i) = \frac{n_d(i)}{\sum_{i' \in \mathcal{T}}{n_d(i')}}\]
-where $n_d(i)$ counts the number of occurences of term $i$ in document $d$ and $\mathcal{T}$ is the set of all terms. 
+where $n_d(i)$ counts the number of occurences of term $i$ in document $d$ and $\mathcal{T}$ denotes the set of all terms. 
 
 TF-IDF stands for term frequency - inverse document frequency. This measure is motivated on the notion that terms which occur in almost every document are not very useful for searching purposes because they are so common. Conversely, terms which occur in only a few documents have much greater discrimination power. This is exploited in the TF-IDF score by reweighting the TF score. The TF-IDF score of term $i$ in document $d$ is is defined by:
 \[\text{TF-IDF}_d(i)= \text{TF}_d(i)\log{(|D|/|\lbrace d' : t(i) \in d' \rbrace|)}\]
-The TF-IDF score of term $i$ drops according to the logarithm of the number of documents that contain term $j$. The TF-IDF score of terms which are contained in every single document is always equal to zero.
+The TF-IDF score of term $i$ drops according to the logarithm of the number of documents that contain term $i$. The TF-IDF score of terms which are contained in every single document is always equal to zero.
 
 \subsubsection{Computing Similarity between Documents}\label{sec:computing_similarity_between_documents}
 
@@ -32,6 +34,6 @@ We arrange the retrieved documents according to their similarity to each other. 
 
 \subsubsection{Keyword and Metadata Search}\label{sec:keyword_search}
 
-For VSM the searching proceeds as follows. The search query is transformed into its vector representation in the same manner as it is done for the document. The cosine similarity between the query vector and the vector representation of each document is computed. The search results are ordered according to their similarity to the user query. 
+For VSM the searching proceeds as follows. The search query is transformed into its vector representation in the same manner as it is done for the document. The cosine similarity between the query vector and the vector representation of each document is computed. Then, the search results are ordered according to their similarity to the user query and presented as result. 
 
 Document retrieval in our model consists of two steps. In the first step, documents that do not satisfy the conditions concerning the type and date of the document, are filtered out. In the second step, documents are sorted in descending order according to their cosine measure similarity with the query. If the search is only on meta data, documents are not sorted. Only the subset of the best results of the size specified by the user proceeds to the next stage.
