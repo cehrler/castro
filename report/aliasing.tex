@@ -1,10 +1,29 @@
+In general, the idea of kernel methods is to map objects of a
+distinct type $K$ into some \textit{Hilbert space} $\mathcal{H}$ using a mapping function $\Phi :
+K \rightarrow \mathcal{H}$. Here, $K$ can be an arbitrary structure like e.g. trees, strings,
+graphs, etc. Given such a mapping $\Phi$ the similarity of two objects $s,t \in K$ can be computed
+by using the scalar product defined on the Hilbert space:
+\[sim(s,t) = <\Phi(s),\Phi(t)>\]
+Instead of defining the mapping function $\Phi$ explicitly, a kernel function $k : K \times K
+\rightarrow \mathbb{R}$ can be used. Kernel functions are positive-semidefinite functions
+who implicitely compute the scalar product of two objects on some Hilbert space. That is, for every
+kernel function $k$ there exists a mapping $\Phi$, such that
+\[k(s,t) = <\Phi(s),\Phi(t)>.\]
+This property of kernel functions is often exploited in practise because it greatly facilitates the
+computational cost that is needed to compute object similarity.
 
-\note{REWRITE}
-CARSTEN:
+\textit{String kernels} are kernel methods \note{cite} that operate on the domain of strings over
+an arbitrary finite alphabet $\Sigma$ and are often applied in the fields of \textit{information
+retrieval} and \textit{bioinformatics}. For the purpose of our work, we applied a
+\textit{p-spectrum} string kernel \note{citattion needed} which is defined by
+\[k_p(s,t) = \sum_{u \in \Sigma^p}{\phi_u^p(s)\phi_u^p(t)},\]
+where $\phi_u^p(s)$ counts the number of occurences of the substring $u$ of length $p$ in $s$. The
+associated Hilbert space for this kernel is $\mathbb{R}^{|\Sigma^p|}$ - the space of all possible
+strings over $\Sigme$ of length $p$.
 
-DESCRUPTION OF THE ALGORITHM
+\note{how to compute this efficient}
 
-HOW WE USE IT FOR COREFF
+\note{hot to do coref}
 
 \begin{figure}[ht]
   \caption{Example for aliasing of document- or query-vectors by string kernel similarity.
@@ -31,6 +50,8 @@ and queries.}
   \label{eq:example_string_sim}
 \end{figure}
 
+\note{how we did coref}
+\note{cpp implemnetation, simmatrix as sparse matrix... approximation...}
 
 HOW IT RELATES TO FULL COREFF SESTEM, HOW IT RELATES TO OTHER STRING DISTANCE METHODS
 
