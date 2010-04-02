@@ -20,22 +20,6 @@ It seems then that the document clustering is more relevant than first observed:
 
 However, querying more specific terms revealed different results: A query was entered using the terms \code{Giron}, and \code{Kennedy}, retrieving the 10 most relevant documents and enabling Chinese Whisper Clustering (set to a maximum of four clusters). Two distinct clusters of documents were produced: One was of documents directly related to the 1961 Bay of Pigs Invasion (a.k.a.\ Playa Gir\'{o}n), e.g.\ speeches on the anniversary of the event, or victory speeches. However, the other cluster was composed largely of documents in which \lingform{Playa Giron} was mentioned but the document was not directly related to the event. Most featured political and/or economic topics as well as the topic of US--Cuban relations or aggression.
 
-While all of these documents could be retrieved with a simple keyword-based search, the clustering of documents into similar themes is 
-
-
-produced a graph of documents which are much more similar to each other in a qualitative sense than that produced by the previous query, for example:
-
-\begin{enumerate}
-\item ``Castro marks 5th anniversary of [Bay of Pigs] invasion'' \label{eval:doc274}
-\item Speech for funeral of five Cuban troops killed in Baracoa landing operation [of the Bay of Pigs invasion]\label{eval:doc337}
-\item ``Castro Remarks at Missile Crisis Conference\label{eval:doc1418}
-\item ``Castro marks 2nd anniversary of [Bay of Pigs]'' invasion \label{eval:doc210}
-\item An article on US--Cuban--Soviet relations, including consequences of ``Giron'' (the Bay of Pigs) and the Cuban Missile Crisis, mentioning President Kennedy\label{eval:doc864}
-\item Report of the arrival of Algerian Preimier Ben Bella in Havana and Castro's speech for it--- in which he mentions the ``victory'' at ``Giron''
-\item ``Castro discusses Latin America in EFE interview'', mentioning Kennedy and several of his actions regarding Latin America \label{eval:doc923}
-\item ``Castro denounces U.S. aggression'' (April 1961) \label{eval:doc134} (regarding 
-\end{enumerate} 
-
-This cluster was generated with a relative edge density of 2.52 with a vertex distance filter of 1 selecting document \ref{eval:doc134} as a focal point. Of the seven total documents in cluster, all but one of them are directly related to the Bay of Pigs invasion itself, US aggression and/or President Kennedy. Even more interesting is that the document \ref{eval:doc337} was relatively isolated in the graph compared to the many edges connecting the anniversary speeches and politically-motivated documents such as \ref{eval:doc923} and \ref{eval:doc134}.
+While all of these documents could be retrieved with a simple keyword-based search, the clustering of documents into similar themes is novel compared to a simple ranking of documents as seen in traditional keyword-based searching.
 
 However, such results were obtained only with relatively specific NEs--- Contrast the query involving \code{``Giron''} and \code{``Kennedy''} to that involving \code{``Central Committee''} ($\sim$ \code{``Castro''})  and \code{economy}. Additionally, even after entering a relatively specific query, much adjustment of the visualization settings was required to display an graph which was both of practical use to the user and was not overwhelming in size and complexity.

@@ -17,13 +17,15 @@ import java.util.List;
 import java.util.Set;
 
 import Functionality.*;
+import Functionality.SimMatrixElem.SimilarityMeasure;
 
 public class MichalMain {
 
 	public static void main(String[] args) {
-		makeBinIndexes();
-		makeSimMatrices();
+		//makeBinIndexes();
+		makeSimMatrices(SimMatrixElem.SimilarityMeasure.cosine);
 		
+		//RunTest();
 		
 		//DataModule.Init(IndexTypeEnum.TF);
 		
@@ -91,7 +93,7 @@ public class MichalMain {
 				System.err.println("(" + i + ", " + j + ") = " + pomI.GetValue(i, j));
 			}
 		
-		SimMatrixElem sim = SimMatrixElem.CountFromVMindex(pomI);
+		SimMatrixElem sim = SimMatrixElem.CountFromVMindex(pomI, SimMatrixElem.SimilarityMeasure.cosine);
 		
 		System.err.println("");
 		System.err.println("Similarities:");
@@ -114,7 +116,7 @@ public class MichalMain {
 				System.err.println("(" + i + ", " + j + ") = " + sim.getSimilarity_byID(i, j) + " -> " + sim2.getSimilarity_byID(i,j));				
 			}
 	
-		VMindex persI = new VMindex("../DataModuleData/PERSONS.tfidf.bin");
+		/*VMindex persI = new VMindex("../DataModuleData/PERSONS.tfidf.bin");
 		
 		for (int i = 0; i < 100; i++)
 		{
@@ -153,67 +155,68 @@ public class MichalMain {
 			System.err.println("sim(" + a + ", " + b + ") = " + simPers.getSimilarity_byID(a, b) + " -> " + simPersLoaded.getSimilarity_byID(a, b));
 		}
 
-		
+		*/
 		return;				
 	}
 	
-	private static void makeSimMatrices()
+	private static void makeSimMatrices(SimMatrixElem.SimilarityMeasure simMeas)
 	{
+		String simString = simMeas.toString();
 		VMindex ind = new VMindex("../DataModuleData/PERSONS.tf.bin");
-		SimMatrixElem sim = SimMatrixElem.CountFromVMindex(ind);
-		sim.SaveToFile("../DataModuleData/PERSONS.tf.sim");
+		SimMatrixElem sim = SimMatrixElem.CountFromVMindex(ind, simMeas);
+		sim.SaveToFile("../DataModuleData/PERSONS." + simString + ".tf.sim");
 
 		ind = new VMindex("../DataModuleData/PERSONS.tfidf.bin");
-		sim = SimMatrixElem.CountFromVMindex(ind);
-		sim.SaveToFile("../DataModuleData/PERSONS.tfidf.sim");
+		sim = SimMatrixElem.CountFromVMindex(ind, simMeas);
+		sim.SaveToFile("../DataModuleData/PERSONS." + simString + ".tfidf.sim");
 		
 		ind = new VMindex("../DataModuleData/LOCATIONS.tf.bin");
-		sim = SimMatrixElem.CountFromVMindex(ind);
-		sim.SaveToFile("../DataModuleData/LOCATIONS.tf.sim");
+		sim = SimMatrixElem.CountFromVMindex(ind, simMeas);
+		sim.SaveToFile("../DataModuleData/LOCATIONS." + simString + ".tf.sim");
 
 		ind = new VMindex("../DataModuleData/LOCATIONS.tfidf.bin");
-		sim = SimMatrixElem.CountFromVMindex(ind);
-		sim.SaveToFile("../DataModuleData/LOCATIONS.tfidf.sim");
+		sim = SimMatrixElem.CountFromVMindex(ind, simMeas);
+		sim.SaveToFile("../DataModuleData/LOCATIONS." + simString + ".tfidf.sim");
 
 		ind = new VMindex("../DataModuleData/ORGANIZATIONS.tf.bin");
-		sim = SimMatrixElem.CountFromVMindex(ind);
-		sim.SaveToFile("../DataModuleData/ORGANIZATIONS.tf.sim");
+		sim = SimMatrixElem.CountFromVMindex(ind, simMeas);
+		sim.SaveToFile("../DataModuleData/ORGANIZATIONS." + simString + ".tf.sim");
 
 		ind = new VMindex("../DataModuleData/ORGANIZATIONS.tfidf.bin");
-		sim = SimMatrixElem.CountFromVMindex(ind);
-		sim.SaveToFile("../DataModuleData/ORGANIZATIONS.tfidf.sim");
+		sim = SimMatrixElem.CountFromVMindex(ind, simMeas);
+		sim.SaveToFile("../DataModuleData/ORGANIZATIONS." + simString + ".tfidf.sim");
 
 		ind = new VMindex("../DataModuleData/PERSONS-smooth.tf.bin");
-		sim = SimMatrixElem.CountFromVMindex(ind);
-		sim.SaveToFile("../DataModuleData/PERSONS-smooth.tf.sim");
+		sim = SimMatrixElem.CountFromVMindex(ind, simMeas);
+		sim.SaveToFile("../DataModuleData/PERSONS-smooth." + simString + ".tf.sim");
 
 		ind = new VMindex("../DataModuleData/PERSONS-smooth.tfidf.bin");
-		sim = SimMatrixElem.CountFromVMindex(ind);
-		sim.SaveToFile("../DataModuleData/PERSONS-smooth.tfidf.sim");
+		sim = SimMatrixElem.CountFromVMindex(ind, simMeas);
+		sim.SaveToFile("../DataModuleData/PERSONS-smooth." + simString + ".tfidf.sim");
 		
 		ind = new VMindex("../DataModuleData/LOCATIONS-smooth.tf.bin");
-		sim = SimMatrixElem.CountFromVMindex(ind);
-		sim.SaveToFile("../DataModuleData/LOCATIONS-smooth.tf.sim");
+		sim = SimMatrixElem.CountFromVMindex(ind, simMeas);
+		sim.SaveToFile("../DataModuleData/LOCATIONS-smooth." + simString + ".tf.sim");
 
 		ind = new VMindex("../DataModuleData/LOCATIONS-smooth.tfidf.bin");
-		sim = SimMatrixElem.CountFromVMindex(ind);
-		sim.SaveToFile("../DataModuleData/LOCATIONS-smooth.tfidf.sim");
+		sim = SimMatrixElem.CountFromVMindex(ind, simMeas);
+		sim.SaveToFile("../DataModuleData/LOCATIONS-smooth." + simString + ".tfidf.sim");
 
 		ind = new VMindex("../DataModuleData/ORGANIZATIONS-smooth.tf.bin");
-		sim = SimMatrixElem.CountFromVMindex(ind);
-		sim.SaveToFile("../DataModuleData/ORGANIZATIONS-smooth.tf.sim");
+		sim = SimMatrixElem.CountFromVMindex(ind, simMeas);
+		sim.SaveToFile("../DataModuleData/ORGANIZATIONS-smooth." + simString + ".tf.sim");
 
 		ind = new VMindex("../DataModuleData/ORGANIZATIONS-smooth.tfidf.bin");
-		sim = SimMatrixElem.CountFromVMindex(ind);
-		sim.SaveToFile("../DataModuleData/ORGANIZATIONS-smooth.tfidf.sim");
+		sim = SimMatrixElem.CountFromVMindex(ind, simMeas);
+		sim.SaveToFile("../DataModuleData/ORGANIZATIONS-smooth." + simString + ".tfidf.sim");
 
 		ind = new VMindex("../DataModuleData/GENERAL.tf.bin");
-		sim = SimMatrixElem.CountFromVMindex(ind);
-		sim.SaveToFile("../DataModuleData/GENERAL.tf.sim");
+		sim = SimMatrixElem.CountFromVMindex(ind, simMeas);
+		sim.SaveToFile("../DataModuleData/GENERAL." + simString + ".tf.sim");
 
 		ind = new VMindex("../DataModuleData/GENERAL.tfidf.bin");
-		sim = SimMatrixElem.CountFromVMindex(ind);
-		sim.SaveToFile("../DataModuleData/GENERAL.tfidf.sim");
+		sim = SimMatrixElem.CountFromVMindex(ind, simMeas);
+		sim.SaveToFile("../DataModuleData/GENERAL." + simString + ".tfidf.sim");
 	}
 	
 }
