@@ -24,13 +24,12 @@ and then use this information to determine similarity between documents. Similar
 can then be interpreted in terms of links between documents and be represented graphically for various uses.
 
 We introduce an interactive graphical system for powerful search and navigation through a collection of historical documents. 
-We exemplify our approach on the Castro Speech Database \citeA{CastroDB} (CSD), a collection 
-speeches and other documents by Fidel Castro, from 1959 to 1996. Our system includes keyword and meta-data search with automatic query 
+We exemplify our approach on the \citeA{CastroDB} (CSD), a collection of
+speeches and other documents by Fidel Castro. Our system includes keyword and metadata search with automatic query 
 expansion for named entities. 
-Retrieved documents are presented as a list of items, as well as an interactive graph where nodes represent 
-documents and edges represent links between documents. Documents are linked according to degree of shared named entities or degree of lexical 
-similarity. This representation is designed to support identification of groups of documents that revolve around similar topics as well as exploration of 
-more specific relations between any subset of presented documents. The system also enables the user to receive a local perspective on a 
+Retrieved documents are presented in a table as well as in an interactive graph, in which nodes represent 
+documents and edges represent links between documents. Documents are linked according to the amount of NEs each has in common, by the degree of lexical
+similarity, or by both measures. This representation is designed to support the identification of groups of documents which revolve around similar topics as well as the exploration of more specific relations between any subset of presented documents. The system also enables the user to receive a local perspective on a 
 specific document and present its most strongly connected neighbors, thus serving also as a recommendation tool. 
 
 Underlying the system are various computational methods and tools for text processing, 
@@ -43,31 +42,31 @@ data visualization and others. In the following section, we provide an overview 
 
 Several processing tasks were performed in the course of implementation of the project. Following is an overview of the steps involved. An in-depth description of each step is provided in section \ref{sec:main_part}.
 
-\begin{enumerate}
-\item[Reading Data] All documents from the CSDB were retrieved. Meta-data provided with each document was extracted from its header.
-\item[Storing Data] Documents were stored in a MySQL database, and a data model was implemented in order to allow efficient retrieval of documents according to meta-data.
-\item[NE Recognition] A robust NE recognizer was used to identify persons, locations and organizations in each document.
-\item[Document Indexing] Documents were indexed in four different manners in order to support document retrieval and serve as input for similarity calculations. Three indexes were based on the three types of identified named entities. The fourth indexing method was based on global vocabulary. Terms were weighted according to both TF and TF/IDF.
-\item[Co-reference Resolution] In order to avoid treating name variations as different entities, we implemented an approximation of a co-reference resolution system, focusing on aliasing (the identification of name variations).
-First, similarity matrices between all named entities of the same type in the Castro collection were calculated using a $p$-spectrum string kernel.
-Then, the similarity matrices were multiplied by the documents matrix. As a result, each document representation was boosted by all name 
+\begin{description}
+\item[Reading Data] All documents from the CSDB were retrieved. Meta-data provided for each document was extracted from its header.
+\item[Storing Data] Documents were stored in a MySQL database, and a data model was created in order to allow efficient retrieval of documents by metadata.
+\item[NER] A NE recognizer was used to identify \meta{Persons}, \meta{Locations} and \meta{Organizations} in each document.
+\item[Document Indexing] Documents were indexed in four different manners in order to support document retrieval and serve as input for similarity calculations--- Three indexes were based on the three types of identified NEs, while the fourth indexing method was based on global vocabulary. Terms were weighted according to both TF and TF/IDF score.
+\item[CRR] In order to avoid treating linguistic form variations as different entities, we implemented an approximation of a CRR system, focusing on aliasing (the identification of linguistic-form variations).
+First, similarity matrices between all NEs of the same type in the database were calculated using a $p$-spectrum string kernel.
+Afterwards, the similarity matrices were multiplied by the documents matrix. As a result, each document representation was boosted by all form 
 variations of the NEs that it contains.
 \item[Calculation of Document Similarity] Document similarity matrices were created according to two different similarity measures. 
 Similarity was computed separately according to NEs and lexical overlap. 
 A link can be established between a pair of documents if their similarity passes a certain threshold. 
 The strength of the link is determined by the strength of the similarity.
-\end{enumerate}
+\end{description}
 
 These processing steps created the infrastructure for a graphical user interface that provides several
 functionalities described in the following section.
 
 \subsubsection{Functionalities of the Application}
-\begin{enumerate}
+\begin{description}
 \item[Document Retrieval Engine] Using the data model and precomputed indexes, an engine for document retrieval was implemented. 
 The engine allows querying the database with keywords. The engine also allows filtering and querying according to specifications on metadata, e.g.\ a period of time, type of document and others. 
 \item[Graphical Representation of Documents] Documents retrieved from the database are presented as nodes of a graph. The size of the node corresponds to its relevance for the query, its shape to the type of the document. We retrieve the similarity measure for each pair of documents, and link them with an edge if the similarity crosses a adjustable threshold. The thickness of edges reflects the strength of the similarity between two documents.
-\item[Functionalities for Exploration of the Collection] We provide an interactive environment that enables the user to navigate through the documents in an effective way. Among the implemented features are, viewing the list of NEs of a particular document; viewing common NEs for several documents; presenting the content of a document with the named entities marked; marking the most similar documents to a specific document; isolating the neighbors of a document up to a specified depth; and manipulating edges representation for thresholds, absolute/relative similarity and others.
-\end{enumerate}
+\item[Functionalities for Exploration of the Collection] We provide an interactive environment that enables the user to navigate through the documents in an effective way. Among the implemented features are viewing the list of NEs of a particular document; viewing common NEs for several documents; presenting the content of a document with the NEs marked; marking the most similar documents to a specific document; isolating the neighbors of a document up to a specified depth; and manipulating edges representation for thresholds, absolute/relative similarity and others.
+\end{description}
 
 A detailed description of each functionality is provided in section \ref{sec:combining_it_all:_user_interface}. In the following, we present the interest of our application for historical research. 
 
@@ -75,31 +74,29 @@ A detailed description of each functionality is provided in section \ref{sec:com
 \label{sec:motivation}
 One of the major tasks of historians consists of working with sources that often come in the form of historical documents. 
 Such documents have numerous usages in the various branches of historical research. Some of these are related the quest of revealing 
-general trends and patterns about a historic period or personality while others focus on finding specific details and pieces of historical 
-information. Historical documents serve both for the formulation of historical hypothesis's and for their validation and rejection efforts. 
+general trends and patterns about a historic period or personality, while others focus on finding specific details and pieces of historical 
+information. Historical documents serve both for the formulation of historical hypotheses and for their validation and rejection efforts. 
 
-While the amount of written accounts about ancient history is relatively limited and well known, historians of modern times often have to 
+While the amount of written accounts about ancient history is well-known and relatively limited, researchers of modern times often have to 
 face an abundance of historical written materials. Dealing with large collections of documents introduces additional challenges for historians. 
-In particular, the focus is often shifted to the identification and retrieval of documents that might be relevant for the interests of the 
+In particular, the focus is often shifted to the identification and retrieval of documents that might be relevant for the interests of 
 historians. Furthermore, identifying trends as well as implicit and explicit links between documents becomes an extremely difficult task to 
 perform manually.
 
-Our systems is designed to support the work of the historian with sources and specifically with large collections of documents such as the 
-CSDB in several manners. Following are some of aspects of our system that are likely to be appealing for historians.
+Our system is designed to support the work of the historian with electronic sources in several ways, specifically with large collections of documents such as the CSDB. Following are some of aspects of our system that are likely to be appealing for historians.
 
 We focus on automatic markup of NEs. In particular, we identify \meta{Persons}, \meta{Organizations} and \meta{Locations}. All three bear potential 
 interest for historians, both in terms of discovering of new entities and identification of known entities. 
 
-Retrieval of documents that contain known NEs or general keywords is done automatically. Documents containing name variations of 
+Retrieval of documents that contain known NEs or general keywords is done automatically. Documents containing form variations of 
 the entities appearing in the query can also be retrieved, enabling historians to receive documents that might be relevant for their interests 
-but do not appear in their query. 
+but do not appear in their query.
 
 Our retrieval mechanism and graphical interface incorporates metadata, if such is provided with the documents in the collection. 
-Using metadata extends the flexibility of the search and allows a more informative graphical presentation of query results. In our case, 
-different types of documents have different node shapes. 
+Using metadata extends the flexibility of the search and allows a more informative graphical presentation of query results.
 
 We present links between retrieved documents based on the overlap of NEs in each document as well as general lexical overlap. These links can be valuable in many scenarios. 
-For instance, if the historian is interested in a specific document, he can easily identify which other documents contain similar named 
+For instance, if the historian is interested in a specific document, he or she can easily identify which other documents contain similar named 
 entities or similar vocabulary. This feature not only helps with the discovery of explicit information about NEs in the 
 collection, but can also provide useful generalizations with regard to documents that potentially deal with similar, sometimes implicit 
 topics to those of the document of interest.   
@@ -110,38 +107,36 @@ different kinds of topics and might be correlated to various parameters, such as
 ``stand alone'' documents can also be highly informative, as they can indicate unique content. 
 
 Our system aims to be both intuitive and simple while allowing considerable amount of flexibility. It enables users to adjust many of the 
-parameters such that they would best suit their needs. A historian that has an intuition that any sort of links between the documents might 
-be relevant for him, may adjust the similarity threshold for presenting edges to be very low. On the other hand, if only tight connections 
-are desired, the threshold can be raised. Other operations on the graph such as switching from named entity to lexical similarity, adjusting 
+parameters such that they would best suit their needs. A historian who has an intuition that any sort of links between the documents might 
+be relevant for him, may adjust the similarity threshold for presenting edges to be very low and display even relatively-weak links between documents. On the other hand, if only tight connections 
+are desired, the threshold can be raised, revealing only relatively-stronger links. Other operations on the graph such as switching from NE to lexical similarity, adjusting 
 thickness of edges to reflect different degree of similarity, setting links according to TF/IDF scores and others have explicit textual 
-interpretation and potential to help to the user achieve his goals. 
+interpretation and the potential to help to the user achieve his goals. 
 
 Finally, our system is designed to make retrieval and navigation through the collection easy and enjoyable. We provide text viewing 
 possibilities, and graph manipulation operations such that the user would be able to explore the collection effectively and with minimal effort.
 
-
 \subsection {Background and Previous Work}
 \label{sec:nlp_background}
 
-
 Our work lies within the areas of NLP, IR and Knowledge Domain Visualization.
-It involves several well known NLP and information retrieval (IR) tasks as well as topics from information visualization and user interfaces. 
-We tackle these tasks by a combination of off-the-shelf tools, implementing and adapting established models, and by introducing new methods 
-that suit our purposes.  In the rest of this section we provide a general overview of the different tasks and frameworks involved in our 
+It involves several well-known NLP and information retrieval (IR) tasks as well as topics from information visualization and user interfaces. 
+We tackle these tasks with a combination of off-the-shelf tools, implementing and adapting established models, and by introducing new methods 
+that suit our purposes. In the rest of this section, we provide a general overview of the different tasks and frameworks involved in our 
 project, review relevant previous research and relate it to our implementation. 
 
 An important NLP task we face is NER. This task refers to the identification and classification of rigid designators, 
 typically proper names \cite{NEsurvey2009}. Three well-studied types of NEs are \meta{Persons}, \meta{Organizations} and \meta{Locations}. 
-As mentioned previously, all three are important for the historical domain. While early studies on NE recognition focused on designing 
+As mentioned previously, all three are important for the historical domain. While early studies in NER focused on designing 
 hand-crafted rules, recent studies and state-of-the-art tools apply statistical and machine learning techniques. For such tools, 
 good feature selection has proven to be crucial, and often more important that the model itself.  
-To recognize NEs in our collection we apply the Stanford NE Recognizer (SNER) \cite{sner}. It is based on Conditional Random Fields (CRF), 
+To recognize NEs in our collection we apply the Stanford Named Entity Recognizer (SNER) \cite{sner}. It is based on Conditional Random Fields (CRF), 
 uses a wide range of features and is available with pre-trained models.  For a detailed description see section \ref{sec:stanford_named_entity_recognizer}.
 
 Another branch of NLP research relevant for our work is CRR, involving the task of determining which phrases refer to the same extra-linguistic entities in a text or a collection of texts.
 Following the relative success of the algorithm and features proposed in \cite {soon2001coreference}, machine learning 
 with an emphasis on feature engineering has been the predominant approach for this task. CRR is widely 
-recognized as an extremely complex problem and existing tools such as BART \cite{bart} achieve only moderate accuracy (an F-score of roughly 65\%). Due to the limitations of existing technology and the nature of our task we restrict ourselves to multi-document aliasing, namely recognizing variations of the same name in a collection of documents. Our approach is based on string similarity, 
+recognized as an extremely complex problem and existing tools such as BART \cite{bart} achieve only moderate accuracy (an F-score of roughly 65\%). Due to the limitations of existing technology and the nature of our task we restrict ourselves to multi-document aliasing, namely recognizing variations in the form of the same entity in a collection of documents. Our approach is based on string similarity, 
 which we approximate using a p-spectrum string kernel \cite{kernels2004}. We describe our co-reference approach in section \ref{sec:aliasing}.
 
 Our implementation of the document retrieval modules and linkage of documents according to similarity relies heavily on standard techniques 
@@ -154,20 +149,20 @@ techniques of domain structures, in particular for scientific domains. Its notab
 IR and information classification.
 The general process flow of visualizing domain knowledge as described in
 \cite{visualizing2003} is the following: 
-\begin{enumerate}
+\begin{description}
 \item Data extraction 
 \item Definition of unit of analysis 
 \item Selection of measures 
 \item Calculation of similarity between units 
 \item Ordination or assignment of coordinates to units 
 \item Use of resulting visualization for analysis and interpretation.
-\end{enumerate}
-Our work-flow falls exactly to these categories. We use NEs and general vocabulary as extracted data, documents as units of analysis, measure and calculate similarity with Manhattan and cosine distances, order documents according to these measures and finally visualize the results as a graph.
-From this perspective, the NLP module is a sub-component that falls within the data extraction step. Extracting NEs has a critical importance
-here as this type of information is extremely relevant for historical documents, as opposed to other domains.  
+\end{description}
+Our workflow conforms exactly to these categories. We use NEs and general vocabulary as extracted data, documents as units of analysis, measure and calculate similarity with Manhattan and cosine distances, order documents according to these measures, and finally visualize the results as a graph.
+From this perspective, the NLP module is a sub-component which falls within the data extraction step. Extracting NEs is of critical importance
+here, as this type of information is extremely relevant for historical documents in contrast to in some other domains.  
 
-More specifically, our model can be regarded as a special case of a \emph{Pathfinder Network} \cite{schvaneveldt1990pathfinder}.
-In Pathfinder networks collections of documents are modeled as graphs that present proximities between objects. 
+More specifically, our model can be regarded as a special case of a pathfinder network \cite{schvaneveldt1990pathfinder}.
+Modeled as a pathfinder networks a collections of documents may be represented as a graphs representing the relative proximities of each objects to each other. 
 Objects are represented as nodes and proximities between objects are represented as links between nodes, where only the strongest links according to a adjustable proximity threshold are taken into consideration. Proximity can have several interpretations, one of them being similarity.
 Degrees of similarity between two objects are typically modeled in the length their links. The more similar two objects are, the shorter their link.
-In our implementation, degree of similarity is divided into three categories and reflected in the type of the link. 
+In our implementation, however, degree of similarity is divided into three categories and reflected by the thickness of each line.
