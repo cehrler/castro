@@ -1,23 +1,28 @@
 \note{identifying names, locations and organizations in the Castro documents,
 input/output examples, evaluation??}
 
-We chose the Stanford Named Entity Recognizer for the task of identifying named entities in the collection.
-The Stanford NER is considered to be one of the best freely available tools for named entity recognition.
-It recognizes location, persons and organizations which, as mentioned previously, are all extremely relevant for the historical domain. 
-It comes with models pre-trained on the CoNLL, MUC-6, MUC-7 and ACE named entity corpora. As a result, it is quite robust across domains.
+We chose the Stanford Named Entity Recognizer (SNER) \cite{sner} for the task of identifying named entities in the collection.
+The SNER is considered to be one of the best freely available tools for named entity recognition.
+It recognizes locations, persons and organizations which, as suggested previously, are all relevant for the historical domain. 
+It comes with models pre-trained on CoNLL, MUC-6, MUC-7 and ACE named entity corpora, which presumably make it robust across domains.
 
 The pre-trained modules are very valuable for us, as we do not have NE annotated data for the Castro collection, and manual annotation of NE's is a labor intensive task. As discussed in the evaluation section \ref{sec:named_entity_recognition}, the domain robustness of the tool is reflected in the quality of the NE tagging for our collection, which contains a variety of different genres. 
 
-The Stanford Named Entity Recognizer implements linear chain Conditional Random Field sequence models, first proposed by \cite{lafferty2001conditional}.
+The Stanford Named Entity Recognizer implements linear chain Conditional Random Field sequence models, proposed by \cite{lafferty2001conditional}.
 CRF is a discriminative model for finding the most probable sequence of labels (NE types) given a sequence of observations (words). 
-It does not assume independence between features, and enables conditioning each random variable of the complete input sequence. The features used for the recognizer implementation include word features, orthographic features, label sequences, ID's of word clusters computed according to distributional similarity. 
+It does not assume independence between features, and enables conditioning each random variable any part of the input sequence. The features used for the recognizer implementation include word features, orthographic features and label sequences. It is also possible to integrate ID's of word clusters computed according to distributional similarity as features of the classifier.
 
-CARSTEN - PROVIDE STATISTICS TABLE, WRITE ON TECHNICALITIES WITH RUNNING THE NER AND STORING RESULTS
+We used vesion $1.1.1$ of the SNER. The named entity recognition was performed with the
+\texttt{ner-eng-ie.crf-3-all2008-distsim.ser.gz} model - a three class classifier with the additional
+distributional similarity lexicon. Processing was done by a
+\texttt{shell} script that runs SNER for each document in the Castro database. The input is a
+text file containing the content of a document without meta-information. For the output format we
+used an XML dialect, with designated tags for the lists of each type of NE. The following table provides basic statistics on the extracted NE's.
+
 \begin{figure}[ht]
 \centering
 \caption{Global statistics for the named entities. The table shows the number of distinct named
-entities found by the stanford named entity recognizer and the average number of occurences for
-each NE type per document.}
+entities found by the SNER and the average number of occurrences for each NE type per document.}
 \begin{tabular}{l|ll}
   Named Entity Type      & Number & Average/Document\\
   \hline
@@ -28,15 +33,4 @@ each NE type per document.}
 \label{fig:ne_statistics}
 \end{figure}
 
-For the subtask of named entity extraction we used the Stanford named entity recognizer (sNER)
-\cite{sner} version $1.1.1$. The package provides several pre-trained classifiers trained on both US
-and UK newswire data from CoNLL, MUC6, MUC7 and ACE.
-
-The named entity recognition was performed with the
-\texttt{ner-eng-ie.crf-3-all2008-distsim.ser.gz} model - a three class classifier for the named
-entities \textsc{Person}, \textsc{Organizations} and \textsc{Locations} with an additional
-``distributional similarity lexicon'' for improved performance. Processing was done by a
-\texttt{shell} script that runs sNER for each document in the castro database. The input is a
-textfile containing the content of a document without meta-information. For the output format we
-choose a XML dialect.
 
