@@ -45,7 +45,7 @@ Several processing tasks were performed in the course of implementation of the p
 \begin{description}
 \item[Reading Data] All documents from the CSDB were retrieved. Meta-data provided for each document was extracted from its header.
 \item[Storing Data] Documents were stored in a MySQL database, and a data model was created in order to allow efficient retrieval of documents by metadata.
-\item[NE Recognition] A NE recognizer was used to identify \meta{Persons}, \meta{Locations} and \meta{Organizations} in each document.
+\item[NER] A NE recognizer was used to identify \meta{Persons}, \meta{Locations} and \meta{Organizations} in each document.
 \item[Document Indexing] Documents were indexed in four different manners in order to support document retrieval and serve as input for similarity calculations--- Three indexes were based on the three types of identified NEs, while the fourth indexing method was based on global vocabulary. Terms were weighted according to both TF and TF/IDF.
 \item[CRR] In order to avoid treating linguistic form variations as different entities, we implemented an approximation of a CRR system, focusing on aliasing (the identification of linguistic-form variations).
 First, similarity matrices between all NEs of the same type in the database were calculated using a $p$-spectrum string kernel.
