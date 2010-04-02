@@ -52,7 +52,7 @@ Several processing tasks were performed in the course of implementation of the p
 First, similarity matrices between all named entities of the same type in the Castro collection were calculated using a $p$-spectrum string kernel.
 Then, the similarity matrices were multiplied by the documents matrix. As a result, each document representation was boosted by all name 
 variations of the NEs that it contains.
-\item[Calculation of Document Similarity] Document similarity matrices were created using Manhattan distance as similarity measurement. 
+\item[Calculation of Document Similarity] Document similarity matrices were created according to two different similarity measures. 
 Similarity was computed separately according to NEs and lexical overlap. 
 A link can be established between a pair of documents if their similarity passes a certain threshold. 
 The strength of the link is determined by the strength of the similarity.
@@ -127,7 +127,7 @@ possibilities, and graph manipulation operations such that the user would be abl
 Our work lies within the areas of NLP, IR and Knowledge Domain Visualization.
 It involves several well known NLP and information retrieval (IR) tasks as well as topics from information visualization and user interfaces. 
 We tackle these tasks by a combination of off-the-shelf tools, implementing and adapting established models, and by introducing new methods 
-that suit our purposes.  In the rest of this section we provide a general overview of the different NLP tasks and frameworks involved in our 
+that suit our purposes.  In the rest of this section we provide a general overview of the different tasks and frameworks involved in our 
 project, review relevant previous research and relate it to our implementation. 
 
 An important NLP task we face is NER. This task refers to the identification and classification of rigid designators, 
@@ -146,7 +146,7 @@ which we approximate using a p-spectrum string kernel \cite{kernels2004}. We des
 
 Our implementation of the document retrieval modules and linkage of documents according to similarity relies heavily on standard techniques 
 and measures used in IR, and specifically on the vector space model \cite{ir2008}. We adopt and adapt techniques for 
-document indexing \cite{indexing1999}, vector space term weighting \cite{jones2004}, \cite{salton1971} and determining query-document and 
+document indexing \cite{indexing1999}, vector space term weighting \cite{jones2004}, \cite{salton1971}, query extension and determining query-document and 
 inter-document similarity. 
 
 From a wider perspective, the project can be located within the field of Domain Knowledge Visualization. This field revolves around visualization
@@ -162,7 +162,7 @@ The general process flow of visualizing domain knowledge as described in
 \item Ordination or assignment of coordinates to units 
 \item Use of resulting visualization for analysis and interpretation.
 \end{enumerate}
-Our work-flow falls exactly to these categories. We use NEs and general vocabulary as extracted data, documents as units of analysis, measure and calculate similarity with Manhattan distance, order documents according to this measure and finally visualize the results as a graph.
+Our work-flow falls exactly to these categories. We use NEs and general vocabulary as extracted data, documents as units of analysis, measure and calculate similarity with Manhattan and cosine distances, order documents according to these measures and finally visualize the results as a graph.
 From this perspective, the NLP module is a sub-component that falls within the data extraction step. Extracting NEs has a critical importance
 here as this type of information is extremely relevant for historical documents, as opposed to other domains.  
 
@@ -170,4 +170,4 @@ More specifically, our model can be regarded as a special case of a \emph{Pathfi
 In Pathfinder networks collections of documents are modeled as graphs that present proximities between objects. 
 Objects are represented as nodes and proximities between objects are represented as links between nodes, where only the strongest links according to a adjustable proximity threshold are taken into consideration. Proximity can have several interpretations, one of them being similarity.
 Degrees of similarity between two objects are typically modeled in the length their links. The more similar two objects are, the shorter their link.
-In our implementation, degree of similarity is divided into three categories and reflected in type of the link (dotted, normal and thick). 
+In our implementation, degree of similarity is divided into three categories and reflected in the type of the link. 
