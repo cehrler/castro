@@ -1,6 +1,6 @@
 We chose the Stanford Named Entity Recognizer (SNER) \cite{sner} for the task of identifying NEs in the collection. It recognizes \meta{Locations}, \meta{Persons} and \meta{Organizations} which, as suggested previously, are all relevant for the historical domain. It comes with models pre-trained on CoNLL, MUC-6, MUC-7 and ACE named entity corpora, which presumably make it robust across domains.
 
-The pre-trained modules are very valuable due to that the CSDB is not annotated with NE information and manual annotation of NEs is very labor intensive. As discussed in the evaluation section \ref{sec:stanford_named_entity_recognizer}, the domain robustness of the tool is reflected in the quality of the NE tagging for the collection, which contains a variety of different genres. 
+The pre-trained modules are very valuable since the CSDB is not annotated with NE information and manual annotation of NEs is labor intensive. As further discussed in the evaluation section \ref{sec:stanford_named_entity_recognizer}, the domain robustness of the tool is reflected in the quality of the NE tagging for the collection, which contains a variety of different genres. 
 
 The SNER implements linear chain Conditional Random Field (CRF) sequence models, proposed by \cite{lafferty2001conditional}.
 CRF is a discriminative model for finding the most probable sequence of labels (NE types) given a sequence of observations (words). 
