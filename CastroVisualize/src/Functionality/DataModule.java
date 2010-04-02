@@ -63,9 +63,9 @@ public class DataModule {
 	private static String smDictionaryFile;
 	
 	
-	private static Map<String, Integer> personsMap;
-	private static Map<String, Integer> locationsMap;
-	private static Map<String, Integer> organizationsMap;
+	private static Map<String, List<Integer>> personsMap;
+	private static Map<String, List<Integer>> locationsMap;
+	private static Map<String, List<Integer>> organizationsMap;
 	private static Map<String, Integer> dictionaryMap;
 	
 	private static List<String> personsList;
@@ -393,15 +393,22 @@ public class DataModule {
 		if (personsMap == null || locationsMap == null || organizationsMap == null || dictionaryMap == null)
 		{
 			connection = MySqlConnectionProvider.getNewConnection(connHost, connDB, connUser, connPasswd);
-			personsMap = new HashMap<String, Integer>();
-			locationsMap = new HashMap<String, Integer>();
-			organizationsMap = new HashMap<String, Integer>();
+			personsMap = new HashMap<String, List<Integer>>();
+			locationsMap = new HashMap<String, List<Integer>>();
+			organizationsMap = new HashMap<String, List<Integer>>();
 			dictionaryMap = new HashMap<String, Integer>();
 			
 			personsList = new ArrayList<String>();
 			locationsList = new ArrayList<String>();
 			organizationsList = new ArrayList<String>();
 			dictionaryList = new ArrayList<String>();
+			
+			for (int i = 0; i < 20000; i++)
+			{
+				personsList.add("");
+				locationsList.add("");
+				organizationsList.add("");
+			}
 			
 			System.err.println("Loading database...");
 			
@@ -412,31 +419,52 @@ public class DataModule {
 				ResultSet srs = stmt.executeQuery("CALL getNE();");
 				
 				String pomS;
+				String neStringOrig;
+				String neString;
 				
 				while (srs.next()) 
 				{
 						pomS = srs.getString("NE_TYPE");
+						neString = srs.getString("NE_NAME").toLowerCase();
+						neStringOrig = srs.getString("NE_NAME");
 						
 						if (pomS.equals("ORGANIZATIONS"))
 						{
-							organizationsMap.put(srs.getString("NE_NAME"), srs.getInt("NE_INDEX_ID"));
-							organizationsList.add("");
+							
+							if (! organizationsMap.containsKey(neString))
+							{
+								organizationsMap.put(neString, new ArrayList<Integer>());
+							}
+							organizationsMap.get(neString).add(srs.getInt("NE_INDEX_ID"));
+							organizationsList.add(srs.getInt("NE_INDEX_ID"), neStringOrig);
 						}
 						else if (pomS.equals("PERSONS"))
 						{
-							personsMap.put(srs.getString("NE_NAME"), srs.getInt("NE_INDEX_ID"));
-							personsList.add("");
+
+							if (! personsMap.containsKey(neString))
+							{
+								personsMap.put(neString, new ArrayList<Integer>());
+							}
+
+							personsMap.get(neString).add(srs.getInt("NE_INDEX_ID"));
+							personsList.add(srs.getInt("NE_INDEX_ID"), neStringOrig);;
 						}
 						else if (pomS.equals("LOCATIONS"))
 						{
-							locationsMap.put(srs.getString("NE_NAME"), srs.getInt("NE_INDEX_ID"));
-							locationsList.add("");
+									
+							if (! locationsMap.containsKey(neString))
+							{
+								locationsMap.put(neString, new ArrayList<Integer>());
+							}
+
+							locationsMap.get(neString).add(srs.getInt("NE_INDEX_ID"));
+							locationsList.add(srs.getInt("NE_INDEX_ID"), neStringOrig);;
 						}
 										
 				}
 				
 				String key;
-				for (Iterator<String> it = organizationsMap.keySet().iterator(); it.hasNext(); )
+				/*for (Iterator<String> it = organizationsMap.keySet().iterator(); it.hasNext(); )
 				{
 					key = it.next();
 					organizationsList.set(organizationsMap.get(key), key);
@@ -452,7 +480,7 @@ public class DataModule {
 				{
 					key = it.next();
 					personsList.set(personsMap.get(key), key);
-				}
+				}*/
 
 				stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
 	                    ResultSet.CONCUR_READ_ONLY);	
@@ -521,18 +549,28 @@ public class DataModule {
 			
 			if (personsMap.containsKey(queryTerms.get(i)))
 			{
-				similarityUpdate(nodes, personsIndexSmooth, personsMap.get(queryTerms.get(i)), termWeights.get(i));
+				for (Iterator<Integer> colIt = personsMap.get(queryTerms.get(i)).iterator() ; colIt.hasNext(); )
+				{
+					similarityUpdate(nodes, personsIndexSmooth, colIt.next(), termWeights.get(i));
+				}
 			}
 			
 			if (locationsMap.containsKey(queryTerms.get(i)))
 			{
-				similarityUpdate(nodes, locationsIndexSmooth, locationsMap.get(queryTerms.get(i)), termWeights.get(i));
+				for (Iterator<Integer> colIt = locationsMap.get(queryTerms.get(i)).iterator() ; colIt.hasNext(); )
+				{
+					similarityUpdate(nodes, locationsIndexSmooth, colIt.next(), termWeights.get(i));
+				}
 				
 			}
 
 			if (organizationsMap.containsKey(queryTerms.get(i)))
 			{
-				similarityUpdate(nodes, organizationsIndexSmooth, organizationsMap.get(queryTerms.get(i)), termWeights.get(i));
+				
+				for (Iterator<Integer> colIt = organizationsMap.get(queryTerms.get(i)).iterator() ; colIt.hasNext(); )
+				{
+					similarityUpdate(nodes, organizationsIndexSmooth, colIt.next(), termWeights.get(i));
+				}
 				
 			}
 			
@@ -750,7 +788,7 @@ public class DataModule {
 	
 	public static Graph getGraphThreshold(String SinceDate, String TillDate, String Place, String Author, String DocType, List<String> queryTerms , List<Double> termWeights, Integer maxNumNodes, double _normalEdgeThreshold, double _dottedEdgeAbsoluteMultiplier, double _thickEdgeAbsoluteMultiplier)
 	{
-	
+		queryTerms = lowercaseQueryTerms(queryTerms);
 		normalEdgeThreshold = _normalEdgeThreshold;
 		dottedEdgeAbsoluteMultiplier = _dottedEdgeAbsoluteMultiplier;
 		thickEdgeAbsoluteMultiplier = _thickEdgeAbsoluteMultiplier;
@@ -764,7 +802,7 @@ public class DataModule {
 	
 	public static Graph getGraphDensity(String SinceDate, String TillDate, String Place, String Author, String DocType, List<String> queryTerms , List<Double> termWeights, Integer maxNumNodes, double _edgeDensity, double _normalEdgeRelativeMultiplier, double _thickEdgeRelativeMultiplier)
 	{
-	
+		queryTerms = lowercaseQueryTerms(queryTerms);
 		edgeDensity = _edgeDensity;
 		normalEdgeRelativeMultiplier = _normalEdgeRelativeMultiplier;
 		thickEdgeRelativeMultiplier = _thickEdgeRelativeMultiplier;
@@ -861,42 +899,55 @@ public class DataModule {
 	public static int documentContainsNE(int docID, String neString)
 	{
 		int ret = 0;
+		int col;
 		if (personsMap.containsKey(neString))
 		{
-			if (personsIndex.GetValue(docID, personsMap.get(neString)) > 0.001)
+			for (Iterator<Integer> itCol = personsMap.get(neString).iterator(); itCol.hasNext(); )
 			{
-				return 2;
-			}
-
-			if (personsIndexSmooth.GetValue(docID, personsMap.get(neString)) > 0.001)
-			{
-				ret = 1;
+				col = itCol.next();
+				if (personsIndex.GetValue(docID, col) > 0.001)
+				{
+					return 2;
+				}
+	
+				if (personsIndexSmooth.GetValue(docID, col) > 0.001)
+				{
+					ret = 1;
+				}
 			}
 
 		}
 		
 		if (locationsMap.containsKey(neString))
 		{
-			if (locationsIndex.GetValue(docID, locationsMap.get(neString)) > 0.001)
+			for (Iterator<Integer> itCol = locationsMap.get(neString).iterator(); itCol.hasNext(); )
 			{
-				return 2;
-			}
-			if (locationsIndexSmooth.GetValue(docID, locationsMap.get(neString)) > 0.001)
-			{
-				ret = 1;
+				col = itCol.next();
+				if (locationsIndex.GetValue(docID, col) > 0.001)
+				{
+					return 2;
+				}
+				if (locationsIndexSmooth.GetValue(docID, col) > 0.001)
+				{
+					ret = 1;
+				}
 			}
 		}
 		
 		if (organizationsMap.containsKey(neString))
 		{
-			if (organizationsIndex.GetValue(docID, organizationsMap.get(neString)) > 0.001)
+			for (Iterator<Integer> itCol = organizationsMap.get(neString).iterator(); itCol.hasNext(); )
 			{
-				return 2;
-			}
-
-			if (organizationsIndexSmooth.GetValue(docID, organizationsMap.get(neString)) > 0.001)
-			{
-				ret = 1;
+				col = itCol.next();
+				if (organizationsIndex.GetValue(docID, col) > 0.001)
+				{
+					return 2;
+				}
+	
+				if (organizationsIndexSmooth.GetValue(docID, col) > 0.001)
+				{
+					ret = 1;
+				}
 			}
 		}
 		
@@ -917,6 +968,18 @@ public class DataModule {
 		
 		kmeans.Evaluate();
 		System.err.println("Kmeans stop");
+	}
+	
+	private static List<String> lowercaseQueryTerms(List<String> terms)
+	{
+		List<String> ret = new ArrayList<String>();
+		
+		for (int i = 0; i < terms.size(); i++)
+		{
+			ret.add(terms.get(i).toLowerCase());
+		}
+		
+		return ret;
 	}
 	
 }
