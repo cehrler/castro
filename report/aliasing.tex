@@ -41,7 +41,7 @@ For our project, we need co-reference resolution based on the extracted named en
 The matrix $\mathcal{S}$ is the \textit{kernel matrix} of the three terms $\mathcal{T} = \lbrace
 \text{Fidel Castro},\text{Dr. Fidel Castro}, \text{Raul}\rbrace$. The first and second term have a
 very high lexical similarity of $0.8$ while the third term is highly dissimilar. Using
-$\mathcal{S}$, a document vector or query $q=(1,0,0)$ can now be expanded into an aliased form
+$\mathcal{S}$, a document vector or query $q=(1,0,0)^T$ can now be expanded into an aliased form
 $\bar q$, where $\bar q = \mathcal{S}q$. In general, aliasing is performed on all document vectors
 and queries.}
   \[
