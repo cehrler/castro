@@ -430,10 +430,6 @@ public class DataModule {
 						
 						if (pomS.equals("ORGANIZATIONS"))
 						{
-							if (organizationsMap.containsKey(neString))
-							{
-								System.err.println("NE rewritten: " + neString + ", by " + neStringOrig);
-							}
 							
 							if (! organizationsMap.containsKey(neString))
 							{
@@ -444,10 +440,6 @@ public class DataModule {
 						}
 						else if (pomS.equals("PERSONS"))
 						{
-							if (personsMap.containsKey(neString))
-							{
-								System.err.println("NE rewritten: " + neString + ", by " + neStringOrig);
-							}
 
 							if (! personsMap.containsKey(neString))
 							{
@@ -459,13 +451,7 @@ public class DataModule {
 						}
 						else if (pomS.equals("LOCATIONS"))
 						{
-							if (locationsMap.containsKey(neString))
-							{
-								System.err.println("NE rewritten: " + neString + ", by " + neStringOrig);
-							}
-
-							
-							
+									
 							if (! locationsMap.containsKey(neString))
 							{
 								locationsMap.put(neString, new ArrayList<Integer>());

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+historyDir=`dirname $0`
+cd $historyDir
+java -Xmx1024M -jar ./bin/historyExplorerNew.jar
