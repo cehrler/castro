@@ -4,7 +4,7 @@ The vector coefficients are usually normalized in order to have the same length,
 
 \subsubsection{Indexing}
 \label{sec:indexing}
-Vector representations of the documents are stored in index matrices. Each row of an index matrix corresponds to the vector representation of a single document. 
+Index is the data structure that stores the vector representation of the documents in the vector model. It is a matrix in which each row stores the vector representation of a single document. Each column stores the weights for one distinct term in all the documents. The index matrix is usually very sparse. In our implementation it is represented as a sparse matrix. In the memory we store only coordinatates of nonzero cells and their values. All the document representation vectors were normalized in advance. Which allows us to compute cosine similarities of documents and queries faster.
 
 Our model contains several index matrices. We created an index matrix for each named entity type and a general index which indexes the non named entity terms. For all named entity types aliased or non-aliased index matrix can be used. Our current implementation of the VSM doesn't use TF-IDF measure for adjustment of query terms. We only use TF-IDF for adjusting the document representation. It means that all the values corresponding to the search terms in the query remain the same in the vector representation of the query. 
 
@@ -26,11 +26,19 @@ TF-IDF stands for term frequency - inverse document frequency. This measure is m
 
 The TF-IDF score of term $j$ drops according to the logarithm of the number of documents that contain term $j$. The TF-IDF score of terms which are contained in every single document is always equal to zero.
 
+\subsection{Computing Similarity between Documents}\label{sec:computing_similarity_between_documents}
+
 In VSM we need to measure the similarity between vectors. The similarity can expressed by the cosine similarity measure:
 
 \[\text{cosim}(q,d) = \sum_{k \in \mathcal{T}}\frac{q(k)d(k)}{|q||d|}\]
 
 It expresses the cosine angle between the vectors q and d. This measure is equal to 1 for the paralell vectors and it's equal to zero for the perpendicular vectors.
+
+We arrange the retrieved documents according to their similarity to each other. To this end, we store the similarity of each pair of documents in similarity matrices. The matrices correspond to the four different indexes: similarity according to persons, locations, organizations and general vocabulary. These matrices are not sparse and each cell is represented in the memory.   
+
+
+
+
 
 \subsubsection{Keyword and Metadata Search}\label{sec:keyword_search}
 
@@ -38,6 +46,5 @@ In VSM the searching proceeds as follows. The search query is transformed into i
 
 Document retrieval in our model consists of two steps. In the first step, documents that do not satisfy the conditions concerning the type and date of the document, are filtered out. In the second step, documents are sorted in descending order according to their cosine measure similarity with the query. If the search is only on meta data, documents are not sorted. Only the subset of the best results of the size specified by the user proceeds to the next stage.
 
-\subsection{Computing Similarity between Documents}\label{sec:computing_similarity_between_documents}
-%\input{documentsimilarity}
+
 
