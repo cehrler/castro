@@ -30,21 +30,8 @@ of the identified named entities as a comma separated list. Although this repres
 the most elegant and optimal solution, the derived database provides sufficient performance and
 usability for the task at hand.
 
-\subsection {Named Entity Recognition}
-\label{sec:named_entity_recognition}
-Please recall, that our ultimate goal is to come up with a cross-document recommendation system for
-the castro speech database. Therefore, we need an appropriate metric on between document
-similarity that serves as a basis for the recommendation software.
+CARSTEN:
+PROVIDE STATISTICS ON THE DATA
+DESCRIBE DATA MODEL
 
-Our first idea was to use proper \textit{co-reference resolution}, e.g. provided by
-\texttt{BART}\footnote{http://www.bart-coref.org/} software \cite{bart}. In this case, document
-similarity is a function of the number of co-references that appear between two docuemnts. However,
-in the end we decided to drop this approach because of the overall complexity and the tight time
-constraints. In general, between document co-reference resolution far from an easy task. The castro
-database though has some nice properties that allow for a more straightforward solution. For this
-dataset, the domain is rather limited and the number of distinct topics should be small. Hence, we
-came up with the idea to base the similarity measure on smoothed co-occurences of named entities.
 
-The next step in the pre-processing chain is thus the execution of named entity recognition followed
-by a smooting of the features in the vector space induced by the named entities using kernel
-methods (see \ref{sec:string_kernel}) \cite{string_kernel_coref}.
