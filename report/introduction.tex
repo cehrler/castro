@@ -28,9 +28,8 @@ We exemplify our approach on the Castro Speech Database \citeA{CastroDB} (CSD), 
 speeches and other documents by Fidel Castro, from 1959 to 1996. Our system includes keyword and meta-data search with automatic query 
 expansion for named entities. Retrieved documents are presented as a list of items, as well as an interactive graph where nodes represent 
 documents and edges represent links between documents. Documents are linked according to degree of shared named entities or degree of lexical 
-similarity. This representation enables identification of groups of documents that revolve around similar topics as well as exploration of 
-more specific relations between any subset of presented documents. The system also enables the user to receive a local perspective on a 
-specific document and present its most strongly connected neighbors, thus serving also as a recommendation tool. 
+similarity. This representation is designed to support identification of groups of documents that revolve around similar topics as well as exploration of 
+more specific relations between any subset of presented documents. 
 
 Underlying the system are various computational methods and tools for text processing, 
 information storage and retrieval, named entity recognition, co-reference resolution, 
@@ -44,12 +43,12 @@ Several processing tasks were performed in the course of implementation of the p
 \emph{Reading Data:} All documents from the Castro Speech Database were retrieved from the LANIC website. Meta-data provided with each document was extracted from its header. \\
 \emph{Storing Data:} Documents were stored in a MySQL database, and a data model was implemented in order to allow efficient retrieval of documents according to meta-data. \\
 \emph{NE Recognition:} A robust NE recognizer was used to identify persons, locations and organizations in each document.\\
-\emph{Document Indexing:} documents were indexed in four different manners and transformed to vector space matrices in order to support document retrieval and serve as input for similarity calculations. Three indexes were based on the three types of identified named entities. The fourth indexing method was based on global vocabulary. Both tf/idf scores and simple counts were computed.\\
+\emph{Document Indexing:} documents were indexed in four different manners in order to support document retrieval and serve as input for similarity calculations. Three indexes were based on the three types of identified named entities. The fourth indexing method was based on global vocabulary. Terms were weighted according to both tf and tf/idf.\\
 \emph{Co-reference Resolution:} In order to avoid treating name variations as different entities, 
 we implemented an approximation of a co-reference resolution system, focusing on aliasing - identification of name variations.
 First, similarity matrices between all named entities of the same type in the Castro collection were calculated using p-spectrum string kernel.
 Then, the similarity matrices were multiplied by the documents matrix. As a result, each document representation was boosted by all name 
-variations of the named entities that it contains.\\
+variations of the named entities that it contains. 
 \emph{Calculation of Document Similarity:} Document similarity matrices were created using Manhattan distance as similarity measurement. 
 Similarity was computed separately according to named entities and  lexical overlap. 
 A link can be established between a pair of documents if their similarity passes a certain threshold. 
@@ -61,9 +60,9 @@ functionalities described in the following section.
 \subsubsection{Functionalities of the Application}
 
 \emph{Document Retrieval Engine:} Using the data model and precomputed indexes, an engine for document retrieval was implemented. 
-The engine allows querying the database with keywords. The engine also allows filtering according to specifications on meta-data, e.g. a period of time, type of document and others.\\ 
-\emph{Graphical Representation of Documents:} Documents retrieved from the database are presented as as nodes of a graph. The size of the node corresponds to its relevance for the query, its shape to the type of document.  We retrieve the similarity measure for each pair of documents, and link them with an edge if the similarity crosses a predefined threshold. Thickness of edges reflects the strength of the similarity between two documents.\\
-\emph{Functionalities for Exploration of the Collection:} We provide an interactive environment that enables the user to navigate through the documents in an effective way. Among the implemented features are, viewing the list of named entities of a particular document. Viewing common named entities for several documents. Presenting the content of a document with the named entities marked. Marking the most similar documents to a specific document. Isolating the neighbors of a document up to a specified depth. Manipulating edges representation for thresholds, absolute/relative similarity and others.
+The engine allows querying the database with keywords. The engine also allows filtering and querying according to specifications on meta-data, e.g. a period of time, type of document and others.\\ 
+\emph{Graphical Representation of Documents:} Documents retrieved from the database are presented as nodes of a graph. The size of the node corresponds to its relevance for the query, its shape to the type of the document. We retrieve the similarity measure for each pair of documents, and link them with an edge if the similarity crosses an adjustable threshold. The thickness of edges reflects the strength of the similarity between two documents.\\
+\emph{Functionalities for Exploration of the Collection:} We provide an interactive environment that enables the user to navigate through the documents in an effective way. Among the implemented features are, viewing the list of named entities of a particular document. Viewing common named entities for several documents. Presenting the content of a document with the named entities and query terms marked. Marking the most similar documents to a specific document. Isolating the neighbors of a document up to a specified depth. Manipulating edges representation for thresholds, absolute/relative similarity and others.
 
 A detailed description of each functionality is provided in section \ref{sec:combining_it_all:_user_interface}. In the following we present the interest of our application for historical research. 
 
@@ -87,7 +86,7 @@ We focus on automatic markup of named entities. In particular we identify person
 interest for historians, both in terms of discovery of new entities and identification of known entities. 
 
 Retrieval of documents that contain known named entities or general keywords is done automatically. Documents containing name variations of 
-the entities appearing in the query are also retrieved, enabling historians to receive documents that might be relevant for their interests 
+the entities appearing in the query can be also retrieved, enabling historians to receive documents that might be relevant for their interests 
 but do not appear in his query. 
 
 Our retrieval mechanism and graphical interface incorporates meta-data, if such is provided with the documents in the collection. 
@@ -101,7 +100,7 @@ collection, but can also provide useful generalizations with regard to documents
 topics to those of the document of interest.   
 
 Providing a graphical representation of the query results also supports the historian in inferring global statements about the collection or 
-one of its subsets. In particular, one can identify groups of highly interconnected documents. Identified cliques are likely to reflect 
+one of its subsets. In particular, one can identify groups of highly interconnected documents. Identified dense regions are likely to reflect 
 different kinds of topics and might be correlated to various parameters, such as time and location. Absence of links and identification of 
 ``stand alone'' documents can also be highly informative, as they can indicate unique content. 
 

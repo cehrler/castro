@@ -26,7 +26,7 @@ TF-IDF stands for term frequency - inverse document frequency. This measure is m
 
 The TF-IDF score of term $j$ drops according to the logarithm of the number of documents that contain term $j$. The TF-IDF score of terms which are contained in every single document is always equal to zero.
 
-\subsection{Computing Similarity between Documents}\label{sec:computing_similarity_between_documents}
+\subsubsection{Computing Similarity between Documents}\label{sec:computing_similarity_between_documents}
 
 In VSM we need to measure the similarity between vectors. The similarity can expressed by the cosine similarity measure:
 
@@ -35,10 +35,6 @@ In VSM we need to measure the similarity between vectors. The similarity can exp
 It expresses the cosine angle between the vectors q and d. This measure is equal to 1 for the paralell vectors and it's equal to zero for the perpendicular vectors.
 
 We arrange the retrieved documents according to their similarity to each other. To this end, we store the similarity of each pair of documents in similarity matrices. The matrices correspond to the four different indexes: similarity according to persons, locations, organizations and general vocabulary. These matrices are not sparse and each cell is represented in the memory.   
-
-
-
-
 
 \subsubsection{Keyword and Metadata Search}\label{sec:keyword_search}
 
