@@ -104,7 +104,7 @@ topics to those of the document of interest.
 Providing a graphical representation of the query results also supports the historian in inferring global statements about the collection or 
 one of its subsets. In particular, one can identify groups of highly interconnected documents. Identified dense regions are likely to reflect 
 different kinds of topics and might be correlated to various parameters, such as time and location. Absence of links and identification of 
-``stand alone'' documents can also be highly informative, as they can indicate unique content. 
+``stand-alone'' documents can also be highly informative, as they can indicate unique content. 
 
 Our system aims to be both intuitive and simple while allowing considerable amount of flexibility. It enables users to adjust many of the 
 parameters such that they would best suit their needs. A historian who has an intuition that any sort of links between the documents might 
@@ -149,14 +149,14 @@ techniques of domain structures, in particular for scientific domains. Its notab
 IR and information classification.
 The general process flow of visualizing domain knowledge as described in
 \cite{visualizing2003} is the following: 
-\begin{description}
+\begin{enumerate}
 \item Data extraction 
 \item Definition of unit of analysis 
 \item Selection of measures 
 \item Calculation of similarity between units 
 \item Ordination or assignment of coordinates to units 
 \item Use of resulting visualization for analysis and interpretation.
-\end{description}
+\end{enumerate}
 Our workflow conforms exactly to these categories. We use NEs and general vocabulary as extracted data, documents as units of analysis, measure and calculate similarity with Manhattan and cosine distances, order documents according to these measures, and finally visualize the results as a graph.
 From this perspective, the NLP module is a sub-component which falls within the data extraction step. Extracting NEs is of critical importance
 here, as this type of information is extremely relevant for historical documents in contrast to in some other domains.  
