@@ -1,35 +1,38 @@
 In general, the idea of kernel methods is to map objects of a
 distinct type $K$ into some \textit{Hilbert space} $\mathcal{H}$ using a mapping function $\Phi :
-K \rightarrow \mathcal{H}$. Here, $K$ can be an arbitrary structure like e.g. trees, strings,
+K \rightarrow \mathcal{H}$. Here, $K$ can have an arbitrary structure, e.g. trees, strings,
 graphs, etc. Given such a mapping $\Phi$ the similarity of two objects $s,t \in K$ can be computed
 by using the scalar product defined on the Hilbert space:
 \[sim(s,t) = <\Phi(s),\Phi(t)>\]
 Instead of defining the mapping function $\Phi$ explicitly, a kernel function $k : K \times K
 \rightarrow \mathbb{R}$ can be used. Kernel functions are positive-semidefinite functions
-who implicitely compute the scalar product of two objects on some Hilbert space. That is, for every
+who implicitly compute the scalar product of two objects on some Hilbert space. That is, for every
 kernel function $k$ there exists a mapping $\Phi$, such that
 \[k(s,t) = <\Phi(s),\Phi(t)>.\]
-This property of kernel functions is often exploited in practise because it greatly facilitates the
+This property of kernel functions is often exploited in practice because it greatly facilitates the
 computational cost that is needed to compute object similarity.
 
 \textit{String kernels} are kernel methods \note{cite} that operate on the domain of strings over
-an arbitrary finite alphabet $\Sigma$ and are often applied in the fields of \textit{information
+a finite alphabet $\Sigma$ and are often applied in the fields of \textit{information
 retrieval} and \textit{bioinformatics}. For the purpose of our work, we applied a
-\textit{p-spectrum} string kernel \note{citattion needed} which is defined by
+\textit{p-spectrum} string kernel \note{citation needed} which is defined by
 \[k_p(s,t) = \sum_{u \in \Sigma^p}{\phi_u^p(s)\phi_u^p(t)},\]
-where $\phi_u^p(s)$ counts the number of occurences of the substring $u$ of length $p$ in $s$. The
+where $\phi_u^p(s)$ counts the number of occurrences of the substring $u$ of length $p$ in $s$. The
 associated Hilbert space for this kernel is $\mathbb{R}^{|\Sigma^p|}$ - the space of all possible
-strings over $\Sigma$ of length $p$.
+strings over $\Sigma$ of length $p$. The p-spectrum string kernel can be efficiently implemented by using \textit{trie} data-structures and \textit{n-gram} models.
 
-\note{how to compute this efficient}
+\subsubsection{Co-reference Resolution by String Kernels}
+\label{sec:co_reference_resolution_by_string_kernels}
+Co-refernce resolution by kernel methods is an active research area and several methods have been proposed for the task. These include string and tree based kernel methods \cite{string_kernel_coref}.
+The advantage of tree based methods is due to the possibilty to encode additional structure and information about syntactic and semantic properties of the text, which renders these methods superior to string based methods.
 
-\note{hot to do coref}
+For our project, we only need co-reference resolution based on the extracted named entities. This essentially comes down to the task of \textit{aliasing} named entities for each type of named entity. To this end, we applied a two-spectrum string kernel. \note{explain this a little more}
 
 \begin{figure}[ht]
   \caption{Example for aliasing of document- or query-vectors by string kernel similarity.
 The matrix $\mathcal{S}$ is the \textit{kernel matrix} of the three terms $\mathcal{T} = \lbrace
 \text{Fidel Castro},\text{Dr. Fidel Castro}, \text{Raul}\rbrace$. The first and second term have a
-very high lexical similarity of $0.8$ while the third term is highly disimilar. Using
+very high lexical similarity of $0.8$ while the third term is highly dissimilar. Using
 $\mathcal{S}$, a document vector or query $q=(1,0,0)$ can now be expanded into an aliased form
 $\bar q$, where $\bar q = \mathcal{S}q$. In general, aliasing is performed on all document vectors
 and queries.}
@@ -51,7 +54,15 @@ and queries.}
 \end{figure}
 
 \note{how we did coref}
-\note{cpp implemnetation, simmatrix as sparse matrix... approximation...}
+\note{cpp implementation, simmatrix as sparse matrix... approximation...}
+
+The first implementation of the two-spectrum kernel function was done in \texttt{python} but we  later reimplemented it in \textt{C++} for performance reasons. For all three types of named entities we computed the complete kernel matrix $\textbf{K}$, where $\textbf{K_{i,j}}$ is the similarity of the named entities $i$ and $j$. Since many of the entries in $\textbf{K}$ are near zero, thresholding with a fixed value was applied after the computation and the resulting sparse matrix was then stored.
+
+Now given the kernel matrix $\textbf{K}$, aliasing can be performed through multiplication of each document-vector with the kernel matrix. The scalor prodact on the resulting aliased document vectors yields the overall document similarity with respect to the named entities. In figure \ref{eq:example_string_sim} we give a short example on aliasing based on three different named entities.
+
+
+
+
 
 HOW IT RELATES TO FULL COREFF SESTEM, HOW IT RELATES TO OTHER STRING DISTANCE METHODS
 
