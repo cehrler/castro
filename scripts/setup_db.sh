@@ -8,13 +8,14 @@ MYSQL_USER=root
 # MySQL password for above username (if username 'root', use the root password for your OS)
 MYSQL_PASSWD=root
 
+echo "Setting up databases...";
+
 ./makeDatabase file_id.txt > castro.sql;
 ./makeNETables NE_id.txt file_id.txt > NE.sql;
 
 run_mysql="mysql -u$MYSQL_USER -p$MYSQL_PASSWD"
 
 setup_db(){
-echo "Setting up databases...";
 $run_mysql --execute="source ./castro.sql;"
 $run_mysql --execute="source ./NE.sql;"
 $run_mysql --execute="source ./getNE.sql;"
