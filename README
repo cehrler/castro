@@ -13,7 +13,7 @@ REQUIREMENTS:
 -2GB RAM (recommended)
 -Java (tested on version 1.6.0_15)
 -MySQL Server (tested on version 14.14)
----------------------------------------------------------
+-------------------------------------------------------------
 INSTALLATION INSTRUCTIONS
 1. Extract the archive containing this readme file into a new directory
 2. In the 'scripts' subdirectory inside the new directory, open the script named 'setup_db.sh' in your editor of choice. Enter username and password information for your MySQL server (if set to default user 'root', simply change the value of 'MYSQL_PASSWD' to that of your root-user password, save and exit.
