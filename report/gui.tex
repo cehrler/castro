@@ -20,7 +20,7 @@ Search terms are entered in the query form (item 1 in the figure above)\footnote
 \paragraph{Presentation}
 The results of the current query are displayed both in a table of results and in a graph displayed in the main window.
 
-\subsubsection{Results}
+\subsubsection{Vizualization of Results}
 \begin{figure}[ht]
 \centering
 \caption{Query Results Table}
@@ -29,7 +29,6 @@ The results of the current query are displayed both in a table of results and in
 
 In the table, the documents are displayed in rows sorted by their relevance to the query in descending order. The metadata associated with each document is displayed in columns. If there was no metadata retrieved for a document, the entry for the data is empty or \code{NULL}.
 
-\subsubsection{Results}
 \begin{figure}[ht]
 \centering
 \caption{Document Similarity Graph}
@@ -93,9 +92,7 @@ Finally, for even further control, the user may manually specify all display set
 
 \begin{description}
 \item[\scare{Index and Similarity Matrix}] \hfill \\
-By setting the index type the user can choose whether to use index and similarity matrices precomputed using either TF or TF/IDF scores. 
-The user can also choose whether to use the smoothed (aliased) index or the non-aliased index. The same holds for similarity matrix, it can be either aliased (precomputed on the base of aliased index) or non-aliased (precomputed on the base of non-aliased index). By setting the similarity measure it can be choosen whether to use the manhattan distance or cosine similarity measure as the method for counting similarities.
-Finally, the similarities can be calculated using only NEs (default), only lexical similarity, or may manually specify the weighting of each measure individually (\scare{custom}), e.g.\ of each type of NE compared to each other and to overall lexical similarity. 
+The user can choose to have document similarities calculated with TF/IDF scores (default) or only TF scores. Additionally, similarities may be calculated with aliasing through the string kernel, or to calculate document similarities with aliasing disabled and associating only exact strings (default). Finally, the similarities can be calculated using only NEs (default), only lexical similarity, or may manually specify the weighting of each measure individually (\scare{custom}), e.g.\ of each type of NE compared to each other and to overall lexical similarity. 
 \item[\scare{Link Settings}]\hfill \\
 The edge density slider on the left-hand control panel left corresponds to the edge density value in relative-similarity mode, or the edge threshold value in absolute-similarity mode. When the graph is constructed in the relative similarity mode, the number of edges is determined by multiplying the number of nodes by the the chosen edge density (slider value), and the strongest edges are displayed according to this value. After the set of edges is determined, the mean of the edge strength is computed. The strength of each edge is then compared with the mean of the edge strength. The ratio between the edge strength and the mean of the edge strength determines whether the edge will be dotted, normal or thick.
 
@@ -120,7 +117,7 @@ The threshold value for normal edges is determined by the slider in the main con
 \item[\scare{Clustering Settings}] \hfill \\
 The user can enable Chinese Whispering (CW) automatic document clustering (disabled by default), and specify the maximum number of clusters formed, the minimum size of each cluster, as well as the temporary graph density. Temporary graph is the data structure that is used for computation of the clusters. For the purpose of the clustering algorithm it's better to have dense graph, while users preffer rather sparser graph. That's the reason why there is a temporary graph structure for the purpose of the clustering algorithm. 
 Clustering can be enabled by setting the maximum number of clusters to the positive value.
-We implemented a modified version of Chinese Whispering algorithm. Modified algorithm is less overgenerating. It puts the document to the cluster only when there is a strong evidence for it. By increasing the "Activation threshold multiplier" and by decreasing the "Init iterations" algorithm becomes more conservative and vice versa. 
+We implemented a modified version of Chinese Whispering algorithm. Modified algorithm is less overgenerating. It puts the document to the cluster only when there is a strong evidence. By increasing the "Activation threshold multiplier" and by decreasing the "Init iterations" algorithm becomes more conservative and vice versa. 
 \end{description}
 
 All of these features combine to create a powerful interface for searching the corpus and visualizing the results which is both highly automated and highly customizable. In turn, the system is designed to accommodate both basic and advanced users.
