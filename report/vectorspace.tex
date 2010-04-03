@@ -8,11 +8,11 @@ Another advantage of the VSM is its flexibility as compared to more restricted m
 
 \subsubsection{Indexing}
 \label{sec:indexing}
-In IR, the index is a data structure which stores the vector representation of documents in a vector model. Given a set of documents $\mathcal{D}$ together with a set of terms $\mathcal{T}$ the index is a matrix $D \in \mathbb{R}^{|\mathcal{D}|\times |\mathcal{T}|}$ where $D_{d,i}$ corresponds to the importance of term $i$ in document $d$. In each column, the weights for one distinct term over all the documents is stored.
+Representing the documents of our collection in vector space requires the construction of an index. Given a set of documents $\mathcal{D}$ together with a set of terms $\mathcal{T}$ the index is a matrix $D \in \mathbb{R}^{|\mathcal{D}|\times |\mathcal{T}|}$ where $D_{d,i}$ corresponds to the importance of term $i$ in document $d$. In each column, the weights for one distinct term over all the documents is stored.
 
-Index matrices are often very sparse: In our implementation, they are represented as a sparse matrix (e.g.\ linked lists)--- In the data structures, only coordinates of the non-zero entries are stored, all of the document vectors being normalized in advance. This allows the compute cosine similarities for documents and queries to be computed without being normalized first.
+Index matrices are often very sparse: In our implementation, they are represented as a sparse matrix (linked lists)--- In the data structures, only coordinates of the non-zero entries are stored, all of the document vectors being normalized in advance. This allows the compute cosine similarities for documents and queries to be computed without being normalized first.
 
-Our model contains several index matrices. We created an index matrix for each NE type and a general index for the non-NE terms (all terms occurring in the documents). This means that all the values corresponding to the search terms in the query remain the same in the vector representation of the query.
+Our model contains several index matrices. We created an index matrix for each NE type and a general index for the non-NE terms (all terms occurring in the documents). For the NE's indexes we used the output of the SNRE. For the non-NE terms (general vocabulary) we used all the vocabulary of the collection, without any filtering. Indexes are also constructed on-the-fly for queries, using the query terms.
 
 \subsubsection{Term Weighting}
 \label{sec:term_weighting}
@@ -26,6 +26,8 @@ TF-IDF is the product of term frequency and the logarithm of inverse document fr
 \[\text{TF-IDF}_d(i)= \text{TF}_d(i)\log{\left(\frac{|D|}{|\lbrace d' : t(i) \in d' \rbrace|}\right)}\]
 The TF-IDF score of term $i$ is proportional to the logarithm of the inverse fraction of documents that contain term $i$; The smaller the logarithm, the lower the TF-IDF score. Thus, the TF-IDF score of terms which are contained in every document always equals $0$.
 
+The difference between these two weighting schemes can have a considerable impact on the ranking of the query results as well as on the similarity measurements between the documents. Using only TF may result in an unjustified high similarity between a pair of documents due to appearances of non-discriminative terms that are frequent in every document. For instance, two completely unrelated documents can have relatively high similarity measure simply since they share NE's such as \lingform{Fidel Castro} and \lingform{Cuba} or non-NE's such functional words. TF-IDF accounts for this problem by assigning low weights for non-discriminative terms. A similar problem can happen with query-document similarity. With respect to this issue, it seems that TF/IDF is a more suitable vector representation for our similarity measurements. However, since it is possible to think of scenarios where the TF could be useful, we enable the user to switch between the two, setting TF/IDF as default. 
+
 \subsubsection{Computing Similarity between Documents}\label{sec:computing_similarity_between_documents}
 
 For the goal of our project, it is necessary to measure the similarity between the documents. According to similarities of the documents, edges of the resulting graph are constructed. The crucial and not easy to be answered question is, how does the similar documents look like. Our project aims at making navigation throw the collection of historical document. Historicians usually aim at some specific historical event or historical person. It follows that it is convenient to suppose that two documents, that touches the same or similar historical topic, are similar. The historical event can be usually specified by the persons, locations and organizations involved in it. Our working hypothese is that the similarity between documents, we are interrested in, can be expressed as the similarity on the named entities. As we represent documents in VSM as the vectors of named entities, we can directly apply standard vector space measures for expressing similarities between vectors. 
@@ -38,10 +40,16 @@ We also used another similarity measure which we denoted as "Manhattan similarit
 
 \[\text{manhattan}(d,d') = \sum_{k \in \mathcal{T}}min[d(k), d'(k)]\]
 
+We breafly compared both similarity measure by comparing the similarity graphs constructed by using those measures. In both cases the sets of edges of the graphs were quite the same. But to achieve a similar result we needed to choose different setups of edge thresholds, because both measures scale differently.
 
-\note{Michal: I added some stuff here. You are welcomed to fix it and complete it. ADD SOMETHING HERE!!!}
+In the current version we use cosine similarity measure by default, because it's the standard measure with nice mathematical interpretation.
 
-The retrieved documents were arranged according to their similarity to each other. To this end, the similarity of each pair of documents was stored in similarity matrices. The matrices correspond to the four different indices: similarity according to \meta{Persons}, \meta{Locations} and \meta{Organizations} and to general vocabulary. These matrices are not sparse (unlike the index matrices) and each entry is represented in the memory.   
+Similarity matrices were precomputed for each combination of named entity type, similarity measure and aliasing setting (aliased or non-aliased).
+Similarity matrices are loaded on the startup of the application and each the similarity measure or aliasing settings changes.
+
+Similarity matrix that is used is computed on the fly by the linear combination of similarity values coming from the precomputed similarity matrices for each named entity type and common word similarity.
+
+These precomputed similarity matrices are not sparse (unlike the index matrices) and each entry is represented in the memory.   
 
 \subsubsection{Keyword and Metadata Search}\label{sec:keyword_search}
 
