@@ -40,10 +40,16 @@ We also used another similarity measure which we denoted as "Manhattan similarit
 
 \[\text{manhattan}(d,d') = \sum_{k \in \mathcal{T}}min[d(k), d'(k)]\]
 
+We breafly compared both similarity measure by comparing the similarity graphs constructed by using those measures. In both cases the sets of edges of the graphs were quite the same. But to achieve a similar result we needed to choose different setups of edge thresholds, because both measures scale differently.
 
-\note{Michal: I added some stuff here. You are welcomed to fix it and complete it. ADD SOMETHING HERE!!!}
+In the current version we use cosine similarity measure by default, because it's the standard measure with nice mathematical interpretation.
 
-The retrieved documents were arranged according to their similarity to each other. To this end, the similarity of each pair of documents was stored in similarity matrices. The matrices correspond to the four different indices: similarity according to \meta{Persons}, \meta{Locations} and \meta{Organizations} and to general vocabulary. These matrices are not sparse (unlike the index matrices) and each entry is represented in the memory.   
+Similarity matrices were precomputed for each combination of named entity type, similarity measure and aliasing setting (aliased or non-aliased).
+Similarity matrices are loaded on the startup of the application and each the similarity measure or aliasing settings changes.
+
+Similarity matrix that is used is computed on the fly by the linear combination of similarity values coming from the precomputed similarity matrices for each named entity type and common word similarity.
+
+These precomputed similarity matrices are not sparse (unlike the index matrices) and each entry is represented in the memory.   
 
 \subsubsection{Keyword and Metadata Search}\label{sec:keyword_search}
 
