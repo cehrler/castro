@@ -19,7 +19,7 @@ TF stands for term frequency and it measures directly how many times a word occu
 where $n_d(i)$ counts the number of occurences of term $i$ in document $d$ and $\mathcal{T}$ denotes the set of all terms. 
 
 TF-IDF stands for term frequency - inverse document frequency. This measure is motivated on the notion that terms which occur in almost every document are not very useful for searching purposes because they are so common. Conversely, terms which occur in only a few documents have much greater discrimination power. This is exploited in the TF-IDF score by reweighting the TF score. The TF-IDF score of term $i$ in document $d$ is is defined by:
-\[\text{TF-IDF}_d(i)= \text{TF}_d(i)\log{(|D|/|\lbrace d' : t(i) \in d' \rbrace|)}\]
+\[\text{TF-IDF}_d(i)= \text{TF}_d(i)\log{\left(\frac{|D|}{|\lbrace d' : t(i) \in d' \rbrace|}\right)}\]
 The TF-IDF score of term $i$ drops according to the logarithm of the number of documents that contain term $i$. The TF-IDF score of terms which are contained in every single document is always equal to zero.
 
 \subsubsection{Computing Similarity between Documents}\label{sec:computing_similarity_between_documents}
