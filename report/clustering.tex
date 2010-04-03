@@ -54,16 +54,6 @@ their weights. In each initialization step, one node is pulled out from the list
 node cluster assignment procedure is then executed on the node for which the cluster assignment sum
 is greater. This means that the cluster assignment sum need not exceed the precomputed threshold.
 
-By this we want to start up the clustering process because it may be hard to exceed the precomputed threshold at any node when all the nodes have their own cluster. Selecting the nodes attached to the edges with great weight ensures that the cluster assignments done during these initialization steps are not relevant.
+This pre-clustering is done in order to allow clustering to begin in spite of this threshold: Initially, each node forms its own cluster, and many nodes may not exceed this threshold. Likewise, selecting the nodes attached to the edges with great weight ensures that the cluster assignments done during these initialization steps are not relevant.
 
-The modified CWC algorithm is a recent feature and it was not properly evaluated yet.
-Visual inspections with reasonable parameter settings revealed, that the the resulting cluster
-assignment look better, compared to the ones obtained from classic CWC clustering. However, for the
-clustering algorithm there is plenty of room for further improvement and a need for extended
-evaluation. Ideas for improvement are e.g.\ experimentation with the thresholding constant
-and implementation of different initialization schemas.
-
-To summarize, graph clustering has the potential enhance our recommendation system in such a way
-that it can help the user to identify tightly coupled sets of documents in larger graphs that
-can be subject of further investigation.
-
+Graph clustering has the potential to improve the recommendation functions of the application, helping the user to identify tightly-coupled sets of documents in larger graphs, which can be subjects of even further investigation. Both the original CWC algorithm and this modified, more conservative variant were included in the final application, with the ability to use either the original algorithm, the modified algorithm, or no clustering at all. This was done to facilitate the evaluation of the modified CWC algorithm over the original, as well as the evaluation of clustered graphs over non-clustered graphs. In fact, it is possible that each option has its advantages and disadvantages, and including each option in the application gives the user greater power in searching.
