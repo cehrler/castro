@@ -46,21 +46,19 @@ cluster assignment.
 
 Although the algorithm is rather simple, it performed well with the data in this project in comparison to $k$-means clustering, which did not work with such a high-dimensional space. CWC was productive in clustering documents in the given dataset, while $k$-means clustering was not. However, one of the drawbacks of CWC is that nodes are always assigned to the locally dominant cluster, even if the node should rather stay in its own cluster. Thus, when using CWC, it is possible that convergence is never achieved.
 
-Two variations of this algorithm was developed in this project to address this problem.
-In the first variation of the algorithm the cluster assignment sum needs to be greater than a predefined threshold in order to be assigned to a cluster different from its currently-assigned one. This threshold was set to the average edge strength of the entire graph multiplied by a constant able to be specified by the user.
+A variations of this algorithm was developed in this project to address this problem.
+In the variation of the algorithm the cluster assignment sum needs to be greater than a predefined threshold in order to be assigned to a cluster different from its currently-assigned one. This threshold was set to the average edge strength of the entire graph multiplied by a constant able to be specified by the user.
 
 Before the updating rounds begin, a predefined number of initialization steps are taken: All edges of the graph are sorted in the descending order according to
 their weights. In each initialization step, one node is pulled out from the list and the standard
 node cluster assignment procedure is then executed on the node for which the cluster assignment sum
 is greater. This means that the cluster assignment sum need not exceed the precomputed threshold.
 
-This pre-clustering is done in order to allow clustering to begin in spite of this threshold: Initially, each node forms its own cluster, and many nodes may not exceed this threshold. Likewise, selecting the nodes attached to the edges with great weight ensures that the cluster assignments done during these initialization steps are not irelevant.
+This pre-clustering is done in order to allow clustering to begin in spite of this threshold: Initially, each node forms its own cluster, and many nodes may not exceed this threshold. Likewise, selecting the nodes attached to the edges with great weight ensures that the cluster assignments done during these initialization steps are not irrelevant.
 
-\note{WATCH out, there is paragraph added here!!!}
-The second variation has a working name "Give it to the poor CHWS". It differs from the first modification in that aspect, that there are no initialization steps and the weight of each cluster is normalized by dividing it by the term, whose value increases proportionality to the cluster size. In other words, this variation tends to produce smaller classes. We assume that this normalization is relevant, because in the experiments it happened a lot of times, that there was a cluster that become so big that it started to attract even the nodes that didn't have any strong connections to the nodes in the cluster - the document became the member of the cluster just because of a huge number of very weak almost irrelevant connections.
+\ignore{
+The second variation has a working name "Give it to the poor CHWS". It differs from the first modification in that aspect, that there are no initialization steps and the weight of each cluster is normalized by dividing it by the term, whose value increases proportionality to the cluster size. In other words, this variation tends to produce smaller classes. We assume that this normalization is relevant, because in the experiments it happened a lot of times, that there was a cluster that become so big that it started to attract even the nodes that didn't have any strong connections to the nodes in the cluster - the document became the member of the cluster just because of a huge number of very weak almost irrelevant connections.}
 
-\note{WATCH out, there is paragraph added here!!!}
-For all the methods, if the number of clusters created exceeds the predefined maximum number of clusters, only the clusters with the greatest number of nodes are marked. The nodes that lay inside the other clusters are marked as not beeing included in any cluster.
-\note{WATCH OUT!!!}
+For all the methods, if the number of clusters created exceeds the predefined maximum number of clusters, only the clusters with the greatest number of nodes are marked. The nodes that lay inside the other clusters are marked as not being included in any cluster.
 
 Graph clustering has the potential to improve the recommendation functions of the application, helping the user to identify tightly-coupled sets of documents in larger graphs, which can be subjects of even further investigation. Both the original CWC algorithm and this modified, more conservative variant were included in the final application, with the ability to use either the original algorithm, the modified algorithm, or no clustering at all. This was done to facilitate the evaluation of the modified CWC algorithm over the original, as well as the evaluation of clustered graphs over non-clustered graphs. In fact, it is possible that each option has its advantages and disadvantages, and including each option in the application gives the user greater power in searching.
