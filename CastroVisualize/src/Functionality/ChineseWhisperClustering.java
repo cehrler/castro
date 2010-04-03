@@ -23,7 +23,9 @@ public abstract class ChineseWhisperClustering {
 		}
 		else if (en == ChineseWhisperTypesEnum.modifiedNew)
 		{
-			implementation = new ChineseWhisperClusteringAdjustedNew();
+			System.err.println("Not implemented!");
+			System.exit(1);
+			//implementation = new ChineseWhisperClusteringAdjustedNew();
 		}
 	}
 	
