@@ -54,14 +54,14 @@ public class ClusteringSettings {
 		JPanel mainPanel = new JPanel(new GridLayout(5,2));
 		
 		mainPanel.add(new JLabel("Clustering algorithm:"));
-		clusteringAlgorithmCB = new JComboBox(new String[] { "Chinese Whisper clustering", "Modified Chinese Whisper clustering" });
+		clusteringAlgorithmCB = new JComboBox(new String[] { "Chinese Whisper clustering", "Modified Chinese Whisper clustering", "Give it to the poor CHWS" });
 		if (SettingsWindow.ChineseWhisperClustering_type == ChineseWhisperTypesEnum.standard)
 		{
-			clusteringAlgorithmCB.setSelectedItem("Chinese Whisper clustering");
+			clusteringAlgorithmCB.setSelectedIndex(0);
 		}
 		else if (SettingsWindow.ChineseWhisperClustering_type == ChineseWhisperTypesEnum.modified)
 		{
-			clusteringAlgorithmCB.setSelectedItem("Modified Chinese Whisper clustering");
+			clusteringAlgorithmCB.setSelectedIndex(1);
 		}
 		else
 		{
@@ -131,7 +131,7 @@ public class ClusteringSettings {
 
 		//dummyComponent = Box.createVerticalStrut(modifiedPanel.getPreferredSize().height);
 
-		if (clusteringAlgorithmCB.getSelectedIndex() > 0)
+		if (clusteringAlgorithmCB.getSelectedIndex() > 0 )
 		{
 			modifiedPanel.setVisible(true);
 			//dummyComponent.setVisible(false);
@@ -163,10 +163,15 @@ public class ClusteringSettings {
 					ChineseWhisperClustering.SetImplementation(ChineseWhisperTypesEnum.standard);
 					SettingsWindow.ChineseWhisperClustering_type = ChineseWhisperTypesEnum.standard;
 				}
-				else
+				else if (clusteringAlgorithmCB.getSelectedIndex() == 1)
 				{
 					ChineseWhisperClustering.SetImplementation(ChineseWhisperTypesEnum.modified);
 					SettingsWindow.ChineseWhisperClustering_type = ChineseWhisperTypesEnum.modified;
+				}
+				else
+				{
+					ChineseWhisperClustering.SetImplementation(ChineseWhisperTypesEnum.normalizing);
+					SettingsWindow.ChineseWhisperClustering_type = ChineseWhisperTypesEnum.normalizing;
 				}
 				
 				if (CastroGUI.GetCurrentSearchQuery() != null)

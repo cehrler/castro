@@ -15,63 +15,8 @@ public class ChineseWhisperClusteringAdjusted extends ChineseWhisperClustering {
 	
 	public ChineseWhisperClusteringAdjusted() {}
 	
-	private class MyPair
-	{
-		public int classID;
-		public double activationScore;
-	}
+		
 	
-	private static void PermuteList(List<Node> ln)
-	{			
-			for (int k = ln.size() - 1; k > 0; k--) {
-			    int w = (int)Math.floor(Math.random() * (k+1));
-			    Node temp = ln.get(w);
-			    ln.set(w, ln.get(k));
-			    ln.set(k, temp);
-			}
-	}
-	
-	
-	private MyPair getBestClassForNode(Node n, Map<Node, Integer> nodesMap)
-	{
-		Map<Integer, Double> activationMap = new HashMap<Integer, Double>();
-		
-		Map<Node, Double> neighboursMap = n.getNeighborsMap();
-		
-		double maxActivation = -1000;
-		int bestClass = -1;
-		double currActivation;
-		
-		for (Iterator<Node> it = neighboursMap.keySet().iterator(); it.hasNext(); )
-		{
-			Node bleNode = it.next();
-			
-			int bleClassID = nodesMap.get(bleNode); 
-			
-			if (activationMap.containsKey(bleClassID))
-			{
-				activationMap.put(bleClassID, activationMap.get(bleClassID) + neighboursMap.get(bleNode));
-			}
-			else
-			{
-				activationMap.put(bleClassID, neighboursMap.get(bleNode));
-			}
-			
-			currActivation = activationMap.get(bleClassID);
-			if (currActivation > maxActivation)
-			{
-				maxActivation = currActivation;
-				bestClass = bleClassID;
-			}
-			
-		}
-		
-		MyPair pair = new MyPair();
-		pair.classID = bestClass;
-		pair.activationScore = maxActivation;
-		return pair;
-		
-	}
 	
 	public void Evaluate(Graph g, int maxNumClusters, int numIterations)
 	{
