@@ -5,7 +5,7 @@
 
 # MySQL username to make databases with (leave alone unless you know what you're doing)
 MYSQL_USER=root
-# MySQL password for above username (if 'root', use the root password for your OS)
+# MySQL password for above username (if username 'root', use the root password for your OS)
 MYSQL_PASSWD=root
 
 ./makeDatabase file_id.txt > castro.sql;
