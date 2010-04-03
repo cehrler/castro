@@ -1,77 +1,64 @@
-For a recommendation system based on graphs it is a desirable feature to cluster the graph into
-dense regions. For such regions it is assumed, that they correspond to highly similar or related
-documents and such clusters can form a group of a larger related unit. Hence, being able to
+For a recommendation system based on graphs, it may be a desirable feature to cluster the graph into
+dense regions: It may be assumed that such regions correspond to highly similar or otherwise-related
+documents which nevertheless form part of a larger related unit. Hence, being able to
 automatically identify clusters can help to further discern between important and less important
-documents for the user.
+documents.
 
-There exist several algorithms for clustering of graphical data, including rather simple
-hierarchical clustering methods and classical methods like k-means clustering
-\cite{eosl2}. Amongst todays most popular clustering algoirthms are Spectral Clustering
-methods, which are based on eigendecompositions of graph laplacians \cite{spectral_clustering}.
+Several algorithms for clustering of graphical data exist, including rather simple
+hierarchical clustering methods and classical methods like $k$-means clustering
+\cite{eosl2}. Two algorithms which are currently popular are spectral clustering
+methods, which are based on eigendecompositions of graph Laplacians \cite{spectral_clustering}.
 
-For the purpose of this project two clustering methods were implemented: First, $k$-means clustering
-and secondly Chinese Whispering clustering which was especially developed for NLP tasks and has the
-favorable property that it automatically determines the number of clusters.
+Two different clustering methods were experimented with in this project: $k$-means clustering
+as well as Chinese Whispering clustering, which was developed with NLP tasks in mind and has the
+favorable property of automatically determining the number of clusters, while in $k$-means clustering this must be specified beforehand \cite{cw_clustering}.
 
-\subsubsection{k-Means Clustering}
+\subsubsection{$k$-means Clustering}
 \label{sec:k-means_clustering}
-At first $k$-means clustering was implemented and evaluated. For this case the VMS representation of
-documents is used, i.e.\ the same vectors as in the index representation of the documents (see
-Section \ref{sec:indexing}). However, one drawback of $k$-means is that the user needs to specify
-the number of clusters $k$ a priori.
+Firstly, $k$-means clustering was implemented and evaluated, where the VMS representation of
+documents was used, i.e.\ the same vectors as used in the index representation of the documents (see
+section \ref{sec:indexing}). However, one drawback of $k$-means is that the user needs to specify
+the number of clusters $k$ beforehand.
 
-The objective in $k$-means clustering is to minimize the total within cluster variance. For the
-initialization, $k$ cluster prototypes are randomly placed on the data. Then the following two
-steps are iterated until convergence:
+The purpose of $k$-means clustering is to minimize total intra-cluster variance. For the
+initialization, $k$ cluster prototypes are randomly placed in the data space. The following two
+steps are then iterated until convergence:
 \begin{itemize}
   \item Assign each datapoint to its closest prototype.
-  \item For each prototype compute the center of mass over all assigned datapoints and place the
+  \item For each prototype, compute the center of mass over all assigned datapoints and place the
 prototype in the new center of mass.
 \end{itemize}
 
-This approach did not perform very well. The resulting clusters were not the densely connected
-regions which is probably caused by the fact that the dimension of the vector space is very high
-and that vectors representing the documents are very sparse. Hence, an other clustering algorithm
-for graphical data was used.
+This approach did not perform very well: The resulting clusters were not the densely connected
+regions, likely caused by the high dimensionality of the vector space used
+and the sparseness of vectors representing the documents.
 
 \subsubsection{Chinese Whispering Clustering}
 \label{sec:chinese_whipsering_clustering}
-The Chinese Whispering (CW) clustering alorithm was developed with a focus on NLP tasks and it is a
-ranomized time-linear graph clustering algorithm with the special feature that it does not depend
-on external parameters but adapts to the domain \cite{cw_clustering}.
+As stated above, the Chinese Whispering clustering (CWC) algorithm was is particularly well-suited to NLP tasks. It is a
+randomized time-linear graph clustering algorithm, with the special characteristic that it does not depend
+on external parameters but rather adapts to the domain automatically \cite{cw_clustering}.
 
-In the initialization each node is assigned to its own cluster. Then the follwoing update round is
-perferomed until the assignment of classes to nodes does not change anymore: In a randomized
-fashion, each node is assigned to the currently highest ranked class in the local neighborhood.
-After few iterations the stable clustering is achieved (i.e.\ there are no changes in the cluster
-assignments) or there are few nodes at the border of the clusters which periodically flip their
+During initialization, each node is assigned to its own cluster. Then, in a randomized
+fashion, each node is assigned to the currently highest ranked class in the local neighborhood. This is performed until the assignment of nodes to clusters ceases to change in the next update round. After few iterations the stable clustering is achieved (i.e.\ there are no changes in the cluster
+assignments), with at most a few nodes, at the border of a cluster or clusters, which periodically flip their
 cluster assignment.
 
-Although this is a very basic clustering alorithm, the performance on our data was satisfactory. The
-algorithm performed much better than k-means clustering. However, one of the drawbacks of CW is due
-to that teh algorithms always assigns nodes to the locally dominant cluster, although sometimes the
-node should rather stay in his own cluster.
+Although the algorithm is rather simple, it performed well with the data in this project in comparison to $k$-means clustering, which did not work with such a high-dimensional space. CWC was productive in clustering documents in the given dataset, while $k$-means clustering was not. However, one of the drawbacks of CWC is that nodes are always assigned to the locally dominant cluster, even if the node should rather stay in its own cluster. Thus, when using CWC, it is possible that convergence is never achieved.
 
-To handle this problem we implemented a variation of this algorithm. In the modified implementation
-the cluster assignment sum needs to be greater than a predefined threshold, otherwise the current
-node does not change its cluster assignment. In the current implementation the threshold is set to
-the average edge strength of the whole graph multiplied by the constant specified by the user.
+A variation of this algorithm was developed in this project to address this problem, where the cluster assignment sum needs to be greater than a predefined threshold in order to be assigned to a cluster different from its currently-assigned one. This threshold was set to
+the average edge strength of the entire graph multiplied by a constant able to be specified by the user.
 
-Before the actual update rounds start, which works exactly like the update rounds in the standard
-version with the exception of the thresholding feature described in previous paragraph, are started
-the predefined number of initialization steps are done.
-
-In the initialization step, all edges of the graph are sorted in the descending order according to
-their weights. In each initialization step, one each is pulled out from the list and the standard
-node cluster assignment procedure is then executed on the node, for which the cluster assignment sum
-is greater. It means that the cluster assignment sum doesn't need to exceed the precomputed
-threshold.
+Before the updating rounds begin, a predefined number of initialization steps are taken: All edges of the graph are sorted in the descending order according to
+their weights. In each initialization step, one node is pulled out from the list and the standard
+node cluster assignment procedure is then executed on the node for which the cluster assignment sum
+is greater. This means that the cluster assignment sum need not exceed the precomputed threshold.
 
 By this we want to start up the clustering process because it may be hard to exceed the precomputed threshold at any node when all the nodes have their own cluster. Selecting the nodes attached to the edges with great weight ensures that the cluster assignments done during these initialization steps are not relevant.
 
-The modified Chinese Whisper algorithm is a recent feature and it was not properly evaluated yet.
+The modified CWC algorithm is a recent feature and it was not properly evaluated yet.
 Visual inspections with reasonable parameter settings revealed, that the the resulting cluster
-assignment look better, compared to the ones obtained from classic CW clustering. However, for the
+assignment look better, compared to the ones obtained from classic CWC clustering. However, for the
 clustering algorithm there is plenty of room for further improvement and a need for extended
 evaluation. Ideas for improvement are e.g.\ experimentation with the thresholding constant
 and implementation of different initialization schemas.
