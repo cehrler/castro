@@ -1,12 +1,16 @@
-\documentclass[a4paper,final]{scrartcl}
+\documentclass[paper=a4,draft=false]{scrartcl}
 \usepackage[english]{babel}
 
 \usepackage{apacite}
 \usepackage{endnotes}
+\usepackage{appendix}
 \usepackage{url}
 \usepackage{fixltx2e}
 \usepackage{appendix}
 \usepackage{booktabs}
+\usepackage{caption}
+\captionsetup[subfigure]{labelformat=empty}
+\usepackage{subfig}
 \usepackage[utf8]{inputenc}
 \usepackage{fullpage}
 
@@ -29,11 +33,12 @@
 % This is now the recommended way for checking for PDFLaTeX:
 \usepackage{ifpdf}
 \newcommand{\note}[1]{{\textbf{Note:} \color{blue} #1}}
+\newcommand{\ignore}[1]{}
 %\newif\ifpdf
 %\ifx\pdfoutput\undefined
 %\pdffalse % we are not running PDFLaTeX
 %\else
-%\pdfoutput=1 % we are running PDFLaTeX
+%\pdfoutpu68=1 % we are running PDFLaTeX
 %\pdftrue
 %\fi
 
@@ -50,9 +55,6 @@
 \newcommand{\meta}[1]{\textsc{#1}}
 \newcommand{\code}[1]{{\tt #1}}
 
-\title{Graphical representation of document similarity using named entity recognition and lexical similarity}
-\author{Todd Shore, Carsten Ehrler, Michal Richter and Yevgeni Berzak}
-\date{\today}
 
 \begin{document}
 
@@ -62,29 +64,58 @@
 \DeclareGraphicsExtensions{.eps, .jpg}
 \fi
 
-\maketitle
-\tableofcontents
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%% begin title page
+
+\begin{titlepage}
+\begin{figure}[ht]
+\sc\centering
+\vspace{20mm}
+  \begin{Huge}
+     History Explorer\\
+  \end{Huge}
+  \vspace{20mm}
+  \begin{Large}A Similarity-Based Graphical Navigation System for Collections of Historical Documents\end{Large}
+\end{figure}
+
+	\begin{figure}[b]
+    \begin{tabular}{l l}
+      ~ & \begin{large}\textbf{Yevgeni Berzak}\end{large} \\
+      ~ & \begin{large}\texttt{jeniabk@gmail.com} \end{large}\\
+      \\
+      \textsc{Project Seminar} & \begin{large}\textbf{Carsten Ehrler}\end{large} \\
+       \textsc{``Unlocking the Secrets of the Past:} & \begin{large}\texttt{carsten.ehrler@gmail.com} \end{large}\\
+        \textsc{Text Mining for Historical Documents''} & \\
+       \textsc{22 Feb--5 Mar 2010} & \begin{large}\textbf{Michal Richter}\end{large} \\
+       & \begin{large}\texttt{michalisek@gmail.com} \end{large}\\
+      \textbf{Supervisors:} Caroline Sporleder \& Martin Schreiber & \\
+      Computational Linguistics and Phonetics & \begin{large}\textbf{Todd Shore}\end{large} \\
+      Saarland University & \begin{large}\texttt{tshore@coli.uni-sb.de} \end{large}
+    \end{tabular} 
+    \end{figure}
+\end{titlepage}
+\pagebreak
 
 \begin{abstract}
+\input{abstract}
 \end{abstract}
+\pagebreak
+\tableofcontents
+\pagebreak
 
-\section{Introduction} % (fold)
-\label{sec:introduction}
+\section{Introduction}\label{sec:introduction}
 \input{introduction}
 
-\section{Main Part}
-\label{sec:main_part}
+\section{Methodology and Implementation}\label{sec:main_part}
 \input{mainpart}
 
-\section{Evaluation}
-\label{sec:evaluation}
+\section{Evaluation}\label{sec:evaluation}
 \input{evaluation}
 
-\section{Conclusion}
-\label{sec:conclusion}
+\section{Conclusion}\label{sec:conclusion}
 \input{conclusion}
 
-\section{Appendix}
+\appendix
+\input{appendix}
 
 \bibliographystyle{apacite}
 \bibliography{bib}

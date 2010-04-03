@@ -24,6 +24,11 @@ import java.util.Set;
 
 public class SimMatrixElem extends SimMatrix {
 	
+	public enum SimilarityMeasure
+	{
+		manhattan, euclidean, cosine, none
+	}
+	
 	private List<List<Double> > matrix;
 	
 	private static List<Double> convertArray = null;
@@ -119,7 +124,7 @@ public class SimMatrixElem extends SimMatrix {
 		return simMat;
 	}
 	
-	public static SimMatrixElem CountFromVMindex(VMindex index)
+	public static SimMatrixElem CountFromVMindex(VMindex index, SimilarityMeasure simMeasure)
 	{
 		SimMatrixElem simMat = new SimMatrixElem();
 		
@@ -142,6 +147,7 @@ public class SimMatrixElem extends SimMatrix {
 		
 		Integer pomInt;
 		
+		double pomBle;
 		for (int i = 0; i < simMat.numSpeeches; i++)
 		{
 			//if (i % 20 == 0) System.out.println("i = " + i);
@@ -154,10 +160,49 @@ public class SimMatrixElem extends SimMatrix {
 				
 				for (Iterator<Integer> it = nonzeroI.iterator(); it.hasNext();  )
 				{
-					pomInt = it.next();					
-					sum += Math.min(index.GetValue(i, pomInt), index.GetValue(j, pomInt));
+					pomInt = it.next();		
+					
+					if (simMeasure == SimilarityMeasure.manhattan)
+					{
+						sum += Math.min(index.GetValue(i, pomInt), index.GetValue(j, pomInt));
+					}
+					else if (simMeasure == SimilarityMeasure.cosine)
+					{
+						sum += index.GetValue(i, pomInt) * index.GetValue(j, pomInt);
+					}
+					else if (simMeasure == SimilarityMeasure.euclidean)
+					{
+						pomBle = index.GetValue(i, pomInt) - index.GetValue(j, pomInt);
+						sum += pomBle * pomBle;
+					}
 				}
-								
+				
+				if (simMeasure == SimilarityMeasure.euclidean)
+				{
+					Set<Integer> nonzeroJ = index.GetNonzeroCells(j);
+					for (Iterator<Integer> it = nonzeroJ.iterator(); it.hasNext();  )
+					{
+						pomInt = it.next();
+						if (index.GetNonzeroCells(i).contains(pomInt))
+							continue;
+						
+						pomBle = index.GetValue(i, pomInt) - index.GetValue(j, pomInt);
+						sum += pomBle * pomBle;
+					}
+					
+				}
+				
+				
+				if (simMeasure == SimilarityMeasure.cosine)
+				{
+					sum = sum / (index.GetDocLength(i) * index.GetDocLength(j));
+				}
+				
+				if (simMeasure == SimilarityMeasure.euclidean)
+				{
+					sum = 1 - Math.sqrt(sum);
+				}
+				
 				simMat.setSim(i, j, sum);
 				simMat.setSim(j, i, sum);
 			}
@@ -174,7 +219,7 @@ public class SimMatrixElem extends SimMatrix {
 		int pomI = (int)Math.round(Math.floor(d * 256));
 		if (pomI < 0 || pomI > 256)
 		{
-			throw new Exception("DoubleToByte doesn't work or nonstandard similarity matrix");
+			throw new Exception("DoubleToByte doesn't work or nonstandard similarity matrix: " + d + " >> " + pomI);
 		}
 		
 		if (pomI == 256) pomI = 255;

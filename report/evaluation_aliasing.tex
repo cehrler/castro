@@ -1,4 +1,4 @@
-As described in section \ref{sec:aliasing_string_kernel} string kernels allow more flexibility then other popular string similarity measures such as edit distance.
+As described in section \ref{sec:aliasing} string kernels allow more flexibility then other popular string similarity measures such as edit distance.
 For example, the following organizations are identified as aliases of each other:
 \begin{enumerate}
 \item  \lingform{Public Health Ministry}
@@ -11,7 +11,7 @@ For example, the following organizations are identified as aliases of each other
 \end{enumerate}
 All the items in this group seem to refer to the same extra-linguistic object. Items 1-3 are very close to each other in terms of edit distance.
 The same can be said about items 4-7. String kernels not only account for these similarities, but also associate between the different word arrangements of the expression. Using edit distance would not be able to bind such cases. A related example is the location \lingform{Delhi} and its aliases 
-\lingform{NewDelhi} and \lingform{NewDelhi}. Here the additional value of our method comes in the form of associating a the shorter version of the
+\lingform{NewDelhi} and \lingform{New Delhi}. Here the additional value of our method comes in the form of associating a the shorter version of the
 name with it's longer variant. 
 
 However, in many cases the flexibility of string kernels results in associating named entities which are completely unrelated to each other. The following is a relatively common example of aliasing different locations: \lingform{Polish People's Republic}, \lingform{Lao People's Republic}, \lingform{Mongolian People's Republic}
@@ -20,7 +20,7 @@ The problem is particularly acute with person names. For instance, there are 21 
  
 Naturally, along with the success and failure cases, many aliases contain a mixture of correct and incorrect bindings, as well as bindings whose correctness can only be determined in context. In the following cluster most of the strings refer to \lingform{Raul Castro}, leaving out \lingform{F. Castro} that refers to a different entity and \lingform{Mr Castro} and \lingform{Dr Castro} that depend on the context: \lingform{Raul Castro},\lingform{MajRaul Castro}, \lingform{GenRaul Castro}, \lingform{RaulCastro}, \lingform{Mr Castro}, \lingform{F. Castro}, \lingform{Dr Castro}, \lingform{RaulCastro Ruz}, \lingform{Maj RaulCastro}, \lingform{Gen RaulCastro}, \lingform{Raul Castro Ruz}, \lingform{Maj Raul Castro},\lingform{Gen Raul Castro}.
 
-Examining outputs of different thresholds, confirmed our assumption that the trade-off between recall and precision can be partially regulated by adjusting the similarity threshold. Higher threshold leads to higher recall but lower precision, while lower threshold improves precision on the expanse of recall. As our similarity measures heavily rely on the accuracy of the aliases, we preferred to use a relatively high inter-entity similarity threshold (of 0.75), to maximize precision while retaining some of the flexibility the method has to offer. The examples presented above were generated with this threshold.
+Examining outputs of different thresholds, confirmed our assumption that the trade-off between recall and precision can be partially regulated by adjusting the similarity threshold. Higher threshold leads to higher recall but lower precision, while lower threshold improves precision on the expanse of recall. As our similarity measures heavily rely on the accuracy of the aliases, we preferred to use a relatively high inter-NE similarity threshold (of 0.75), to maximize precision while retaining some of the flexibility the method has to offer. The examples presented above were generated with this threshold.
 
 However, even given this setup the mechanism has considerable over-generation, which then leads to unjustified linking between documents which is a crucial problem. The noise produced by the aliasing over-generation is possibly the major drawback of our system. We discuss solutions for this situation in the future research section \ref{sec:future_work_NLP}.
 

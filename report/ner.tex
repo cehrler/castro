@@ -1,6 +1,26 @@
-\note{details on the tool}
+We chose the Stanford Named Entity Recognizer (SNER) \cite{sner} for the task of identifying NEs in the collection. It recognizes \meta{Locations}, \meta{Persons} and \meta{Organizations} which, as suggested previously, are all relevant for the historical domain. It comes with models pre-trained on CoNLL, MUC-6, MUC-7 and ACE named entity corpora, which presumably make it robust across domains.
 
-\subsubsection{Recognizing Named Entities in the Castro Archive}
-\label{sec:recognizing_named_enitiies_in_the_castro_archive}
-\note{identifying names, locations and organizations in the Castro documents,
-input/output examples, evaluation??}
+The pre-trained modules are very valuable since the CSDB is not annotated with NE information and manual annotation of NEs is labor intensive. As further discussed in the evaluation section \ref{sec:stanford_named_entity_recognizer}, the domain robustness of the tool is reflected in the quality of the NE tagging for the collection, which contains a variety of different genres. 
+
+The SNER implements linear chain Conditional Random Field (CRF) sequence models, proposed by \cite{lafferty2001conditional}.
+CRF is a discriminative model for finding the most probable sequence of labels (NE types) given a sequence of observations (words). 
+It does not assume independence between features, and enables conditioning each random variable any part of the input sequence. The features used for the recognizer implementation include word features, orthographic features and label sequences. It is also possible to integrate IDs of word clusters computed according to distributional similarity as features of the classifier.
+
+Version $1.1.1$ of the SNER was used, using the
+\texttt{ner-eng-ie.crf-3-all2008-distsim.ser.gz} model--- a three-class classifier with the additional
+distributional similarity lexicon. A shell script was used to run the SNER on each document in the Castro database: The input was a text file containing the document content without metadata. The output format was the original text annotated with markup using an XML dialect. Designated tags for each type of NE were supplied. The following table provides basic statistics on the extracted NEs.
+
+\begin{figure}[ht]
+\centering
+\caption{Global statistics for NEs. The table shows the number of distinct NEs found by the SNER and the average number of occurrences of each NE type per document.}
+\begin{tabular}{l rr}
+\toprule
+  NE Type      & Count & Average/Document\\
+  \midrule
+  \meta{Persons}       & 6515   & 21.5\\
+  \meta{Organizations} & 3667   & 44.7\\
+  \meta{Locations}     & 6612   & 17.1\\
+  \bottomrule
+\end{tabular}
+\label{fig:ne_statistics}
+\end{figure}

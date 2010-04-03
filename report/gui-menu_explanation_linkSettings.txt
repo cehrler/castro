@@ -1,0 +1,33 @@
+Link settings:
+
+Edges - relative mode
+These settings control the edge appearence when the edge mode is set to relative. 
+
+First we should explain how the relative edge mode works:
+
+There is the edge density slider on the panel left from the panel displaying the graph. The position of this slider corresponds to the edge density value. When the graph is constructed in the relative edge mode, the number of edges is determined by multiplying the number of nodes and the chosen edge density. All possible edges are sorted according to their strength and only the precomputed number of best edges are included in the graph. After the set of edges is determined, the mean of the edge strength is computed. The strength of each edge is then compared with the mean of the edge strength, the ratio between the edge strength and the mean of the edge strength determines whether the edge will be dotted, normal or thick.
+
+Maximum edge density: Determines which density value corresponds to the right corner position of the density slider.
+
+dotted edge const: If the edge strength is lower than the mean of the edge strength multiplied by dotted edge const, then the edge is dotted.
+
+thick edge const: If the edge strength is higher then the mean of the edge strength multiplied by thick edge const, then the edge is thick.
+
+Edges - absolute mode: 
+These settings control the edge appearence when the edge mode is set to absolute.
+
+In the absolute mode the appearence of the edge is determined by the results of comparison between the edge strength and the thresholds value.
+
+If the strength of the edge lies between the dotted edge threshold and the normal edge threshold, then the edge is dotted.
+
+If the strength of the edge lies between the normal edge threshold and the thick edge threshold, ten the edge is normal.
+
+If the strength of the edge is greater than the thick edge threshold, then the edge is thick.
+
+Threshold value for the normal edge is determined by the slider in the feature panel in the main gui window.
+
+Threshold value for the dotted edge is computed as a product of the normal edge threshold and the dotted edge const.
+
+Threshold value for the thick edge os computed as a product of the normal edge threshold and the thick edge const.
+
+
