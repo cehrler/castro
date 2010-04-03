@@ -1,19 +1,69 @@
-\note{MICHAL - EXPAND SECTION WITH STUFF ABOUT THE COMPUTATIONAL, ALGORITHMIC, AND IMPLEMENTATION STUFF.}
+So far we have described how nodes and edges of the graph are obtained from documents and their
+similarity. In order to display the graph, a graph layout (two dimensional representation of the
+graph) must be determined. If the vector representation of the document is only two dimensional,
+then it is straightforward to obtain the graph layout just by using the features as two dimensional
+coordinates. However, the documents in our model are represented by vectors with several thousands
+of dimensions. The problem of reducing the dimensionality, is usually not solved by mapping
+from high dimensional vector space to the low dimensional vector space but by using algorithms that
+solve the problem of graph layouting directly using only the properties of the underlying graph
+(nodes and edges together with their weights).
 
-So far we have described how the nodes and edges of the graph are obtained. In order to display the graph, a graph layout (two dimensional representation of the graph) must be determined. If our vector representation of the document was only two dimensional, then it would be very straightforward to obtain the graph layout just by using two feature values as x and y coordinates. However the document in the described model is represented by the vector of several thousands of dimensions. This problem is usually not solved by direct mapping from high dimensional vector space to the low dimensional vector space. There are algorithm that solve the problem of graph layouting directly by using only the properties of the underlying graph (nodes and edges together with their weights).
+\subsubsection{Computing Graph Layouts}
+The layouting algorithm that was used in this project belongs to the popular class of force-based
+layout algorithms which are based on physical modeling. An Edge is considered a spring and
+the nodes are considered to be electrically charged particles (i.e.\ with equal signed charge such
+that they repel each other) The optimal length of the springs is set in advance. Springs whose
+length is larger or smaller than their optimal length exert a force that acts on the connected
+nodes. In each iteration of the layouting algorithm, nodes are moved according to the resultant
+force
+that acts on them. After some time the position of the nodes becomes (quasi) stationary and the
+system get into a local equilibrium state.
 
-The layouting algorithm that was used in our project belongs to the popular class of the layouting algorithms called force-based layout algorithms. In this class of algorithms physical modelling is used. Edge is considered to be a spring and the node is considered to be a electrically charged particle (all nodes have the same charge). The optimal length of the edge/spring is set in advance. if the length of the edge exceeds the optimal value, then there is a power between connected nodes trying to push them together. If the distance of two nodes is lower than the predefined repulsion distance, then there is a repulsion power trying to push them apart. In each iteration of the layouting algorithm, nodes are moved acording to the resultant force that takes effect on them. After some time the position of the nodes becomes stationary, the layout achieves so called equilibrum state.
+The described class of force based layout algorithms subsumes various algorithms with different
+properties. However, they all perform variations of force-field energy minimization by iterative
+approximation schemes. In this project the very basic algorithm as it is described in the previous
+paragraph was used.
 
-The class of forse based layout algorithms groups together various different algorithms with different properties. The idea of a comparison between nodes and edges of the graph and the real world object, that interact together, and the step by step simulation are their common properties. In our project we used the very basic algorithm as it is described in the previous article.
+\subsubsection{Jung Graph Framework}
+For the purpose of graph layouting, graph painting and user-graph interaction, the
+\texttt{Jung - java universal network/graph framework} was used \cite{jung}. It provides great
+flexibility in adjusting the graph appearance. Several so-called transformers which affect node and
+edge label appearance can be plugged together to result in the aesthetically pleasant appearance.
+\texttt{Jung} also provides predefined classes that allow for easy interaction with the user.
+Functionalities for graph translation, zooming, node selection, node transposition and other
+features can be achieved with minimal programming effort. One notably strong point of the library is
+its template based design with the possibility to include several plug-in components such as
+rendering and transformers that affect the resulting appearance of the graph.
 
-For the purpose of graph layouting, graph painting and user-graph interaction, we used Jung - java universal network/graph library. It provides great flexibility of adjusting the graph appearence. Several transformers that affect the node label, label and edge appearence can be plugged together to result in the aesthetically pleasent appearence. There are also predefined classes that allows the easy interaction with the user. Functionalities of graph translating, zooming, node picking, node transposition and many others can be achieved with minimal programming effort. The strong point of the library is it's design based on general template classes with the possibility to include several pluggable component such as various renderers and transformers that affect the resulting appearance of the graph. 
-
-However there were few aspects of the jung library, that we found annoying. We found it difficult to achieve some low level functionalities as monitoring the on-screen position of the fixed point in the graph when the graph translation was performed. Also several operation are done in quite inefficient way. For example in order to change the color of one node, the whole graph must be redrawn, during this process all the vizualization transformers are applied on each graph object. When we used a default implementation of a jung visualization class, the application consumed more then 50\% of the processor capacity even though there was no user interaction or computation task (This depended on the size of the presented graph - this statement holds for graph with 25 nodes about 50 edges). Then we found out that the low performance is caused by the fact that the jung library completely redraws the whole graph several times each second without actual reason for doing so (It doesn't only redraw the graph by displaying precomputed bitmap, it actually determines the graph appearence from scretch by calling all its transformers and renderers, which is really computationaly expensive). By extending the standard jung VisualizationViewer class and overriding few functions, we resolved the issue of unnecesarry graph redrawing and by that we solved the problem of the low gui performance. Proposed problems of the library gave us the notion that the cost for the general and extensible jung desing is its quite low performance.
+However there are some aspects of the \texttt{Jung} library, that were annoying fro the project.
+First, it is difficult to achieve certain low level functionalities, like e.g.\ monitoring the
+on-screen position of a fixed point while translation of the graph was performed. Secondly, several
+operation are implemented in a circumstantial way. For example, in order to change the color of
+one node the whole graph must be redrawn and during this process all active visualization
+transformers are applied on each graph object.When we used the default implementation of the
+\texttt{Jung} visualization class, the application consumed more then 50\% of the processor time
+even though there was no ongoing user interaction or computation task (this depended on the size of
+the presented graph --- the statement holds for graph with 25 nodes about 50 edges). By extending
+the standard \texttt{Jung VisualizationViewer} class and overriding several functions, the issue of
+unnecessary graph redrawing was resolved and accordingly the problem of the low gui performance.
 
 \subsubsection {Querying Functionalities}
 \label{sec:querying_functionalities}
-The nodes of the graph are generated from the results of a database query supplied by the user, who can search either by keyword, by NE, or by a combination of both in the same query. Likewise, the user may select a range of years to search in (e.g.\ retrieve documents occurring between \code{1970} and \code{1975}), as well as select only certain types of documents to be searched (e.g.\ retrieve only documents of type \meta{Speech} or \meta{Interview}). The documents most relevant to the current query are displayed, the number of the documents displayed being specified by the user (e.g.\ display the \code{25} most relevant documents), and edges connecting each document are drawn based on the similarity measures relating each document to each other.
+The nodes of the graph are generated from the results of a database query supplied by the user, who
+can search either by keyword, by NE, or by a combination of both in the same query. Likewise, the
+user may select a range of years to search in (e.g.\ retrieve documents occurring between
+\code{1970} and \code{1975}), as well as select only certain types of documents to be searched
+(e.g.\ retrieve only documents of type \meta{Speech} or \meta{Interview}). The documents most
+relevant to the current query are displayed, the number of the documents displayed being specified
+by the user (e.g.\ display the \code{25} most relevant documents), and edges connecting each
+document are drawn based on the similarity measures relating each document to each other.
 
 \subsubsection {Presenting Results}
 \label{sec:presenting_results}
-After submitting a query, a table of query results is displayed and a graph corresponding to the results is drawn, in which the relevance measure of each document to the current query is represented by the absolute size of the node representing the document in question: The larger the node, the more relevant it is to the current query. The type of document represented by the node is represented by its shape, e.g.\ \meta{Speech} $\rightarrow$ star, \meta{Meeting} $\rightarrow$ pentagon. The edges linking the nodes of the graph represent the strength of similarity the of the two documents represented by the nodes.
+After submitting a query, a table of query results is displayed and a graph corresponding to the
+results is drawn, in which the relevance measure of each document to the current query is
+represented by the absolute size of the node representing the document in question: The larger the
+node, the more relevant it is to the current query. The type of document represented by the node is
+represented by its shape, e.g.\ \meta{Speech} $\rightarrow$ star, \meta{Meeting} $\rightarrow$
+pentagon. The edges linking the nodes of the graph represent the strength of similarity the of the
+two documents represented by the nodes.
