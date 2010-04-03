@@ -1,4 +1,4 @@
-## MySQL Settings. Change user and password to that of a user with MySQL admin priviledges and save as 'castro.conf'.
+## MySQL Settings:
 host=localhost
 database=castro_db
 user=root
