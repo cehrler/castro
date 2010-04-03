@@ -23,8 +23,9 @@ Exceptions to the above are granted for Caroline Sporleder and Martin Schreiber 
 
 --------------------------------------------------------
 REQUIREMENTS:
-- Approx. 350MB available hard disk space
+- Dual-core 2.0GHz CPU (recommended)
 - >1.5GB available RAM (recommended)
+- Approx. 350MB available hard disk space
 - Java (tested on version 1.6.0_15)
 - MySQL Server (tested on version 14.14)
 
