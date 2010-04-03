@@ -1,50 +1,28 @@
-\subsubsection{Kernel Methods}
-Kernel methods are used to map objects of a
-distinct type $K$ into a Hilbert space $\mathcal{H}$ using a mapping function $\Phi :
-K \rightarrow \mathcal{H}$. Here, $K$ can have an arbitrary structure, e.g.\ trees, strings,
-graphs, etc. Given a mapping $\Phi$, the similarity of two objects $s,t \in K$ can be computed
-through the ordinary scalar product defined in the Hilbert space:
-\[sim(s,t) = <\Phi(s),\Phi(t)>\]
-Instead of defining the mapping function $\Phi$ explicitly, a kernel function $k : K \times K
-\rightarrow \mathbb{R}$ can be used. Kernel functions are positive semi-definite functions
-which implicitly compute the scalar product of two objects in some Hilbert space. In other words, for every
-kernel function $k$ there exists a mapping $\Phi$, such that
-\[k(s,t) = <\Phi(s),\Phi(t)>.\]
-This property of kernel functions is often exploited in practice because it greatly facilitates the
-computation of object similarity.
+Relying on the raw output of the SNER might not be sufficient if we desire reliable counts of NE's. One of the major problems is that the same
+NE can be manifested in a variety of phrases. In order to know how many times a certain NE appears in a document, we should be able to identify all the phrases that refer to this entity. This task is known as CRR, and as described previously is extremely difficult to solve.
 
-\subsubsection{String Kernels}
+Nevertheless, it is possible to approximate CRR by focusing on aliasing--- grouping linguistic variants of names. Our aim is to increase the reliability of the IR and the document similarity measures by not trating strings such as \lingform{Castro} , \lingform{Dr. Castro} and \lingform{Fidel Castro} as different terms. Our approach to aliassing relies on string similarity. We measure similarity between NE's that belong to the same class using String Kernels. This method allows for more flexibility then other methods such as edit distance. In a second stage we expand (or "smooth") vector representations of documents with the aliases of the NE's they contain. This allows more reliable similarity measurement of document similarity as well as indirect query expansion for NE's. 
+
 String kernels are kernel methods which operate on the domain of strings over
-a finite alphabet $\Sigma$ and are often applied in the fields of IR and bioinformatics \note{cite!}. In this project, a
-$p$-spectrum string kernel was applied \note{citation needed!}, defined as
+a finite alphabet $\Sigma$ and are often applied in the fields of IR and bioinformatics. In this project, a
+$p$-spectrum string kernel was applied, defined as
 \[k_p(s,t) = \sum_{u \in \Sigma^p}{\phi_u^p(s)\phi_u^p(t)},\]
 where $\phi_u^p(s)$ counts the number of occurrences of the substring $u$ of length $p$ in $s$. The
 associated Hilbert space for this kernel is $\mathbb{R}^{|\Sigma^p|}$--- the space of all possible
 strings over $\Sigma$ of length $p$. The $p$-spectrum string kernel can be efficiently implemented by using trie data-structures and $n$-gram models.
 
-\note{ADD explanation of p-spectrum kernel! WHY is it useful? WHAT do we do with it (implementation)}
+Operating on the characters level this method allows to to calculate a similarity matrix between each pair of named entities of the same type. 
+The complete kernel matrix $\textbf{K}$ was computed for all three types of NEs, where $\textbf{K}_{i,j}$ is the similarity measure of the NEs $i$ and $j$. Since many of the entries in $\textbf{K}$ are near zero, fixed-value thresholding was applied after the kernel matrix computation, storing the resulting sparse matrices for further use.
 
-\subsubsection{Co-reference Resolution with String Kernels}
-\label{sec:co_reference_resolution_by_string_kernels}
-\ignore{Co-reference resolution can be divided into three consecutive subtasks \cite{string_kernel_coref}:
-\begin{itemize}
-  \item Binding constraints
-  \item Expletive detection
-  \item Aliasing
-\end{itemize}
-For all of these subtasks tailored kernel methods have been proposed.}
+Having calculated this similarity matrix, we can apply it to the matrices that contain the document vectors. As a result, if the similarity rate of a possible alias of a NE that appears in the document exceeds a certain threshold the value of this alias in the document vector becomes non-zero. This approach is examplified in the following figure.
 
-CRR with kernel methods is an active research area, and several methods have been proposed, including string- and tree-based kernel methods \cite{string_kernel_coref}.
-One advantage of tree-based over string-based methods is the ability to model a comparatively-more complex structure and more information about the syntactic and semantic properties of the text. This means that a tree-kernel method may be better-suited for primarily linguistic domains \note{CITE!!!}.
-
-\ignore{For our project, we need CRR based on the extracted named entities. That is, we want to resolve references between different named entities. This essentially comes down to the task of \textit{aliasing} named entities for each type of named entity. To this end, we applied a two-spectrum string kernel, where the basic idea is to compute similarities between all named entities and based on that to group similar ones. Grouping is not done by hard clustering, i.e.\ we do not cluster the named entities in different groups but rather use a soft clustering based on the resulting kernel matrix.}
 
 \begin{figure}[ht]
-  \caption{Aliasing of document- or query-vectors with string kernel similarity measure.
+  \caption{Aliasing of document with string kernel similarity measure.
 The matrix $\mathcal{S}$ is the kernel matrix of the three terms $\mathcal{T} = \lbrace
 \text{\lingform{Fidel Castro}},\text{\lingform{Dr. Fidel Castro}}, \text{\lingform{Raul}}\rbrace$. The first and second term have a
-very high lexical similarity measure of $0.8$, while the third term has a very low similarity measure. Using
-$\mathcal{S}$, a document vector or a query $q=(1,0,0)^T$ can be expanded into an aliased form
+very high similarity measure of $0.8$, while the third term has a very low similarity measure. Using
+$\mathcal{S}$, a document vector $d=(1,0,0)^T$ can be expanded into an aliased form
 $\bar q$, where $\bar q = \mathcal{S}q$.}
   \[
      \underbrace{\begin{pmatrix}
@@ -63,6 +41,8 @@ $\bar q$, where $\bar q = \mathcal{S}q$.}
   \label{eq:example_string_sim}
 \end{figure}
 
-\ignore{The first implementation of the two-spectrum kernel function was done in \texttt{python} but we  later reimplemented it in \texttt{C++} for performance reasons}. The complete kernel matrix $\textbf{K}$ was computed for all three types of NEs, where $\textbf{K}_{i,j}$ is the similarity measure of the NEs $i$ and $j$. Since many of the entries in $\textbf{K}$ are near zero, fixed-value thresholding was applied after the kernel matrix computation, storing the resulting sparse matrices for further use.
+After each document was multiplied by the kernel similarity matrix, it has pseodo-counts for all the variants of its NE's in the whole collection. This can be interpreted as if all variants of the name appeared in the document. 
 
-Given the kernel matrix $\textbf{K}$, aliasing can be performed by multiplying each document vector with the kernel matrix. The scalar product of the resulting aliased document vectors yields the overall document similarity in respect to all NEs in the database. A short example of aliasing based on three different named entities is illustrated in figure \ref{eq:example_string_sim}.
+Having these expanded representations gives us the effect of aliasing for two later processing steps. First, name variants no longer effect similarity measurements. For example if previously document 1 would have only the NE's \lingform{Castro} and document 2 would have only the NE's \lingform{Dr. Castro} their similarity would be 0. After the aliasing, both documents contain both terms, and thus have maximal similarity. A similar effect is achieved when measuring query document similarity. We discuss both implications in the relevant sections.
+
+
