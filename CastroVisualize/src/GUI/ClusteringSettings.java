@@ -21,6 +21,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import Functionality.ChineseWhisperClustering;
+import Functionality.ChineseWhisperClustering.ChineseWhisperTypesEnum;
 
 public class ClusteringSettings {
 
@@ -135,11 +136,11 @@ public class ClusteringSettings {
 				
 				if (clusteringAlgorithmCB.getSelectedIndex() == 0)
 				{
-					ChineseWhisperClustering.SetImplementationToBasic();
+					ChineseWhisperClustering.SetImplementation(ChineseWhisperTypesEnum.standard);
 				}
 				else
 				{
-					ChineseWhisperClustering.SetImplementationToAdjusted();
+					ChineseWhisperClustering.SetImplementation(ChineseWhisperTypesEnum.modified);
 				}
 				
 				CastroGUI.gui.performSearch(CastroGUI.GetCurrentSearchQuery(), true);

@@ -196,7 +196,7 @@ public class Graph {
 		if (maxClusters > 0)
 		{
 			gr.createEdgesDensity((int)(Math.round(ln.size() * SettingsWindow.ChineseWhisperClustering_tempGraphDensity)));
-			ChineseWhisperClustering.GetImplementation().Evaluate(gr, 3, 5);
+			ChineseWhisperClustering.GetImplementation().Evaluate(gr, SettingsWindow.maxNumClusters, SettingsWindow.ChineseWhisperClustering_numberOfIterations);
 		}
 		else
 		{
@@ -271,7 +271,7 @@ public class Graph {
 		if (maxClusters > 0)
 		{
 			gr.createEdgesDensity((int)(Math.round(ln.size() * SettingsWindow.ChineseWhisperClustering_tempGraphDensity)));
-			ChineseWhisperClustering.GetImplementation().Evaluate(gr, 3, 5);
+			ChineseWhisperClustering.GetImplementation().Evaluate(gr, SettingsWindow.maxNumClusters, SettingsWindow.ChineseWhisperClustering_numberOfIterations);
 		}
 		else
 		{

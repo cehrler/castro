@@ -11,14 +11,25 @@ public abstract class ChineseWhisperClustering {
 		return implementation;
 	}
 	
-	public static void SetImplementationToBasic()
+	public static void SetImplementation(ChineseWhisperTypesEnum en)
 	{
-		implementation = new ChineseWhisperClusteringBasic();
+		if (en == ChineseWhisperTypesEnum.standard)
+		{
+			implementation = new ChineseWhisperClusteringBasic();			
+		}
+		else if (en == ChineseWhisperTypesEnum.modified)
+		{
+			implementation = new ChineseWhisperClusteringAdjusted();
+		}
+		else if (en == ChineseWhisperTypesEnum.modifiedNew)
+		{
+			implementation = new ChineseWhisperClusteringAdjustedNew();
+		}
 	}
 	
-	public static void SetImplementationToAdjusted()
+	public enum ChineseWhisperTypesEnum
 	{
-		implementation = new ChineseWhisperClusteringAdjusted();
+		standard, modified, modifiedNew
 	}
 
 }

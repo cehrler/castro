@@ -27,6 +27,7 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 
+import Functionality.ChineseWhisperClustering.ChineseWhisperTypesEnum;
 import GUI.SettingsWindow;
 public class DataModule {
 
@@ -182,6 +183,9 @@ public class DataModule {
 	public static void Init(String indexTypeS, boolean indexSmooth, boolean simMatrixSmooth, double simMatPersonsCoef, double simMatLocationsCoef, double simMatOrganizationsCoef, double simMatDictionaryCoef)
 	{
 		IndexTypeEnum indexType = IndexTypeEnum.NULL;
+		
+
+		ChineseWhisperClustering.SetImplementation(SettingsWindow.ChineseWhisperClustering_type);
 		
 		if (indexTypeS == "TF")
 		{
@@ -600,7 +604,7 @@ public class DataModule {
 		
 		for (int i = 0; i < Math.min(nodes.size(), maxNumNodes); i++)
 		{
-			if (nodes.get(i).GetRelevance() <= simEpsilon) break;
+			if (nodes.get(i).GetRelevance() <= simEpsilon && queryTerms.size() > 0) break;
 			sn.add(nodes.get(i));
 		}
 		
