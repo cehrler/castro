@@ -7,7 +7,7 @@ In the second step each vector is assigned to it's closest cluster centroid.
 In the third step each cluster centroid is updated in such a way that the cluster centroid lies exactly in the center of all vectors assigned to this cluster centroid.
 Second and third step are repeated as long as the positions of the centroids change.
  
-This approach didn't work very well. The produced clusters were not the densily connected regions. It was probably caused by the fact, that the dimensionality of the vector space is very high and that the vectors representing the documents are very sparse.
+This approach didn't work very well. The produced clusters were not the densely connected regions. It was probably caused by the fact, that the dimensionality of the vector space is very high and that the vectors representing the documents are very sparse.
 
 
 We decided to use rather the clustering algorithm that is directly aiming the problem of graph clustering.
@@ -17,11 +17,11 @@ In the initialization step each vector is assigned to it's own cluster.
 
 At the beginning of each update round, the randomly ordered list containing all nodes is created. It means that in each update round the ordering in which we update the node's cluster assignment is different.
 
-The nodes are then pulled out from the list one by one, for each node the cluster assignment is updated. Updating of the node's assignment to the cluster works as follows: The neighbours of the focused node are grouped together according to their assignment to the clusters. The weights of the edges connecting the focused node with the nodes contained in the distinct group are sumed up together. The focused node is then assigned to the cluster for which the sum was greatest. For the later use we denote this greatest sum as the cluster assignment sum.
+The nodes are then pulled out from the list one by one, for each node the cluster assignment is updated. Updating of the node's assignment to the cluster works as follows: The neighbors of the focused node are grouped together according to their assignment to the clusters. The weights of the edges connecting the focused node with the nodes contained in the distinct group are summed up together. The focused node is then assigned to the cluster for which the sum was greatest. For the later use we denote this greatest sum as the cluster assignment sum.
 
-After few iterations the stable clustering is achieved (there are no changes in the cluster assignments) or there are few nodes ar the borders of the clusters that periodically flip their cluster assignment.
+After few iterations the stable clustering is achieved (there are no changes in the cluster assignments) or there are few nodes are the borders of the clusters that periodically flip their cluster assignment.
 
-This algorithm worked much better than k-means clustering. But the problem of the algorithm is that it always change the node's cluster assignment to the strongest cluster in his neighbourhood. But sometimes the node is not strongly connected to none of the clusters and we would rather not include it in any cluster.
+This algorithm worked much better than k-means clustering. But the problem of the algorithm is that it always change the node's cluster assignment to the strongest cluster in his neighborhood. But sometimes the node is not strongly connected to none of the clusters and we would rather not include it in any cluster.
 
 To handle this problem we implemented a variation of this algorithm. 
 
@@ -29,7 +29,7 @@ In the standard version the focused node is always assigned to the cluster for w
 
 In our modified implementation the cluster assignment sum needs to be greater than a precomputed threshold, otherwise the focused node doesn't change its cluster assignment. In the current implementation this threshold is set to the mean of the edge strength over whole graph multiplied by the constant which can be specified in the clustering settings menu.
 
-Before the update rounds, which works exactly like the update rounds in the standard version with the exception of the thresholding feature discribed in previous paragraph, are started, the predefined number of initialization steps are done.
+Before the update rounds, which works exactly like the update rounds in the standard version with the exception of the thresholding feature described in previous paragraph, are started, the predefined number of initialization steps are done.
 
 For the purpose of the initialization steps, all edges of the graph are sorted in the descending order according to their weights. In each initialization step, one each is pulled out from the list and the standard node cluster assignment procedure is then executed on the node, for which the cluster assignment sum is greater. It means that the cluster assignment sum doesn't need to exceed the precomputed threshold.
 
