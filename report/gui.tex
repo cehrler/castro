@@ -54,8 +54,8 @@ Lastly, it is possible through the context menu to automatically select the near
 \begin{figure}[ht]
 \centering
 \caption{\scare{Mark Nearest Neighbors} Function}
-\subfloat[][Before]{\includegraphics[width=80mm]{markneighbors_before.png}}
-\subfloat[][After]{\includegraphics[width=80mm]{markneighbors_after.png}}
+\subfloat[][Before]{\includegraphics[width=60mm]{markneighbors_before.png}}
+\subfloat[][After]{\includegraphics[width=60mm]{markneighbors_after.png}}
 \end{figure}
 
 Each nearest neighbor is automatically shaded in a range from black to white to represent the level of similarity between the node and the originally-selected node (item 14): The darker the shade, the more similar the document is to the document of the originally-selected node in relation to the other nearest neighbors; The lighter the shade, the less similar the document is. For example, of the nearest neighbours, item 15 is most similar to the originally-selected node. In descending order of similarity, the next most similar documents are item 16, 17 18 and 19.
@@ -66,7 +66,7 @@ Each nearest neighbor is automatically shaded in a range from black to white to 
 \begin{figure}[ht]
 \centering
 \caption{Display Options}
-\includegraphics[height=80mm]{displayopts.png}
+\includegraphics[height=60mm]{displayopts.png}
 \end{figure}
 
 The graphical display may be further adjusted by applying a distance filter (item 12) or by adjusting the method by which edges are drawn (item 13).
@@ -115,7 +115,7 @@ If the strength of the edge lies between the normal edge threshold and the thick
 
 The threshold value for normal edges is determined by the slider in the main control panel. The dotted-edge threshold value is then computed as a product of the normal edge threshold and the dotted edge constant. Likewise, the thick-edge threshold value is computed as a product of the normal edge threshold and the thick edge constant.
 \item[\scare{Clustering Settings}] \hfill \\
-The user can enable automatic document clustering using CWC (disabled by default), and specify the maximum number of clusters formed, the minimum size of each cluster, as well as the temporary graph density. \scare{Temporary graph} is the density of the data structure used for computation of the clusters: The clustering algorithm tends to be more effective with a dense graph, while users may prefer a rather sparser graph. Using this feature, the temporary graph structure can then be adjusted to the user's preferences. Clustering is enabled by setting the maximum number of clusters to a positive value. As well as the original Chinese Whispering algorithm, a modified version of the algorithm was implemented which is much more conservative and thus tends to overgenerate less. It adds a document to a cluster only when there is a strong evidence. Additionally, by increasing the \scare{Activation threshold multiplier} and by decreasing the \scare{Init iterations}, the algorithm becomes more conservative and vice versa. 
+The user can enable automatic document clustering using CWC (disabled by default), and specify the maximum number of clusters formed, the minimum size of each cluster, as well as the temporary graph density. \scare{Temporary graph} is the density of the data structure used for computation of the clusters: The clustering algorithm tends to be more effective with a dense graph, while users may prefer a rather sparser graph. Using this feature, the temporary graph structure can then be adjusted to the user's preferences. Clustering is enabled by setting the maximum number of clusters to a positive value. As well as the original CWC algorithm, the modified, more conservative version of the algorithm may be used (as mentioned in section \ref{sec:chinese_whipsering_clustering}). By increasing the \scare{Activation threshold multiplier} and by decreasing the \scare{Init iterations}, the algorithm becomes more conservative and vice versa. 
 \end{description}
 
 All of these features combine to create a powerful interface for searching the corpus and visualizing the results which is both highly automated and highly customizable. In turn, the system is designed to accommodate both basic and advanced users.
