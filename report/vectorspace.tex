@@ -27,11 +27,18 @@ The TF-IDF score of term $i$ is proportional to the logarithm of the inverse fra
 
 \subsubsection{Computing Similarity between Documents}\label{sec:computing_similarity_between_documents}
 
-In VSM, it is necessary to measure the similarity between vectors. This can expressed by the cosine similarity measure:
+For the goal of our project, it is necessary to measure the similarity between the documents. According to similarities of the documents, edges of the resulting graph are constructed. The crucial and not easy to be answered question is, how does the similar documents look like. Our project aims at making navigation throw the collection of historical document. Historicians usually aim at some specific historical event or historical person. It follows that it is convenient to suppose that two documents, that touches the same or similar historical topic, are similar. The historical event can be usually specified by the persons, locations and organizations involved in it. Our working hypothese is that the similarity between documents, we are interrested in, can be expressed as the similarity on the named entities. As we represent documents in VSM as the vectors of named entities, we can directly apply standard vector space measures for expressing similarities between vectors. 
+
+The most common measure is the cosine similarity measure.
 \[\text{cosim}(d,d') = \sum_{k \in \mathcal{T}}\frac{d(k)d'(k)}{|d||d'|}\]
 It expresses the cosine angle between the vectors $d$ and $d'$. The cosine measure is equal to $1$ for the parallel vectors and is equal to $0$ for perpendicular vectors.
 
-\note{ADD SOMETHING HERE!!!}
+We also used another similarity measure which we denoted as "Manhattan similarity measure". The reason is that the Manhattan similarity measure between two vectors can be described using the manhattan distance between zero vector and the vector whose value for each column is equal to the minimum value of those vectors for that column.
+
+\[\text{manhattan}(d,d') = \sum_{k \in \mathcal{T}}min[d(k), d'(k)]\]
+
+
+\note{Michal: I added some stuff here. You are welcomed to fix it and complete it. ADD SOMETHING HERE!!!}
 
 The retrieved documents were arranged according to their similarity to each other. To this end, the similarity of each pair of documents was stored in similarity matrices. The matrices correspond to the four different indices: similarity according to \meta{Persons}, \meta{Locations} and \meta{Organizations} and to general vocabulary. These matrices are not sparse (unlike the index matrices) and each entry is represented in the memory.   
 
