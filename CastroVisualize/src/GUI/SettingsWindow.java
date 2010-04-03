@@ -79,7 +79,7 @@ public class SettingsWindow implements ActionListener {
 	public static double ChineseWhisperClustering_tempGraphDensity = 3.0;
 	public static int ChineseWhisperClusteringAdjusted_numberEdgesForMeanComputation = 10000000; //Means that all of them are used!
 	public static int ChineseWhisperClustering_minimalSizeOfCluster = 3;
-	public static ChineseWhisperClustering.ChineseWhisperTypesEnum ChineseWhisperClustering_type = ChineseWhisperTypesEnum.modifiedNew;
+	public static ChineseWhisperClustering.ChineseWhisperTypesEnum ChineseWhisperClustering_type = ChineseWhisperTypesEnum.modified;
 	public static int ChineseWhisperClustering_numberOfIterations = 15;
 	public static double ChineseWhisperClusteringAdjusted_activationThresholdMultiplierIncrement = 0.5;
 	

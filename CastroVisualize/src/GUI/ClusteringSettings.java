@@ -55,6 +55,18 @@ public class ClusteringSettings {
 		
 		mainPanel.add(new JLabel("Clustering algorithm:"));
 		clusteringAlgorithmCB = new JComboBox(new String[] { "Chinese Whisper clustering", "Modified Chinese Whisper clustering" });
+		if (SettingsWindow.ChineseWhisperClustering_type == ChineseWhisperTypesEnum.standard)
+		{
+			clusteringAlgorithmCB.setSelectedItem("Chinese Whisper clustering");
+		}
+		else if (SettingsWindow.ChineseWhisperClustering_type == ChineseWhisperTypesEnum.modified)
+		{
+			clusteringAlgorithmCB.setSelectedItem("Modified Chinese Whisper clustering");
+		}
+		else
+		{
+			clusteringAlgorithmCB.setSelectedIndex(2);
+		}
 		
 		clusteringAlgorithmCB.addActionListener(new ActionListener() {
 			
@@ -73,6 +85,7 @@ public class ClusteringSettings {
 			}
 		});
 		clusteringAlgorithmCB.setAlignmentX(Component.LEFT_ALIGNMENT);
+
 		mainPanel.add(clusteringAlgorithmCB);
 		
 		
@@ -115,10 +128,20 @@ public class ClusteringSettings {
 		activationThresholdMultiplierTF = new JTextField(new Double(SettingsWindow.ChineseWhisperClusteringAdjusted_activationThresholdMultiplier).toString());
 		activationThresholdMultiplierTF.setHorizontalAlignment(SwingConstants.TRAILING);
 		modifiedPanel.add(activationThresholdMultiplierTF);
+
+		//dummyComponent = Box.createVerticalStrut(modifiedPanel.getPreferredSize().height);
+
+		if (clusteringAlgorithmCB.getSelectedIndex() > 0)
+		{
+			modifiedPanel.setVisible(true);
+			//dummyComponent.setVisible(false);
+		}
+		else
+		{
+			modifiedPanel.setVisible(false);
+			
+		}
 		
-		modifiedPanel.setVisible(false);
-		
-		dummyComponent = Box.createVerticalStrut(modifiedPanel.getPreferredSize().height);
 		vbox.add(modifiedPanel);
 		
 		Box buttonBox = Box.createHorizontalBox();
@@ -134,16 +157,22 @@ public class ClusteringSettings {
 				SettingsWindow.ChineseWhisperClusteringAdjusted_activationThresholdMultiplier = Double.parseDouble(activationThresholdMultiplierTF.getText());
 				SettingsWindow.ChineseWhisperClusteringAdjusted_numMasterEdges = Integer.parseInt(numMasterEdgesTF.getText());
 				
+				
 				if (clusteringAlgorithmCB.getSelectedIndex() == 0)
 				{
 					ChineseWhisperClustering.SetImplementation(ChineseWhisperTypesEnum.standard);
+					SettingsWindow.ChineseWhisperClustering_type = ChineseWhisperTypesEnum.standard;
 				}
 				else
 				{
 					ChineseWhisperClustering.SetImplementation(ChineseWhisperTypesEnum.modified);
+					SettingsWindow.ChineseWhisperClustering_type = ChineseWhisperTypesEnum.modified;
 				}
 				
-				CastroGUI.gui.performSearch(CastroGUI.GetCurrentSearchQuery(), true);
+				if (CastroGUI.GetCurrentSearchQuery() != null)
+				{
+					CastroGUI.gui.performSearch(CastroGUI.GetCurrentSearchQuery(), true);
+				}
 				frame.dispose();
 				
 			}
