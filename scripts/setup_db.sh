@@ -14,7 +14,7 @@ MYSQL_PASSWD=root
 run_mysql="mysql -u$MYSQL_USER -p$MYSQL_PASSWD"
 
 setup_db(){
-echo "Setting up databases..."
+echo "Setting up databases...";
 $run_mysql --execute="source ./castro.sql;"
 $run_mysql --execute="source ./NE.sql;"
 $run_mysql --execute="source ./getNE.sql;"
