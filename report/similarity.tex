@@ -15,7 +15,7 @@ We briefly compared both similarity measures by comparing the similarity graphs 
 
 In the current version we use cosine similarity measure by default. We do that because this measure is more widespread that the Manhattan distance, and because of its elegant mathematical interpretation.
 
-We computed similarity matrices in order to store the similarity rates between each pair of documents. Separate similarity matrices were computed for each combination of the four indexes, two similarity measure and two aliasing settings (aliased or non-aliased), resulting is 16 similarity matrices. We explain our approach to aliasing and its effect on the similarity measures in section \ref{aliasing}. Unlike the index matrices, the similarity matrices are not sparse and each entry is represented in the memory.
+We computed similarity matrices in order to store the similarity rates between each pair of documents. Separate similarity matrices were computed for each combination of the four indexes, two similarity measure and two aliasing settings (aliased or non-aliased), resulting is 16 similarity matrices. We explain our approach to aliasing and its effect on the similarity measures in section \ref{sec:aliasing}. Unlike the index matrices, the similarity matrices are not sparse and each entry is represented in the memory.
 
 Similarity matrices are loaded on the startup of the application. Switching similarity measures or aliasing settings leads to redrawing of the edges of the graph according to a different matrix. Choosing a weights combination of NE's and possibly general vocabulary leads to on-the-fly computation of similarities based on the specified linear combination of values from the relevant precomputed similarity matrices.
 
