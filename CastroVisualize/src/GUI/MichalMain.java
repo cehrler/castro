@@ -34,6 +34,11 @@ public class MichalMain {
 	public static void main(String[] args) {
 		
 		SettingsWindow.ChineseWhisperClustering_type = ChineseWhisperTypesEnum.normalizing;
+		SettingsWindow.smoothedSimMatrix = true;
+		SettingsWindow.lexicalSimilarityCoef = 0.0;
+		SettingsWindow.personsCoef = 0.33;
+		SettingsWindow.locationsCoef = 0.33;
+		SettingsWindow.organizationsCoef = 0.34;
 		
 		Functionality.DataModule.InitConfiguration();
 		Functionality.DataModule.Init(SettingsWindow.currIndex,
@@ -94,7 +99,7 @@ public class MichalMain {
 		{
 			//FileOutputStream fos = new FileOutputStream("/home/michalisek/clustering.out");
 			//OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
-			BufferedWriter br = new BufferedWriter(new FileWriter("/home/michalisek/clustering-giveItToThePour-smoothed.out"));
+			BufferedWriter br = new BufferedWriter(new FileWriter("/home/michalisek/clustering-smooth.out"));
 	
 			
 			
