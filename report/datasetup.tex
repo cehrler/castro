@@ -1,5 +1,5 @@
 The corpus was retrieved in HTML format from the CSDB using an automated script for a web retrieval program \cite{wget}. The HTML files were parsed using shell and \citeauthor{python} scripting, separating document metadata in the document header from the content in the body of the documents.
 
-A database for the corpus was constructed using a \citeauthor{MySQL} server with \citeauthor{perl} scripting, containing for each document not only metadata and the document content, but also the NEs recognized in the document content (see section \ref{sec:stanford_named_entity_recognizer} below).
+A database for the corpus was constructed using a \citeauthor{MySQL} server with Perl scripting \cite{perl}, containing for each document not only metadata and the document content, but also the NEs recognized in the document content (see section \ref{sec:stanford_named_entity_recognizer} below).
 
 This allows us to save implementation time by using standard tools for querying databases and filtering retrieved documents based on metadata. 
