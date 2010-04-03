@@ -1,51 +1,44 @@
-So far we have described how nodes and edges of the graph are obtained from documents and their
-similarity. In order to display the graph, a graph layout (two dimensional representation of the
-graph) must be determined. If the vector representation of the document is only two dimensional,
-then it is straightforward to obtain the graph layout just by using the features as two dimensional
+A graphical visualization system was developed, the documents and their computed similarities being used to draw the nodes and edges of the graph.
+However, in order to display the graph, a graph layout (a two-dimensional representation of the
+graph) must be determined: If the vector representation of the document were only two-dimensional,
+then it would straightforward to obtain the graph layout--- by simply using the features as two dimensional
 coordinates. However, the documents in our model are represented by vectors with several thousands
-of dimensions. The problem of reducing the dimensionality, is usually not solved by mapping
-from high dimensional vector space to the low dimensional vector space but by using algorithms that
-solve the problem of graph layouting directly using only the properties of the underlying graph
+of dimensions. The problem of reducing the dimensionality usually cannot be solved by simply mapping a high-dimensional vector space to a low-dimensional one. Instead, algorithms are used to solve the problem of graph layouting directly using only the properties of the underlying graph
 (nodes and edges together with their weights).
 
 \subsubsection{Computing Graph Layouts}
 The layouting algorithm that was used in this project belongs to the popular class of force-based
-layout algorithms which are based on physical modeling. An Edge is considered a spring and
-the nodes are considered to be electrically charged particles (i.e.\ with equal signed charge such
-that they repel each other) The optimal length of the springs is set in advance. Springs whose
-length is larger or smaller than their optimal length exert a force that acts on the connected
+layout algorithms which are based on physical modeling. An edge is considered a spring and
+the nodes are considered to be electrically charged particles, i.e.\ with equal signed charge such
+that they repel each other. The optimal length of the springs is set in advance. Springs with a 
+length that is larger or smaller than their optimal length exert a force that acts on the connected
 nodes. In each iteration of the layouting algorithm, nodes are moved according to the resultant
 force
-that acts on them. After some time the position of the nodes becomes (quasi) stationary and the
+that acts on them. After some time, the position of the nodes becomes (quasi)-stationary and the
 system get into a local equilibrium state.
 
-The described class of force based layout algorithms subsumes various algorithms with different
+The described class of force-based layout algorithms subsumes various algorithms with different
 properties. However, they all perform variations of force-field energy minimization by iterative
-approximation schemes. In this project the very basic algorithm as it is described in the previous
-paragraph was used.
+approximation schemes. A basic version of this algorithm is used for visualization in this project
 
 \subsubsection{Jung Graph Framework}
 For the purpose of graph layouting, graph painting and user-graph interaction, the
-\texttt{Jung - java universal network/graph framework} was used \cite{jung}. It provides great
-flexibility in adjusting the graph appearance. Several so-called transformers which affect node and
-edge label appearance can be plugged together to result in the aesthetically pleasant appearance.
-\texttt{Jung} also provides predefined classes that allow for easy interaction with the user.
-Functionalities for graph translation, zooming, node selection, node transposition and other
-features can be achieved with minimal programming effort. One notably strong point of the library is
-its template based design with the possibility to include several plug-in components such as
-rendering and transformers that affect the resulting appearance of the graph.
+Jung visualization libraries were used \cite{jung}. It provides great
+flexibility in adjusting the graph appearance, with many predefined classes and plug-ins in a template-based design.
 
-However there are some aspects of the \texttt{Jung} library, that were annoying fro the project.
-First, it is difficult to achieve certain low level functionalities, like e.g.\ monitoring the
-on-screen position of a fixed point while translation of the graph was performed. Secondly, several
-operation are implemented in a circumstantial way. For example, in order to change the color of
-one node the whole graph must be redrawn and during this process all active visualization
-transformers are applied on each graph object.When we used the default implementation of the
-\texttt{Jung} visualization class, the application consumed more then 50\% of the processor time
-even though there was no ongoing user interaction or computation task (this depended on the size of
-the presented graph --- the statement holds for graph with 25 nodes about 50 edges). By extending
-the standard \texttt{Jung VisualizationViewer} class and overriding several functions, the issue of
-unnecessary graph redrawing was resolved and accordingly the problem of the low gui performance.
+\ignore{Several so-called transformers which affect node and
+edge label appearance can be used together, facilitating an aesthetically- pleasing end product. Jung also provides predefined classes which allow for easy interaction with the user.
+Functionalities for graph translation, zooming, node selection, node transposition and other
+features can be achieved with minimal programming effort. One advantage of the library is
+its template based design, with the possibility to include several plug-in components such as
+rendering and transformers that affect the resulting appearance of the graph.}
+
+However there were several problems related to using the Jung library which had to be overcome: For example, in order to change the color of
+one node, the whole graph must be redrawn. Furthermore, during this process all active visualization
+transformers are applied on each graph object. Using the default implementation of the
+Jung visualization class, the application used roughly $50\%$ CPU load (of a single-core 2.5GHz CPU) when displaying a graph with 25 nodes about 50 edges--- even without any ongoing user interaction or computation task. The issue of
+unnecessary graph redrawing and poor GUI performance was largely resolved by extending
+the standard Jung \texttt{VisualizationViewer} class and re-implementing several functions. 
 
 \subsubsection {Querying Functionalities}
 \label{sec:querying_functionalities}
