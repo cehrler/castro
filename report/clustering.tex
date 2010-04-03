@@ -1,49 +1,82 @@
-The aim of graph clustering is to divide the nodes of the graph into the separate regions in such a way that the number of edges connecting the nodes inside the same region is big and the number of edges connecting the edges from the different regions is low.
+For a recommendation system based on graphs it is a desirable feature to cluster the graph into
+dense regions. For such regions it is assumed, that they correspond to highly similar or related
+documents and such clusters can form a group of a larger related unit. Hence, being able to
+automatically identify clusters can help to further discern between important and less important
+documents for the user.
 
-At first we tried to use the k-means clustering which is general vector clustering algorithm. In this case the vector representations of the documents are used. These are the same vectors as in the index representation of the documents. In this algorithm number of clusters must be determined in advance. 
+There exist several algorithms for clustering of graphical data, including rather simple
+hierarchical clustering methods and classical methods like k-means clustering
+\cite{2}. Amongst todays most popular clustering algoirthms are Spectral Clustering
+methods, which are based on eigendecompositions of graph laplacians \cite{spectral_clustering}.
 
-In the first step cluster centroids are initialized as the random vectors. 
-In the second step each vector is assigned to it's closest cluster centroid.
-In the third step each cluster centroid is updated in such a way that the cluster centroid lies exactly in the center of all vectors assigned to this cluster centroid.
-Second and third step are repeated as long as the positions of the centroids change.
- 
-This approach didn't work very well. The produced clusters were not the densely connected regions. It was probably caused by the fact, that the dimensionality of the vector space is very high and that the vectors representing the documents are very sparse.
+For the purpose of this project two clustering methods were implemented: First, $k$-means clustering
+and secondly Chinese Whispering clustering which was especially developed for NLP tasks and has the
+favorable property that it automatically determines the number of clusters.
 
+\subsubsection{k-Means Clustering}
+\label{sec:k-means_clustering}
+At first $k$-means clustering was implemented and evaluated. For this case the VMS representation of
+documents is used, i.e.\ the same vectors as in the index representation of the documents (see
+Section \ref{sec:indexing}). However, one drawback of $k$-means is that the user needs to specify
+the number of clusters $k$ a priori.
 
-We decided to use rather the clustering algorithm that is directly aiming the problem of graph clustering.
-The Chinese Whisper algorithm works as follows:
+The objective in $k$-means clustering is to minimize the total within cluster variance. For the
+initialization, $k$ cluster prototypes are randomly placed on the data. Then the following two
+steps are iterated until convergence:
+\begin{itemize}
+  \item Assign each datapoint to its closest prototype.
+  \item For each prototype compute the center of mass over all assigned datapoints and place the
+prototype in the new center of mass.
+\end{itemize}
 
-In the initialization step each vector is assigned to it's own cluster.
+This approach did not perform very well. The resulting clusters were not the densely connected
+regions which is probably caused by the fact that the dimension of the vector space is very high
+and that vectors representing the documents are very sparse. Hence, an other clustering algorithm
+for graphical data was used.
 
-At the beginning of each update round, the randomly ordered list containing all nodes is created. It means that in each update round the ordering in which we update the node's cluster assignment is different.
+\subsubsection{Chinese Whispering Clustering}
+\label{sec:chinese_whipsering_clustering}
+The Chinese Whispering (CW) clustering alorithm was developed with a focus on NLP tasks and it is a
+ranomized time-linear graph clustering algorithm with the special feature that it does not depend
+on external parameters but adapts to the domain \cite{cw_clustering}.
 
-The nodes are then pulled out from the list one by one, for each node the cluster assignment is updated. Updating of the node's assignment to the cluster works as follows: The neighbors of the focused node are grouped together according to their assignment to the clusters. The weights of the edges connecting the focused node with the nodes contained in the distinct group are summed up together. The focused node is then assigned to the cluster for which the sum was greatest. For the later use we denote this greatest sum as the cluster assignment sum.
+In the initialization each node is assigned to its own cluster. Then the follwoing update round is
+perferomed until the assignment of classes to nodes does not change anymore: In a randomized
+fashion, each node is assigned to the currently highest ranked class in the local neighborhood.
+After few iterations the stable clustering is achieved (i.e.\ there are no changes in the cluster
+assignments) or there are few nodes at the border of the clusters which periodically flip their
+cluster assignment.
 
-After few iterations the stable clustering is achieved (there are no changes in the cluster assignments) or there are few nodes are the borders of the clusters that periodically flip their cluster assignment.
+Although this is a very basic clustering alorithm, the performance on our data was satisfactory. The
+algorithm performed much better than k-means clustering. However, one of the drawbacks of CW is due
+to that teh algorithms always assigns nodes to the locally dominant cluster, although sometimes the
+node should rather stay in his own cluster.
 
-This algorithm worked much better than k-means clustering. But the problem of the algorithm is that it always change the node's cluster assignment to the strongest cluster in his neighborhood. But sometimes the node is not strongly connected to none of the clusters and we would rather not include it in any cluster.
+To handle this problem we implemented a variation of this algorithm. In the modified implementation
+the cluster assignment sum needs to be greater than a predefined threshold, otherwise the current
+node does not change its cluster assignment. In the current implementation the threshold is set to
+the average edge strength of the whole graph multiplied by the constant specified by the user.
 
-To handle this problem we implemented a variation of this algorithm. 
+Before the actual update rounds start, which works exactly like the update rounds in the standard
+version with the exception of the thresholding feature described in previous paragraph, are started
+the predefined number of initialization steps are done.
 
-In the standard version the focused node is always assigned to the cluster for which the sum of edges was greatest. 
-
-In our modified implementation the cluster assignment sum needs to be greater than a precomputed threshold, otherwise the focused node doesn't change its cluster assignment. In the current implementation this threshold is set to the mean of the edge strength over whole graph multiplied by the constant which can be specified in the clustering settings menu.
-
-Before the update rounds, which works exactly like the update rounds in the standard version with the exception of the thresholding feature described in previous paragraph, are started, the predefined number of initialization steps are done.
-
-For the purpose of the initialization steps, all edges of the graph are sorted in the descending order according to their weights. In each initialization step, one each is pulled out from the list and the standard node cluster assignment procedure is then executed on the node, for which the cluster assignment sum is greater. It means that the cluster assignment sum doesn't need to exceed the precomputed threshold.
+In the initialization step, all edges of the graph are sorted in the descending order according to
+their weights. In each initialization step, one each is pulled out from the list and the standard
+node cluster assignment procedure is then executed on the node, for which the cluster assignment sum
+is greater. It means that the cluster assignment sum doesn't need to exceed the precomputed
+threshold.
 
 By this we want to start up the clustering process because it may be hard to exceed the precomputed threshold at any node when all the nodes have their own cluster. Selecting the nodes attached to the edges with great weight ensures that the cluster assignments done during these initialization steps are not relevant.
 
-The modified Chinese Whisper algorithm is a recent feature and it wasn't properly evaluated yet. With the right setting of the parameter the resulting clusters looks better than the clusters achieved by the standard algorithm. In the feature we should experiment with the different parameter settings. We should also find out whether it's a good idea to base the mean of the edge weights as the basis for the threshold computation. It may be better to choose predefined constant. We should also evaluate the impact of the initialization steps, how important they are for the algorithm and whether there is a better way how to start up the clustering.
+The modified Chinese Whisper algorithm is a recent feature and it was not properly evaluated yet.
+Visual inspections with reasonable parameter settings revealed, that the the resulting cluster
+assignment look better, compared to the ones obtained from classic CW clustering. However, for the
+clustering algorithm there is plenty of room for further improvement and a need for extended
+evaluation. Ideas for improvement are e.g.\ experimentation with the thresholding constant
+and implementation of different initialization schemas.
 
-Bibliography:
-Chinese Whispers - an Efficient Graph Clustering Algorithm
-and its Application to Natural Language Processing Problems
-                            Chris Biemann
-                University of Leipzig, NLP Department
-                         Augustusplatz 10/11
-                      04109 Leipzig, Germany
-              biem@informatik.uni-leipzig.de
-
+To summarize, graph clustering has the potential enhance our recommendation system in such a way
+that it can help the user to identify tightly coupled sets of documents in larger graphs that
+can be subject of further investigation.
 
