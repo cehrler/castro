@@ -1,4 +1,4 @@
-The clustering functionality was the last function that we added to the project. Chinese Whisper clustering and the two modified variants of it were implemented. By observing the produced clusters it is obvious that the clustering does the proper with respect to the underlying similarity measures (This means that the number of edges connecting different clusters is rather small while the number of edges connecting the nodes inside the same cluster is high). Another question is whether the marked clusters really denote the sets of semantically connected documents. This question touches the general difficulties of the evaluation of our project. 
+The clustering functionality was the last function that was added to the project. Chinese Whisper clustering and the two modified variants of it were implemented. By observing the produced clusters it is obvious that the clustering does the proper with respect to the underlying similarity measures (This means that the number of edges connecting different clusters is rather small while the number of edges connecting the nodes inside the same cluster is high). Another question is whether the marked clusters really denote the sets of semantically connected documents. This question touches the general difficulties of the evaluation of our project. 
 
 The behaviour of two modified versions of Chinese Whisper clustering algorithms behaved differently than the standard one. 
 
@@ -6,5 +6,7 @@ If the threshold value was set to high, then no cluster was found because none o
 
 When standard algorithm was used, then most of the nodes were included in the clusters of size bigger than one (In contrary to the modified versions) 
 
-The so called "Give it to the poor" version of Chinese Whisper clustering tended to form clusters of smaller size, we assume that this behaviour is more suitable for the purpose of our application. Because there is usually not very great amouth of documents related to the same historical event or any more specific focus of the historical research. 
+The so called "Give it to the poor" version of Chinese Whisper clustering tended to form clusters of smaller size, it is assumed that this behaviour is more suitable for the purpose of our application. Because there is usually not very great amouth of documents related to the same historical event or any more specific focus of the historical research. 
+
+The Chinese Whisper algorithm has very low computationaly complexity, its running time is linear proportionally to the number of edges in the graph. 
 
