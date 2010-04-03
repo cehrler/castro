@@ -110,7 +110,7 @@ public class SpeechDetailPanel
 			Map<String, Boolean> locsMap = new HashMap<String, Boolean>();
 			Map<String, Boolean> orgsMap = new HashMap<String, Boolean>();
 			
-			
+			System.err.println("persNE.size" + (new ArrayList<NamedEntity>(persNE)).size());
 			
 			NamedEntity ne;
 			for (Iterator<NamedEntity> it = persNE.iterator(); it.hasNext(); )

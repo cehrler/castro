@@ -15,15 +15,6 @@ public class ChineseWhisperClusteringBasic extends ChineseWhisperClustering {
 	
 	public ChineseWhisperClusteringBasic() {}
 	
-	private static void PermuteList(List<Node> ln)
-	{			
-			for (int k = ln.size() - 1; k > 0; k--) {
-			    int w = (int)Math.floor(Math.random() * (k+1));
-			    Node temp = ln.get(w);
-			    ln.set(w, ln.get(k));
-			    ln.set(k, temp);
-			}
-	}
 	
 	@Override
 	public void Evaluate(Graph g, int maxNumClusters, int numIterations)

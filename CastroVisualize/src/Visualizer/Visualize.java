@@ -242,6 +242,8 @@ public class Visualize implements ItemListener, MouseListener {
 			n = ln.get(i);
 			clusterID = n.GetCluster();
 			
+			if (clusterID == -1) continue;
+			
 			double xnew = (layout_width / 2) + Math.cos(angleShift * clusterID) * radius + (50 - Math.random() * 100);
 			double ynew = (layout_height / 2) + Math.sin(angleShift * clusterID) * radius + (50 - Math.random() * 100);
 			

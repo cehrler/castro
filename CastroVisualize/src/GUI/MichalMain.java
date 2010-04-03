@@ -26,12 +26,14 @@ import java.util.Map;
 import java.util.Set;
 
 import Functionality.*;
+import Functionality.ChineseWhisperClustering.ChineseWhisperTypesEnum;
 import Functionality.SimMatrixElem.SimilarityMeasure;
 
 public class MichalMain {
 
 	public static void main(String[] args) {
 		
+		SettingsWindow.ChineseWhisperClustering_type = ChineseWhisperTypesEnum.normalizing;
 		
 		Functionality.DataModule.InitConfiguration();
 		Functionality.DataModule.Init(SettingsWindow.currIndex,
@@ -40,13 +42,15 @@ public class MichalMain {
 				SettingsWindow.organizationsCoef,
 				SettingsWindow.lexicalSimilarityCoef);
 
-		SettingsWindow.maxNumClusters = 10;
+		SettingsWindow.maxNumClusters = 30;
 		SettingsWindow.ChineseWhisperClustering_minimalSizeOfCluster = 3;
 		SettingsWindow.ChineseWhisperClustering_tempGraphDensity = 4;
 		SettingsWindow.ChineseWhisperClusteringAdjusted_activationThresholdMultiplier = 1.5;
 		SettingsWindow.ChineseWhisperClusteringAdjusted_numMasterEdges = 2;
 		SettingsWindow.ChineseWhisperClusteringAdjusted_activationThresholdMultiplierIncrement = 0.5;
 		SettingsWindow.ChineseWhisperClustering_numberOfIterations = 5;
+		
+		SettingsWindow.ChineseWhisperClusteingNormalizing_sizeAddConstant = 0.3;
 		
 		Graph g = DataModule.getGraphThreshold("1940-01-01", "2000-12-31", "NULL", "NULL", "NULL", new ArrayList<String>(), new ArrayList<Double>(), 2000, 0.5, 0.8, 1.2);
 		
@@ -90,7 +94,7 @@ public class MichalMain {
 		{
 			//FileOutputStream fos = new FileOutputStream("/home/michalisek/clustering.out");
 			//OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
-			BufferedWriter br = new BufferedWriter(new FileWriter("/home/michalisek/clustering.out"));
+			BufferedWriter br = new BufferedWriter(new FileWriter("/home/michalisek/clustering-giveItToThePour-smoothed.out"));
 	
 			
 			
