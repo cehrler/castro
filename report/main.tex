@@ -33,6 +33,7 @@
 % This is now the recommended way for checking for PDFLaTeX:
 \usepackage{ifpdf}
 \newcommand{\note}[1]{{\textbf{Note:} \color{blue} #1}}
+\newcommand{\ignore}[1]{}
 %\newif\ifpdf
 %\ifx\pdfoutput\undefined
 %\pdffalse % we are not running PDFLaTeX
@@ -53,6 +54,7 @@
 \newcommand{\scare}[1]{``#1''}
 \newcommand{\meta}[1]{\textsc{#1}}
 \newcommand{\code}[1]{{\tt #1}}
+
 
 \begin{document}
 
@@ -88,7 +90,7 @@
       \textbf{Supervisors:} Caroline Sporleder \& Martin Schreiber & \\
       Computational Linguistics and Phonetics & \begin{large}\textbf{Todd Shore}\end{large} \\
       Saarland University & \begin{large}\texttt{tshore@coli.uni-sb.de} \end{large}
-    \end{tabular}
+    \end{tabular} 
     \end{figure}
 \end{titlepage}
 \pagebreak

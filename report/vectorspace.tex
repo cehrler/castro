@@ -1,39 +1,43 @@
-The Vector Space Model (VSM) is a model for representing text documents or in general arbitrary data as vectors. In information retrieval, the VSM is often used to represent both documents and queries as points in the euclidean space. In the VSM the value of each element of the vector corresponds to the importance of a term for the representation of the query or the document. The main advantage of the VSM is that it has a convenient algebraic formulation. It is also more flexible than boolean models. In boolean models documents that do not exactly match the query are rejected. However, in many real word scenarios the situation is different: The relevance of the document for the user is often graded rather then binary. The VSM can model this relevance scale.
+\note{ADD INTRODUCTION: WHAT do we do with the data in the databases? WHY do we do it? WHAT does this enable us to do? (i.e.\ later)}
 
-The vectors in VSM are usually normalized in order to have the same length (e.g.\ unit length), otherwise the model would favor larger documents.
+The Vector Space Model (VSM) is a model for representing text documents or arbitrary data in general as vectors. In IR, the VSM is often used to represent both documents and queries as points in Euclidean space. In the VSM the value of each element of the vector corresponds to the importance of a term for the representation of the query or the document. The main advantage of the VSM is that it has a convenient algebraic formulation. It is also more flexible than boolean models. In boolean models, documents that do not exactly match the query are rejected. However, in many real word scenarios, the situation is different: The relevance of the document for the user is often graded rather then binary. The VSM can model this relevance scale.
+
+The vectors in VSM are usually normalized in order to have the same length (e.g.\ unit length)--- Otherwise, the model would favor larger documents.
 
 \subsubsection{Indexing}
 \label{sec:indexing}
-In information retrieval, the index is a data structure that stores the vector representation of documents in a vector model. Given a set of documents $\mathcal{D}$ together with a set of terms $\mathcal{T}$ the index is a matrix $D \in \mathbb{R}^{|\mathcal{D}|\times |\mathcal{T}|}$ where $D_{d,i}$ corresponds to the importance of term $i$ in document $d$. In each column if the index matrix the weights for one distinct term over all the documents is stored. 
+In IR, the index is a data structure which stores the vector representation of documents in a vector model. Given a set of documents $\mathcal{D}$ together with a set of terms $\mathcal{T}$ the index is a matrix $D \in \mathbb{R}^{|\mathcal{D}|\times |\mathcal{T}|}$ where $D_{d,i}$ corresponds to the importance of term $i$ in document $d$. In each column, the weights for one distinct term over all the documents is stored.
 
-Index matrices are usually very sparse and in our implementation they is represented as a sparse matrix (e.g. linked lists). In memory we only store coordinates of the nonzero entries. All the document vectors were normalized in advance. This allows to compute cosine similarities for documents and queries without normalization effort.
+Index matrices are often very sparse: In our implementation, they are represented as a sparse matrix (e.g.\ linked lists)--- In the data structures, only coordinates of the non-zero entries are stored, all of the document vectors being normalized in advance. This allows the compute cosine similarities for documents and queries to be computed without being normalized first.
 
-Our model contains several index matrices. We created an index matrix for each NE type and a general index for the non named entity terms (all terms occuring in the documents). Our current implementation of the VSM does not use a TF-IDF measure for the adjustment of query terms. We only use TF-IDF for adjusting to the document representation. This means that all the values corresponding to the search terms in the query remain the same in the vector representation of the query.
+Our model contains several index matrices. We created an index matrix for each NE type and a general index for the non-NE terms (all terms occurring in the documents). This means that all the values corresponding to the search terms in the query remain the same in the vector representation of the query.
 
 \subsubsection{Term Weighting}
 \label{sec:term_weighting}
-There are several measures that can be used to express the importance of the index term for the document. The most widely used are TF and TF-IDF.
+There are several measures that can be used to express the importance of the index term for the document, perhaps the most widely used being TF and TF-IDF.
 
-TF stands for term frequency and it measures directly how many times a word occurred in the document. Hence, TF scores grow linearly with the number of occurrences of a term in the document. The TF score of term $i$ in document $d$ is defined as follows:
+TF is the frequency of a term in a given document. Hence, TF scores grow linearly with the number of occurrences of a term in the document. The TF score of term $i$ in document $d$ is defined as:
 \[\text{TF}_d(i) = \frac{n_d(i)}{\sum_{i' \in \mathcal{T}}{n_d(i')}}\]
-where $n_d(i)$ counts the number of occurences of term $i$ in document $d$ and $\mathcal{T}$ denotes the set of all terms. 
+where $n_d(i)$ denotes the number of occurrences of term $i$ in document $d$ and $\mathcal{T}$ denotes the set of all terms. 
 
-TF-IDF stands for term frequency - inverse document frequency. This measure is motivated on the notion that terms which occur in almost every document are not very useful for searching purposes because they are so common. Conversely, terms which occur in only a few documents have much greater discrimination power. This is exploited in the TF-IDF score by reweighting the TF score. The TF-IDF score of term $i$ in document $d$ is is defined by:
+TF-IDF is the product of term frequency and the logarithm of inverse document frequency. This measure is based on the observation that terms which occur more commonly in documents overall are less useful than terms which occur less commonly in documents overall. The TF-IDF score of term $i$ in document $d$ is is defined as
 \[\text{TF-IDF}_d(i)= \text{TF}_d(i)\log{\left(\frac{|D|}{|\lbrace d' : t(i) \in d' \rbrace|}\right)}\]
-The TF-IDF score of term $i$ drops according to the logarithm of the number of documents that contain term $i$. The TF-IDF score of terms which are contained in every single document is always equal to zero.
+The TF-IDF score of term $i$ is proportional to the logarithm of the inverse fraction of documents that contain term $i$; The smaller the logarithm, the lower the TF-IDF score. Thus, the TF-IDF score of terms which are contained in every document always equals $0$.
 
 \subsubsection{Computing Similarity between Documents}\label{sec:computing_similarity_between_documents}
 
-In VSM we need to measure the similarity between vectors. The similarity can expressed by the cosine similarity measure:
-
+In VSM, it is necessary to measure the similarity between vectors. This can expressed by the cosine similarity measure:
 \[\text{cosim}(d,d') = \sum_{k \in \mathcal{T}}\frac{d(k)d'(k)}{|d||d'|}\]
+It expresses the cosine angle between the vectors $d$ and $d'$. The cosine measure is equal to $1$ for the parallel vectors and is equal to $0$ for perpendicular vectors.
 
-It expresses the cosine angle between the vectors $d$ and $d'$. The cosine measure is equal to one for the paralell vectors and is equal to zero for perpendicular vectors.
+\note{ADD SOMETHING HERE!!!}
 
-We arrange the retrieved documents according to their similarity to each other. To this end, we store the similarity of each pair of documents in similarity matrices. The matrices correspond to the four different indexes: similarity according to persons, locations, organizations and general vocabulary. These matrices are not sparse and each cell is represented in the memory.   
+The retrieved documents were arranged according to their similarity to each other. To this end, the similarity of each pair of documents was stored in similarity matrices. The matrices correspond to the four different indices: similarity according to \meta{Persons}, \meta{Locations} and \meta{Organizations} and to general vocabulary. These matrices are not sparse (unlike the index matrices) and each entry is represented in the memory.   
 
 \subsubsection{Keyword and Metadata Search}\label{sec:keyword_search}
 
-For VSM the searching proceeds as follows. The search query is transformed into its vector representation in the same manner as it is done for the document. The cosine similarity between the query vector and the vector representation of each document is computed. Then, the search results are ordered according to their similarity to the user query and presented as result. 
+Searching in VSMs is implemented by transforming a search query into its vector representation in the same fashion as a document is. The cosine similarity between the query vector and the vector representation of each document is computed. The search results are then ordered according to their similarity to the user query and are returned as output. 
 
-Document retrieval in our model consists of two steps. In the first step, documents that do not satisfy the conditions concerning the type and date of the document, are filtered out. In the second step, documents are sorted in descending order according to their cosine measure similarity with the query. If the search is only on meta data, documents are not sorted. Only the subset of the best results of the size specified by the user proceeds to the next stage.
+Document retrieval using this model consists of two steps: Firstly, documents that do not satisfy the conditions concerning the type and date of the document are filtered out. Secondly, documents are sorted in descending order according to their cosine similarity to the query. However, if the search is solely on metadata, documents are not sorted. Only the subset of the best results of the size specified by the user proceeds to the next stage.
+
+\note{ADD CONCLUSION: WHY is this useful? WHAT do we use this for? HOW does it help in the project? e.g.\ ``By precomputing a database of bla bla ba... aliasing can be performed in real time and I can get a good grade for this fucking course''}
