@@ -1,4 +1,7 @@
 package Functionality;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -180,7 +183,56 @@ public class Node implements Comparable<Object> {
 	}
 	@Override
 	public String toString() {
-		return "";//+ this.id;
+		String s = "---- ID = " + id + ", Date = " + this.getSpeech_date() + ", "  + headline + "\n";
+		
+		/*List<NamedEntity> pers = new ArrayList<NamedEntity>(this.getNamedEntitiesPerson());
+		List<NamedEntity> locs = new ArrayList<NamedEntity>(this.getNamedEntitiesLocations());
+		List<NamedEntity> orgs = new ArrayList<NamedEntity>(this.getNamedEntitiesOrganizations());
+		
+		Comparator<NamedEntity> comparator = new Comparator<NamedEntity>() {
+
+			private Double pom1;
+			private Double pom2;
+			
+			public int compare(NamedEntity arg0, NamedEntity arg1) {
+				pom1 = arg0.getWeight();
+				pom2 = arg1.getWeight();
+				return pom1.compareTo(pom2);
+			}
+		};
+		
+		Collections.sort(orgs, comparator); 
+		Collections.reverse(orgs);
+		
+		Collections.sort(locs, comparator);
+		Collections.reverse(locs);
+		
+		Collections.sort(pers, comparator);
+		Collections.reverse(pers);
+		
+		s = s + "10 persons: ";
+		for (int i = 0; i < Math.min(10, pers.size()); i++)
+		{
+			if (i > 0) s = s + ", ";
+			s += pers.get(i).getText();
+		}
+		
+		s += "\n10 locations: ";
+		for (int i = 0; i < Math.min(10, locs.size()); i++)
+		{
+			if (i > 0) s = s + ", ";
+			s += locs.get(i).getText();
+		}
+
+		s += "\n10 organizations: ";
+		for (int i = 0; i < Math.min(10, pers.size()); i++)
+		{
+			if (i > 0) s = s + ", ";
+			s += pers.get(i).getText();
+		}
+		s += "\n";*/
+
+		return s;//+ this.id;
 	}
 
 }

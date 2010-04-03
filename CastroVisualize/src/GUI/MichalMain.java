@@ -11,9 +11,18 @@
 package GUI;
 
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import Functionality.*;
@@ -22,8 +31,92 @@ import Functionality.SimMatrixElem.SimilarityMeasure;
 public class MichalMain {
 
 	public static void main(String[] args) {
+		
+		
+		Functionality.DataModule.InitConfiguration();
+		Functionality.DataModule.Init(SettingsWindow.currIndex,
+				SettingsWindow.smoothedIndex, SettingsWindow.smoothedSimMatrix,
+				SettingsWindow.personsCoef, SettingsWindow.locationsCoef,
+				SettingsWindow.organizationsCoef,
+				SettingsWindow.lexicalSimilarityCoef);
+
+		SettingsWindow.maxNumClusters = 10;
+		SettingsWindow.ChineseWhisperClustering_minimalSizeOfCluster = 3;
+		SettingsWindow.ChineseWhisperClustering_tempGraphDensity = 4;
+		SettingsWindow.ChineseWhisperClusteringAdjusted_activationThresholdMultiplier = 1.5;
+		SettingsWindow.ChineseWhisperClusteringAdjusted_numMasterEdges = 2;
+		SettingsWindow.ChineseWhisperClusteringAdjusted_activationThresholdMultiplierIncrement = 0.5;
+		SettingsWindow.ChineseWhisperClustering_numberOfIterations = 5;
+		
+		Graph g = DataModule.getGraphThreshold("1940-01-01", "2000-12-31", "NULL", "NULL", "NULL", new ArrayList<String>(), new ArrayList<Double>(), 2000, 0.5, 0.8, 1.2);
+		
+		System.err.println("number of clusters: " + g.GetNumberOfClusters());
+		
+		Map<Integer, Integer> clusterIdToNumNodes = new HashMap<Integer, Integer>();
+		Map<Integer, String> clusterToInfo = new HashMap<Integer, String>();
+		int clusterID;
+		List<Node> ln = g.getNodes();
+		
+		for (int i = 0; i < ln.size(); i++)
+		{
+			clusterID = ln.get(i).GetCluster();
+			
+			if (clusterIdToNumNodes.containsKey(clusterID))
+			{
+				clusterIdToNumNodes.put(clusterID, clusterIdToNumNodes.get(clusterID) + 1);
+			}
+			else
+			{
+				clusterIdToNumNodes.put(clusterID, 1);
+			}
+			
+			if (clusterID >= 0)
+			{
+				String nodeInfo = ln.get(i).toString();
+				
+				if (clusterToInfo.containsKey(clusterID))
+				{
+					clusterToInfo.put(clusterID, clusterToInfo.get(clusterID) + nodeInfo);
+				}
+				else
+				{
+					clusterToInfo.put(clusterID, nodeInfo);
+				}
+			}
+		}
+		
+		
+		try
+		{
+			//FileOutputStream fos = new FileOutputStream("/home/michalisek/clustering.out");
+			//OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
+			BufferedWriter br = new BufferedWriter(new FileWriter("/home/michalisek/clustering.out"));
+	
+			
+			
+			for (Iterator<Integer> it = clusterIdToNumNodes.keySet().iterator(); it.hasNext(); )
+			{
+				clusterID = it.next();
+				System.err.println("clusterID: " + clusterID + ", numDocs: " + clusterIdToNumNodes.get(clusterID));
+				
+				if (clusterID >= 0)
+				{
+					br.write("\n---------------------\n\n");
+					br.write("ClusterID: " + clusterID + "\n");
+					br.write(clusterToInfo.get(clusterID));
+				}
+			}
+			
+			br.flush();
+			br.close();
+		} 
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			System.exit(1);
+		}
 		//makeBinIndexes();
-		makeSimMatrices(SimMatrixElem.SimilarityMeasure.euclidean);
+		//makeSimMatrices(SimMatrixElem.SimilarityMeasure.euclidean);
 		
 		//RunTest();
 		

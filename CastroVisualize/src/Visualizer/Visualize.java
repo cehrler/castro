@@ -1,10 +1,12 @@
 package Visualizer;
 
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+
 import java.util.Map;
 import java.util.Set;
 import java.awt.BasicStroke;
@@ -39,8 +41,6 @@ import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.RadialTreeLayout;
 import edu.uci.ics.jung.algorithms.layout.SpringLayout;
 import edu.uci.ics.jung.algorithms.layout.SpringLayout2;
-import edu.uci.ics.jung.algorithms.layout.StaticLayout;
-import edu.uci.ics.jung.algorithms.layout3d.AbstractLayout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseMultigraph;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
@@ -67,8 +67,12 @@ import GUI.CastroGUI;
 
 public class Visualize implements ItemListener, MouseListener {
 	
+<<<<<<< HEAD
+	VisualizationViewer<Functionality.Node,Functionality.Edge> vv;	
+=======
 	MyVisualizationViewer<Functionality.Node,Functionality.Edge> vv;
 	
+>>>>>>> 98aa748109be4d2cea8a7ed67037386bd2c377ee
 	Graph<Functionality.Node, Functionality.Edge> qt;
 	
 	private SpringLayoutWeighted layout;
