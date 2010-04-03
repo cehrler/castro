@@ -54,10 +54,6 @@
 \newcommand{\meta}[1]{\textsc{#1}}
 \newcommand{\code}[1]{{\tt #1}}
 
-\title{History Explorer: Similarity Based Graphical Navigation System for Collections of Historical Documents}
-\author{Todd Shore, Carsten Ehrler, Michal Richter and Yevgeni Berzak}
-\date{\today}
-
 \begin{document}
 
 \ifpdf
@@ -69,66 +65,45 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% begin title page
 
 \begin{titlepage}
-\begin{center}
-  \vspace{.8in}
-  \begin{large}
-    Seminar Report\\
-  \end{large}
-  \vspace{.1in}
-  \begin{Large}
-    Unlocking the Secrets of the Past:\\
-    Text Mining for Historical Documents\\
-  \end{Large}
-  \vspace{.1in}
-  \begin{large}
-    Supervisors:\\ Caroline Sporleder \& Martin Schreiber\\
-  \end{large}
+\begin{figure}[ht]
+\sc\centering
+\vspace{20mm}
+  \begin{Huge}
+     History Explorer\\
+  \end{Huge}
+  \vspace{20mm}
+  \begin{Large}A Similarity-Based Graphical Navigation System for Collections of Historical Documents\end{Large}
+\end{figure}
 
-  \vspace{1.2in}
-
-  \begin{LARGE}
-    \textbf{History Explorer:\\Similarity Based Graphical Navigation System for\\Collections of Historical Documents\\}
-  \end{LARGE}
-  \today
-  \vspace{1.5in}
-
-  \end{center}
-
-  \begin{flushright}
-    \begin{tabular}{l}
-      \begin{large}\textbf{Yevgeni Berzak}\end{large} \\
-      \begin{large}\texttt{jeniabk@gmail.com} \end{large}
-      \vspace{.20in}\\
-      \begin{large}\textbf{Carsten Ehrler}\end{large} \\
-      \begin{large}\texttt{carsten.ehrler@gmail.com} \end{large}
-      \vspace{.20in}\\
-      \begin{large}\textbf{Michal Richter}\end{large} \\
-      \begin{large}\texttt{michalisek@gmail.com} \end{large}
-      \vspace{.20in}\\
-      \begin{large}\textbf{Todd Shore}\end{large} \\
-      \begin{large}\texttt{t.c.shore@gmx.com} \end{large}
+	\begin{figure}[b]
+    \begin{tabular}{l l}
+    \vspace{10mm}
+      & \begin{large}\textbf{Yevgeni Berzak}\end{large} \\
+      & \begin{large}\texttt{jeniabk@gmail.com} \end{large}\\
+      \\
+      \textsc{Project Seminar} & \begin{large}\textbf{Carsten Ehrler}\end{large} \\
+       \textsc{``Unlocking the Secrets of the Past:} & \begin{large}\texttt{carsten.ehrler@gmail.com} \end{large}\\
+        \textsc{Text Mining for Historical Documents''} & \\
+       \textsc{22 Feb--5 Mar 2010} & \begin{large}\textbf{Michal Richter}\end{large} \\
+       & \begin{large}\texttt{michalisek@gmail.com} \end{large}\\
+      \textbf{Supervisors:} Caroline Sporleder \& Martin Schreiber & \\
+      Computational Linguistics and Phonetics & \begin{large}\textbf{Todd Shore}\end{large} \\
+      Saarland University & \begin{large}\texttt{t.c.shore@gmx.com} \end{large}
     \end{tabular}
-  \end{flushright}
+    \end{figure}
 \end{titlepage}
-
-\newpage
-\thispagestyle{empty}
-\mbox{}
-\newpage
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%% end title page
-
-%\maketitle
-\tableofcontents
-\newpage
+\pagebreak
 
 \begin{abstract}
+\input{abstract}
 \end{abstract}
+\pagebreak
+\tableofcontents
 
 \section{Introduction}\label{sec:introduction}
 \input{introduction}
 
-\section{Main Part}\label{sec:main_part}
+\section{Methodology and Implementation}\label{sec:main_part}
 \input{mainpart}
 
 \section{Evaluation}\label{sec:evaluation}
