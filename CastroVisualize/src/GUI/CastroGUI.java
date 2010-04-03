@@ -257,8 +257,8 @@ public class CastroGUI implements ActionListener, ChangeListener,
 
 		JMenu fileMenu = new JMenu("File");
 		
-		JMenuItem saveHistoryMenuItem = new JMenuItem("Save History");
-		JMenuItem loadHistoryMenuItem = new JMenuItem("Load History");
+		//JMenuItem saveHistoryMenuItem = new JMenuItem("Save History");
+		//JMenuItem loadHistoryMenuItem = new JMenuItem("Load History");
 		
 		JMenuItem exitMenuItem = new JMenuItem("Exit");
 		
@@ -269,8 +269,8 @@ public class CastroGUI implements ActionListener, ChangeListener,
 			}
 		});
 		
-		fileMenu.add(saveHistoryMenuItem);
-		fileMenu.add(loadHistoryMenuItem);
+		//fileMenu.add(saveHistoryMenuItem);
+		//fileMenu.add(loadHistoryMenuItem);
 		fileMenu.add(exitMenuItem);
 		menuBar.add(fileMenu);
 		
