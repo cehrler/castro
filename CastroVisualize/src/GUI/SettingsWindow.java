@@ -83,7 +83,7 @@ public class SettingsWindow implements ActionListener {
 	public static int ChineseWhisperClustering_numberOfIterations = 15;
 	public static double ChineseWhisperClusteringAdjusted_activationThresholdMultiplierIncrement = 0.5;
 	
-	public static SimMatrixElem.SimilarityMeasure similarityMeasure = SimMatrixElem.SimilarityMeasure.manhattan;
+	public static SimMatrixElem.SimilarityMeasure similarityMeasure = SimMatrixElem.SimilarityMeasure.cosine;
 	
 	public SettingsWindow()
 	{

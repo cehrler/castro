@@ -32,6 +32,10 @@ The most common measure is the cosine similarity measure.
 \[\text{cosim}(d,d') = \sum_{k \in \mathcal{T}}\frac{d(k)d'(k)}{|d||d'|}\]
 It expresses the cosine angle between the vectors $d$ and $d'$. The cosine measure is equal to $1$ for the parallel vectors and is equal to $0$ for perpendicular vectors.
 
+We also used another similarity measure which we denoted as "Manhattan similarity measure". The reason is that the Manhattan similarity measure between two vectors can be described using the manhattan distance between zero vector and the vector whose value for each column is equal to the minimum value of those vectors for that column.
+
+\[\text{manhattan}(d,d') = \sum_{k \in \mathcal{T}}min[d(k), d'(k)]\]
+
 
 \note{Michal: I added some stuff here. You are welcomed to fix it and complete it. ADD SOMETHING HERE!!!}
 
