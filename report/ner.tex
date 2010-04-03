@@ -13,12 +13,14 @@ distributional similarity lexicon. A shell script was used to run the SNER on ea
 \begin{figure}[ht]
 \centering
 \caption{Global statistics for NEs. The table shows the number of distinct NEs found by the SNER and the average number of occurrences of each NE type per document.}
-\begin{tabular}{l|ll}
-  Named Entity Type      & Number & Average/Document\\
-  \hline
-  \textsc{Persons}       & 6515   & 21.5\\
-  \textsc{Organizations} & 3667   & 44.7\\
-  \textsc{Locations}     & 6612   & 17.1\\
+\begin{tabular}{l rr}
+\toprule
+  NE Type      & Number & Average/Document\\
+  \midrule
+  \meta{Persons}       & 6515   & 21.5\\
+  \meta{Organizations} & 3667   & 44.7\\
+  \meta{Locations}     & 6612   & 17.1\\
+  \bottomrule
 \end{tabular}
 \label{fig:ne_statistics}
 \end{figure}
