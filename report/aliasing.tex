@@ -1,7 +1,7 @@
 Relying on the raw output of the SNER might not be sufficient if we desire reliable counts of NE's. One of the major problems is that the same
 NE can be manifested in a variety of phrases. In order to know how many times a certain NE appears in a document, we should be able to identify all the phrases that refer to this entity. This task is known as CRR, and as described previously is extremely difficult to solve.
 
-Nevertheless, it is possible to approximate CRR by focusing on aliasing--- grouping linguistic variants of names. Our aim is to increase the reliability of the IR and the document similarity measures by not trating strings such as \lingform{Castro} , \lingform{Dr. Castro} and \lingform{Fidel Castro} as different terms. Our approach to aliassing relies on string similarity. We measure similarity between NE's that belong to the same class using String Kernels. This method allows for more flexibility then other methods such as edit distance. In a second stage we expand (or "smooth") vector representations of documents with the aliases of the NE's they contain. This allows more reliable similarity measurement of document similarity as well as indirect query expansion for NE's. 
+Nevertheless, it is possible to approximate CRR by focusing on aliasing--- grouping linguistic variants of names. Our aim is to increase the reliability of the IR and the document similarity measures by not treating strings such as \lingform{Castro} , \lingform{Dr. Castro} and \lingform{Fidel Castro} as different terms. Our approach to aliasing relies on string similarity. We measure similarity between NE's that belong to the same class using String Kernels. This method allows for more flexibility then other methods such as edit distance. In a second stage we expand (or "smooth") vector representations of documents with the aliases of the NE's they contain. This allows more reliable similarity measurement of document similarity as well as indirect query expansion for NE's. 
 
 String kernels are kernel methods which operate on the domain of strings over
 a finite alphabet $\Sigma$ and are often applied in the fields of IR and bioinformatics. In this project, a
@@ -11,7 +11,7 @@ where $\phi_u^p(s)$ counts the number of occurrences of the substring $u$ of len
 associated Hilbert space for this kernel is $\mathbb{R}^{|\Sigma^p|}$--- the space of all possible
 strings over $\Sigma$ of length $p$. The $p$-spectrum string kernel can be efficiently implemented by using trie data-structures and $n$-gram models.
 
-Operating on the characters level this method allows to to calculate a similarity matrix between each pair of named entities of the same type. 
+Operating on the characters level, this method allows to calculate a similarity matrix between each pair of named entities of the same type. 
 The complete kernel matrix $\textbf{K}$ was computed for all three types of NEs, where $\textbf{K}_{i,j}$ is the similarity measure of the NEs $i$ and $j$. Since many of the entries in $\textbf{K}$ are near zero, fixed-value thresholding was applied after the kernel matrix computation, storing the resulting sparse matrices for further use.
 
 Having calculated this similarity matrix, we can apply it to the matrices that contain the document vectors. As a result, if the similarity rate of a possible alias of a NE that appears in the document exceeds a certain threshold the value of this alias in the document vector becomes non-zero. This approach is examplified in the following figure.
@@ -32,11 +32,11 @@ $\bar q$, where $\bar q = \mathcal{S}q$.}
      \end{pmatrix}}_{\mathcal{S}}
      \underbrace{\begin{pmatrix}
      1\\ 0\\0 
-     \end{pmatrix}}_{q}
+     \end{pmatrix}}_{d}
      =
      \underbrace{\begin{pmatrix}
      1\\ 0.8\\0 
-     \end{pmatrix}}_{\bar q}
+     \end{pmatrix}}_{\bar d}
   \]
   \label{eq:example_string_sim}
 \end{figure}
