@@ -4,14 +4,12 @@ More importantly, the notions of similarity or relatedness are very difficult to
 
 Having said that, we would like to present one example which according to our intuitions presents interesting results to a possible user query.
 
-\note{EXAMPLE HERE}
-
 The results of the document similarity visualization are mixed: While there are many relationships represented between documents, the qualitative value of these relationships is irregular.
 
 A search for \code{"Central Committee"} was conducted between the years \code{1959} and \code{1995}, retrieving the ten most relevant documents. The resulting graph based on NE similarity showed a large number of 
 edges (NE links) between documents, but after a qualitative evaluation of the document contents, it was discovered that the documents were not strongly related. Additionally, activating CWC clustering was ineffective: The CWC clustering algorithm did not discern any distinct density regions in the graph.
 
-However, querying more specific terms revealed different results: A query was entered using the terms \code{Giron}, and \code{Kennedy}, retrieving the 10 most relevant documents and enabling Chinese Whisper Clustering (set to a maximum of four clusters). Two distinct clusters of documents were produced: One was of documents directly related to the 1961 Bay of Pigs Invasion (a.k.a.\ Playa Gir\'{o}n), e.g.\ speeches on the anniversary of the event, or victory speeches. However, the other cluster was composed largely of documents in which \lingform{Playa Giron} was mentioned but the document was not directly related to the event. Most featured political and/or economic topics as well as the topic of US--Cuban relations or aggression.
+However, querying more specific terms revealed different results: A query was entered using the terms \code{Giron} and \code{Kennedy}, retrieving the 10 most relevant documents and enabling Chinese Whisper Clustering (set to a maximum of four clusters). Two distinct clusters of documents were produced: One was of documents directly related to the 1961 Bay of Pigs Invasion (a.k.a.\ Playa Gir\'{o}n), e.g.\ speeches on the anniversary of the event, or victory speeches. However, the other cluster was composed largely of documents in which \lingform{Playa Giron} was mentioned but the document was not directly related to the event. Most featured political and/or economic topics as well as the topic of US--Cuban relations or aggression.
 
 While all of these documents could be retrieved with a simple keyword-based search, the clustering of documents into similar themes is novel compared to a simple ranking of documents as seen in traditional keyword-based searching.
 
