@@ -35,12 +35,12 @@ features can be achieved with minimal programming effort. One notably strong poi
 its template based design with the possibility to include several plug-in components such as
 rendering and transformers that affect the resulting appearance of the graph.
 
-However there are some aspects of the \texttt{Jung} library, that were annoying fro the project.
+However there are some aspects of the \texttt{Jung} library, that presented difficulties for the project.
 First, it is difficult to achieve certain low level functionalities, like e.g.\ monitoring the
 on-screen position of a fixed point while translation of the graph was performed. Secondly, several
 operation are implemented in a circumstantial way. For example, in order to change the color of
 one node the whole graph must be redrawn and during this process all active visualization
-transformers are applied on each graph object.When we used the default implementation of the
+transformers are applied on each graph object. When we used the default implementation of the
 \texttt{Jung} visualization class, the application consumed more then 50\% of the processor time
 even though there was no ongoing user interaction or computation task (this depended on the size of
 the presented graph --- the statement holds for graph with 25 nodes about 50 edges). By extending
