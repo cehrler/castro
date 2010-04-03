@@ -13,8 +13,6 @@ WEBSITE: http://github.com/cehrler/castro
 
 LICENSING:
 All rights fully reserved by Yevgeni Berzak, Carsten Ehrler, Michal Richter and Todd Shore. Usage or reference to this work or any part thereof must feature credit to all the authors. Without explicit permission from the authors beforehand, this software, its source and documentation may NOT be:
-- Downloaded
-- Used
 - Distributed
 - Incorporated into other products (either wholly or partially)
 - Used to create derived works
@@ -24,7 +22,7 @@ Exceptions to the above are granted for Caroline Sporleder and Martin Schreiber 
 --------------------------------------------------------
 REQUIREMENTS:
 - Dual-core 2.0GHz CPU (recommended)
-- >1.5GB available RAM (recommended)
+- >2GB RAM (recommended)
 - Approx. 350MB available hard disk space
 - Java (tested on version 1.6.0_15)
 - MySQL Server (tested on version 14.14)

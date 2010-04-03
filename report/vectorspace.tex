@@ -45,13 +45,11 @@ We briefly compared both similarity measures by comparing the similarity graphs 
 
 In the current version we use cosine similarity measure by default. We do that because this measure is more widespread that the Manhattan distance, and because of its elegant mathematical interpretation.
 
-We computed similarity matrices in order to store the similarity rates between each pair of documents. Similarity matrices were precomputed for each combination of named entity type, similarity measure and aliasing setting (aliased or non-aliased).
-Similarity matrices are loaded on the startup of the application and each the similarity measure or aliasing settings changes.
+We computed similarity matrices in order to store the similarity rates between each pair of documents. Separate similarity matrices were computed for each combination of the four indexes, two similarity measure and two aliasing settings (aliased or non-aliased), resulting is 16 similarity matrices. We explain our approach to aliasing and its effect on the similarity measures in section \ref{aliasing}. Unlike the index matrices, the similarity matrices are not sparse and each entry is represented in the memory.
 
-Similarity matrix that is used is computed on the fly by the linear combination of similarity values coming from the precomputed similarity matrices for each named entity type and common word similarity.
+Similarity matrices are loaded on the startup of the application. Switching similarity measures or aliasing setting redraws the edges of the graph according to a different matrix. Choosing a weights for combination of NE's and possibly general vocabulary leads to on-the-fly computation of similarities based on a linear combination of values from the relevant precomputed similarity matrices.
 
-These precomputed similarity matrices are not sparse (unlike the index matrices) and each entry is represented in the memory.   
-
+   
 \subsubsection{Keyword and Metadata Search}\label{sec:keyword_search}
 
 Searching in VSMs is implemented by transforming a search query into its vector representation in the same fashion as a document is. The cosine similarity between the query vector and the vector representation of each document is computed. The search results are then ordered according to their similarity to the user query and are returned as output. 
