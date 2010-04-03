@@ -38,7 +38,7 @@ one node, the whole graph must be redrawn. Furthermore, during this process all 
 transformers are applied on each graph object. Using the default implementation of the
 Jung visualization class, the application used roughly $50\%$ CPU load (of a single-core 2.5GHz CPU) when displaying a graph with 25 nodes about 50 edges--- even without any ongoing user interaction or computation task. The issue of
 unnecessary graph redrawing and poor GUI performance was largely resolved by extending
-the standard Jung \texttt{VisualizationViewer} class and re-implementing several functions. 
+the standard Jung \code{VisualizationViewer} class and re-implementing several functions. 
 
 \subsubsection {Querying Functionalities}
 \label{sec:querying_functionalities}
