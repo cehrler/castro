@@ -33,19 +33,19 @@ The difference between these two weighting schemes can have a considerable impac
 As mentioned previously, our representation of the documents is based on their similarity to each other according to some extracted data. The edges of the resulting graphs are constructed based on these similarities. The crucial and difficult question is, how do the similar and related documents look like. This question can have various answers depending on the set of documents and the interests of the historian. Our working hypothesis is that the similarity and relatedness between the documents that might be relevant for the interest of the historian can be expressed as the similarity of the named entities. 
 The assumption is that NE's of the sort we extract are more relevant for historically motivated similarity then other information that can be extracted from the documents. As we represent documents in VSM as the vectors of named entities, we can directly apply standard vector space measures for expressing similarities between vectors. 
 
-The most common measure is the cosine similarity measure.
+The first measure we use is the cosine similarity measure. 
 \[\text{cosim}(d,d') = \sum_{k \in \mathcal{T}}\frac{d(k)d'(k)}{|d||d'|}\]
-It expresses the cosine angle between the vectors $d$ and $d'$. The cosine measure is equal to $1$ for the parallel vectors and is equal to $0$ for perpendicular vectors.
+It expresses the cosine angle between the vectors $d$ and $d'$. The cosine measure is equal to $1$ for the parallel vectors and is equal to $0$ for perpendicular vectors. The smaller the angle between the vectors, the more similar they are.
 
-We also used another similarity measure which we denoted as "Manhattan similarity measure". The reason is that the Manhattan similarity measure between two vectors can be described using the manhattan distance between zero vector and the vector whose value for each column is equal to the minimum value of those vectors for that column.
+We also used "Manhattan similarity measure". The Manhattan similarity between two vectors can be described using the Manhattan distance between the zero vector and the minimum value for each column out of the two vectors.
 
 \[\text{manhattan}(d,d') = \sum_{k \in \mathcal{T}}min[d(k), d'(k)]\]
 
-We breafly compared both similarity measure by comparing the similarity graphs constructed by using those measures. In both cases the sets of edges of the graphs were quite the same. But to achieve a similar result we needed to choose different setups of edge thresholds, because both measures scale differently.
+We briefly compared both similarity measures by comparing the similarity graphs constructed using those measures. Though at first glance the edges look differently, it seems that the main reason for that concerns the different scalability of the two measures. Adjusting the similarity threshold of one of the graphs can yield rather similar edges to the other graph.
 
-In the current version we use cosine similarity measure by default, because it's the standard measure with nice mathematical interpretation.
+In the current version we use cosine similarity measure by default. We do that because this measure is more widespread that the Manhattan distance, and because of its elegant mathematical interpretation.
 
-Similarity matrices were precomputed for each combination of named entity type, similarity measure and aliasing setting (aliased or non-aliased).
+We computed similarity matrices in order to store the similarity rates between each pair of documents. Similarity matrices were precomputed for each combination of named entity type, similarity measure and aliasing setting (aliased or non-aliased).
 Similarity matrices are loaded on the startup of the application and each the similarity measure or aliasing settings changes.
 
 Similarity matrix that is used is computed on the fly by the linear combination of similarity values coming from the precomputed similarity matrices for each named entity type and common word similarity.
