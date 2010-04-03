@@ -82,6 +82,7 @@ public class SettingsWindow implements ActionListener {
 	public static ChineseWhisperClustering.ChineseWhisperTypesEnum ChineseWhisperClustering_type = ChineseWhisperTypesEnum.modified;
 	public static int ChineseWhisperClustering_numberOfIterations = 15;
 	public static double ChineseWhisperClusteringAdjusted_activationThresholdMultiplierIncrement = 0.5;
+	public static double ChineseWhisperClusteingNormalizing_sizeAddConstant = 0.3;
 	
 	public static SimMatrixElem.SimilarityMeasure similarityMeasure = SimMatrixElem.SimilarityMeasure.cosine;
 	
@@ -137,7 +138,7 @@ public class SettingsWindow implements ActionListener {
 		matrixUpperPanel.add(new JLabel("Similarity matrix:"));
 
 		similarityMeasureCB = new JComboBox(new String[] { "named entity", "lexical", "custom" } );
-		similarityMeasureCB.setSelectedItem(similarityMeasureType);
+		similarityMeasureCB.setSelectedIndex(similarityMeasureType);
 		similarityMeasureCB.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {

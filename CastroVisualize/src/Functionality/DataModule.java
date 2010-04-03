@@ -915,6 +915,7 @@ public class DataModule {
 	{
 		int ret = 0;
 		int col;
+		neString = neString.toLowerCase();
 		if (personsMap.containsKey(neString))
 		{
 			for (Iterator<Integer> itCol = personsMap.get(neString).iterator(); itCol.hasNext(); )
