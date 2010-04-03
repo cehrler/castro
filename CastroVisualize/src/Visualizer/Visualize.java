@@ -67,12 +67,8 @@ import GUI.CastroGUI;
 
 public class Visualize implements ItemListener, MouseListener {
 	
-<<<<<<< HEAD
-	VisualizationViewer<Functionality.Node,Functionality.Edge> vv;	
-=======
 	MyVisualizationViewer<Functionality.Node,Functionality.Edge> vv;
 	
->>>>>>> 98aa748109be4d2cea8a7ed67037386bd2c377ee
 	Graph<Functionality.Node, Functionality.Edge> qt;
 	
 	private SpringLayoutWeighted layout;
