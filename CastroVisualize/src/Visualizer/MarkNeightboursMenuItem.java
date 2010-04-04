@@ -47,7 +47,7 @@ public class MarkNeightboursMenuItem extends JMenuItem implements VertexListener
 
 	/** Creates a new instance of MarkNeightboursVertexedge StrokeMenuItem */
 	public MarkNeightboursMenuItem() {
-		super("Mark Strongest Neighbors");
+		super("Mark Neighbors");
 		this.addActionListener(new ActionListener(){
 			@SuppressWarnings("unchecked")
 			public void actionPerformed(ActionEvent e) {
