@@ -15,7 +15,16 @@ The query functions, graph and display functions are integrated into a single gr
 }
 \end{figure}
 
-Search terms are entered in the query form (item 1 in the figure above)\footnote{Unless otherwise mentioned, the version depicted is \code{2010-04-02}.}: Entering any term will return both NEs and also keywords sharing the exact form (not case-sensitive)--- For instance, entering \lingform{committee} will both return exact instances of \code{committee} in the document itself, and will return NEs similar to \lingform{committee} based on the string kernel similarity measure, e.g.\ \lingform{Central Committee} and \lingform{Central Committee of the Cuban Communist Party}. Multi-word terms are denoted in double quotes, e.g.\ \code{"Central Committee"}. The maximum amount of query results can be adjusted (item 2): For example, entering a value of \code{10} will return ten documents most relevant to the query. The set of years searched between is also modifiable specified by (item 3), as well as the type(s) of documents searched (e.g.\ \code{Speech}, \code{Interview}) (item 5). Once the criteria are entered, the query is run by selecting item 5.
+Search terms are entered in the query form (item 1 in the figure above)\footnote{Unless otherwise
+mentioned, the version depicted is \code{2010-04-02}.}: Entering any term will return both NEs and
+also keywords sharing the exact form (not case-sensitive)--- For instance, entering
+\lingform{committee} will both return exact instances of \code{committee} in the document itself,
+and will return NEs similar to \lingform{committee} based on the string kernel similarity measure,
+e.g.\ \lingform{Central Committee} and \lingform{Central Committee of the Cuban Communist Party}.
+Multi-word terms are denoted in double quotes, e.g.\ \code{"Central Committee"}. The maximum amount
+of query results can be adjusted (item 2). The set of years searched between is also modifiable
+specified by (item 3), as well as the type(s) of documents searched (e.g.\ \code{Speech},
+\code{Interview}) (item 5). Once the criteria are entered, the query is run by selecting item 5.
 
 \paragraph{Presentation}
 The results of the current query are displayed both in a table of results and in a graph displayed in the main window.
@@ -115,9 +124,18 @@ If the strength of the edge lies between the normal edge threshold and the thick
 
 The threshold value for normal edges is determined by the slider in the main control panel. The dotted-edge threshold value is then computed as a product of the normal edge threshold and the dotted edge constant. Likewise, the thick-edge threshold value is computed as a product of the normal edge threshold and the thick edge constant.
 \item[\scare{Clustering Settings}] \hfill \\
-The user can enable automatic document clustering using CWC (disabled by default), and specify the maximum number of clusters formed, the minimum size of each cluster, as well as the temporary graph density. \scare{Temporary graph} is the density of the data structure used for computation of the clusters: The clustering algorithm tends to be more effective with a dense graph, while users may prefer a rather sparser graph. Using this feature, the temporary graph structure can then be adjusted to the user's preferences. Clustering is enabled by setting the maximum number of clusters to a positive value. As well as the original CWC algorithm, the modified, more conservative version of the algorithm may be used (as mentioned in section \ref{sec:chinese_whipsering_clustering}). By increasing the \scare{Activation threshold multiplier} and by decreasing the \scare{Init iterations}, the algorithm becomes more conservative and vice versa.
+The user can enable automatic document clustering using CWC (disabled by default), and specify the
+maximum number of clusters formed, the minimum size of each cluster, as well as the temporary graph
+density. \scare{Temporary graph} is the density of the data structure used for computation of the
+clusters: The clustering algorithm tends to be more effective with a dense graph, while users may
+prefer a rather sparser graph. Using this feature, the temporary graph structure can then be
+adjusted to the user's preferences. Clustering is enabled by setting the maximum number of clusters
+to a positive value. As well as the original CWC algorithm, the modified, more conservative version
+of the algorithm may be used (as mentioned in section \ref{sec:chinese_whispering_clustering}). By
+increasing the \scare{Activation threshold multiplier} and by decreasing the \scare{Init
+iterations}, the algorithm becomes more conservative and vice versa.
 
-\begin{figure}[h]
+\begin{figure}[ht]
 \centering
 \caption{Document Clustering}
 \includegraphics[width=120mm]{clustering.png}
