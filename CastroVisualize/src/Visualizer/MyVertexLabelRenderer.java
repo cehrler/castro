@@ -1,4 +1,7 @@
-/*
+/* The class was derived from the jung source code.
+ * Author of the modification: Michal Richter
+ * Original author: see below
+
  * Copyright (c) 2005, the JUNG Project and the Regents of the University of
  * California All rights reserved.
  *
