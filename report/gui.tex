@@ -58,7 +58,7 @@ Selecting a document either through its corresponding entry in the table or node
 In addition to viewing document metadata in the query results table, the user may to view the metadata of the document associated with a particular node (e.g.\ document \meta{Type}, \meta{Date} or \meta{Location}) through the node's context menu (item 10) (i.e.\ by right-clicking on the node with the mouse). Also available through the context menu is the text of the document itself, which is displayed in a separate window which can be kept open while still navigating through the graph and viewing other nodes (item 11). The NEs in the text are denoted by being colored according to their type.
 
 \paragraph{\scare{Mark Neighbors} Function}
-Lastly, it is possible through the context menu to automatically select the nearest neighbors of the selected node(s), i.e.\ to select the nodes which are connected directly to the said node (rather than through another node).
+Lastly, it is possible through the context menu to automatically select the neighbors of the selected node(s), i.e.\ to select the nodes which are connected directly to the said node (rather than through another node).
 
 \begin{figure}[ht]
 \centering
@@ -67,7 +67,7 @@ Lastly, it is possible through the context menu to automatically select the near
 \subfloat[][After]{\includegraphics[width=60mm]{markneighbors_after.png}}
 \end{figure}
 
-Each nearest neighbor is automatically shaded in a range from black to white to represent the level of similarity between the node and the originally-selected node (item 14): The darker the shade, the more similar the document is to the document of the originally-selected node in relation to the other nearest neighbors; The lighter the shade, the less similar the document is. For example, of the nearest neighbours, item 15 is most similar to the originally-selected node. In descending order of similarity, the next most similar documents are item 16, 17 18 and 19.
+Each neighbor is automatically shaded in a range from black to white to represent the level of similarity between the node and the originally-selected node (item 14): The darker the shade, the more similar the document is to the document of the originally-selected node in relation to the other neighbors; The lighter the shade, the less similar the document is. For example, of the neighbours, item 15 is most similar to the originally-selected node. In descending order of similarity, the next most similar documents are item 16, 17 18 and 19.
 
 \paragraph{Display Options}
 \subparagraph{Edge/Node Filtering}
