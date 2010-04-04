@@ -20,7 +20,7 @@ documents was used, i.e.\ the same vectors as used in the index representation o
 section \ref{sec:indexing}). However, one drawback of $k$-means is that the user needs to specify
 the number of clusters $k$ beforehand.
 
-The purpose of $k$-means clustering is to minimize total intra-cluster variance. For the
+The objective of $k$-means clustering is to minimize total intra-cluster variance. For the
 initialization, $k$ cluster prototypes are randomly placed in the data space. The following two
 steps are then iterated until convergence:
 \begin{itemize}
@@ -54,7 +54,10 @@ their weights. In each initialization step, one node is pulled out from the list
 node cluster assignment procedure is then executed on the node for which the cluster assignment sum
 is greater. This means that the cluster assignment sum need not exceed the precomputed threshold.
 
-This pre-clustering is done in order to allow clustering to begin in spite of this threshold: Initially, each node forms its own cluster, and many nodes may not exceed this threshold. Likewise, selecting the nodes attached to the edges with great weight ensures that the cluster assignments done during these initialization steps are not irrelevant.
+This pre-clustering is done in order to allow clustering to begin in spite of this threshold:
+Initially, each node forms its own cluster, and many nodes may not exceed this threshold. Likewise,
+selecting the nodes attached to the edges with great weight ensures that the cluster assignments
+done during these initialization steps are not relevant for the final result.
 
 \ignore{
 The second variation has a working name "Give it to the poor CHWS". It differs from the first modification in that aspect, that there are no initialization steps and the weight of each cluster is normalized by dividing it by the term, whose value increases proportionality to the cluster size. In other words, this variation tends to produce smaller classes. We assume that this normalization is relevant, because in the experiments it happened a lot of times, that there was a cluster that become so big that it started to attract even the nodes that didn't have any strong connections to the nodes in the cluster - the document became the member of the cluster just because of a huge number of very weak almost irrelevant connections.}
