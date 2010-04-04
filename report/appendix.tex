@@ -13,14 +13,24 @@ With the MySQL backend set-up, the History Explorer frontend GUI can be run, acc
 and allowing the user to enter queries, view results, and navigate the information provided in
 real-time. To run the application for the first time, the frontend must be configured to access the
 MySQL database. This is done by creating a configuration file, by opening and editing the file
-\code{castro.conf.template} the subdirectory \code{HistoryExplorer}, replacing the MySQL username
+\code{castro.conf.template} in the subdirectory \code{HistoryExplorer}, replacing the MySQL username
 and password in the template file to that of a user with privileges sufficient to access and read
-the MySQL database (by default set to \code{root}), saving the file as \code{castro.conf} in the
-subdirectory \code{HistoryExplorer}.
+the MySQL database (by default set to \code{root}) and finally saving the file as \code{castro.conf}
+in the subdirectory \code{HistoryExplorer}.
 
-The application can then be run with the script \code{historyExplorer} in the \code{HistoryExplorer} directory. The size of the database is exceptionally large, and not only is much of the data accessed and loaded concurrently, but calculations are performed on large amounts of data both concurrently and in real-time: Thus, the application is rather demanding and, for optimal performance, it is recommended to set-up the application on a system with at least a dual-core 2.0GHz CPU and 2GB or more of available RAM (the script is set by default to launch the Java VM with a heap space of 1024MB). Be advised that the high memory requirments of the application might slow down the computer, especially after peforming multiple queries. 
+The application can then be run with the script \code{historyExplorer} in the \code{HistoryExplorer}
+directory. The size of the database is exceptionally large, and not only is much of the data
+accessed and loaded concurrently, but calculations are performed on large amounts of data both
+concurrently and in real-time: Thus, the application is rather demanding and, for optimal
+performance, it is recommended to set-up the application on a system with at least a dual-core
+2.0GHz CPU and 2GB or more of available RAM (the script is set by default to launch the Java VM with
+a heap space of 1024MB). Be advised that the high memory requirments of the application might slow
+down the computer, especially after peforming multiple queries.
 
-Although the only data supplied with the archive is for the Castro corpus from the CSDB, obtaining data and setting up databases for other corpora is very possible: The scripts used to obtain and process the data are included in the archive (in the subdirectory \code{scripts}), and can be easily adapted to other sources. The source code for the frontend is located in \code{CastroVisualize}.
+Although the only data supplied with the archive is for the Castro corpus from the CSDB, obtaining
+data and setting up databases for other corpora is possible: The scripts used to obtain and
+process the data are included in the archive (in the subdirectory \code{scripts}), and can be easily
+adapted to other sources. The source code for the frontend is located in \code{CastroVisualize}.
 
 \section{Credits}
 \begin{table}[ht]
