@@ -15,7 +15,16 @@ The query functions, graph and display functions are integrated into a single gr
 }
 \end{figure}
 
-Search terms are entered in the query form (item 1 in the figure above)\footnote{Unless otherwise mentioned, the version depicted is \code{2010-04-02}.}: Entering any term will return both NEs and also keywords sharing the exact form (not case-sensitive)--- For instance, entering \lingform{committee} will both return exact instances of \code{committee} in the document itself, and will return NEs similar to \lingform{committee} based on the string kernel similarity measure, e.g.\ \lingform{Central Committee} and \lingform{Central Committee of the Cuban Communist Party}. Multi-word terms are denoted in double quotes, e.g.\ \code{"Central Committee"}. The maximum amount of query results can be adjusted (item 2): For example, entering a value of \code{10} will return ten documents most relevant to the query. The set of years searched between is also modifiable specified by (item 3), as well as the type(s) of documents searched (e.g.\ \code{Speech}, \code{Interview}) (item 5). Once the criteria are entered, the query is run by selecting item 5.
+Search terms are entered in the query form (item 1 in the figure above)\footnote{Unless otherwise
+mentioned, the version depicted is \code{2010-04-02}.}: Entering any term will return both NEs and
+also keywords sharing the exact form (not case-sensitive)--- For instance, entering
+\lingform{committee} will both return exact instances of \code{committee} in the document itself,
+and will return NEs similar to \lingform{committee} based on the string kernel similarity measure,
+e.g.\ \lingform{Central Committee} and \lingform{Central Committee of the Cuban Communist Party}.
+Multi-word terms are denoted in double quotes, e.g.\ \code{"Central Committee"}. The maximum amount
+of query results can be adjusted (item 2). The set of years searched between is also modifiable
+specified by (item 3), as well as the type(s) of documents searched (e.g.\ \code{Speech},
+\code{Interview}) (item 5). Once the criteria are entered, the query is run by selecting item 5.
 
 \paragraph{Presentation}
 The results of the current query are displayed both in a table of results and in a graph displayed in the main window.
