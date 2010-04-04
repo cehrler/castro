@@ -26,4 +26,6 @@ $run_mysql --execute="source ./getNodes.sql;"
 $run_mysql --execute="source ./getNode.sql;"
 $run_mysql --execute="source ./getSpeechText.sql;"
 $run_mysql --execute="source ./getDictionary.sql;"
-} && echo "Database setup finished. If there were no errors, you may now run History Explorer."
+}
+
+setup_db && echo "Database setup finished. If there were no errors, you may now run History Explorer."
