@@ -1,4 +1,8 @@
-/*
+/* Note: This class was created as the modification of the jung library SpringLayout.java class
+ * 	     In order to take into the account the strength of the edge
+ * 		 Author of the modification: Michal Richter
+ * 		 Original author: see below
+ * 
  * Copyright (c) 2003, the JUNG Project and the Regents of the University of
  * California All rights reserved.
  *
