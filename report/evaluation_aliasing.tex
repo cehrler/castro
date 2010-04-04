@@ -41,7 +41,7 @@ Naturally, along with the cases of clear success and those of clear failure, man
 
 Most of the strings above refer to the same entity (Raul Castro), with the exception of \lingform{F. Castro}, which clearly refers to a different entity, as well as \lingform{Mr Castro} and \lingform{Dr Castro} (the correctness of these forms being dependent on context).
 
-By examining the outputs of using different similarity thresholds, it was found that the original assumption that the trade-off between recall and precision can be partially regulated by adjusting the similarity threshold. A higher threshold leads to higher recall but lower precision, while lower threshold improves precision at the expense of recall. As our similarity measures heavily rely on the accuracy of the aliases, we preferred to use a relatively high inter-NE similarity threshold (0.75) in order to maximize precision while retaining some of the flexibility the method has to offer. The examples presented above were generated with this threshold.
+By examining the outputs of using different similarity thresholds, it was found that the original assumption that the trade-off between recall and precision can be partially regulated by adjusting the similarity threshold. A higher threshold leads to higher precision but lower recall, while a lower threshold improves recall at the expense of precision.
 
 However, even given this setup, the mechanism has considerable over-generation, which then leads to unjustified linking between documents which is a crucial problem. The noise produced by the aliasing over-generation is possibly the major drawback of our system. We discuss solutions for this situation in the future research section \ref{sec:future_work_NLP}.
 
