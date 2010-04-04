@@ -6,9 +6,9 @@ database back-end requires a working version of MySQL Server. The archive must f
 into a new directory. After extracting, a database for the similarity matrices, metadata and other
 information must be created for use by the server. An automated script is supplied which sets up a
 database with the necessary information for the Castro corpus: inside the \code{scripts}
-subdirectory is a file named \code{setup\_db.sh} This file must first be run by the user to include
-the correct username and password of a system user with MySQL administrator privileges (by default
-set to \code{root}). The script can then be run to set-up the necessary database structure.
+subdirectory is a file named \code{setup\_db.sh} This file must first be edited by the user to
+include the correct username and password of a system user with MySQL administrator privileges (by
+default set to \code{root}). The script can then be run to set-up the necessary database structure.
 With the MySQL backend set-up, the History Explorer frontend GUI can be run, accessing the database
 and allowing the user to enter queries, view results, and navigate the information provided in
 real-time. To run the application for the first time, the frontend must be configured to access the
