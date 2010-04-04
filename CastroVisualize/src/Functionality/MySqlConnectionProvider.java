@@ -1,3 +1,5 @@
+// This comes from a internet discussion forum, don't remember exactly. Michal
+
 package Functionality;
 
 import java.sql.Connection;

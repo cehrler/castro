@@ -1,3 +1,5 @@
+/* We changed the original jung class a bit, I don't remember why. Michalisek*/
+
 /*
  * Copyright (c) 2003, the JUNG Project and the Regents of the University of
  * California All rights reserved.

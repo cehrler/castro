@@ -25,6 +25,9 @@ import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Map;
 
+/* This class was derived from the original jung class - see below
+/* The class was changed by Michal Richter in order to take into the account the strength of the edges */
+
 /**
  * Implements the Fruchterman-Reingold force-directed algorithm for node layout.
  * 
