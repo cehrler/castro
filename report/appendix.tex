@@ -1,9 +1,22 @@
 \section{Distribution and Installation}
 The application and its source may be downloaded as an archive file at \url{http://github.com/cehrler/castro}.
 
-To run the front-end, a working version of Java Runtime Environment must be installed, and the database back-end requires a working version of MySQL Server. The archive must first be extracted into a new directory. After extracting, a database for the similarity matrices, metadata and other information must be created for use by the server. An automated script is supplied which sets up a database with the necessary information for the Castro corpus: inside the \code{scripts} subdirectory is a file named \code{setup\_db.sh} This file must first be by the user to include the correct username and password of a system user with MySQL administrator privileges (by default set to \code{root}). The script can then be run to set-up the necessary database structure.
-
-With the MySQL backend set-up, the History Explorer frontend GUI can be run, accessing the database and allowing the user to enter queries, view results, and navigate the information provided in real-time. To run the application for the first time, the frontend must be configured to access the MySQL database. This is done by creating a configuration file, by opening and editing the file \code{castro.conf.template} the subdirectory \code{HistoryExplorer}, replacing the MySQL username and password in the template file to that of a user with privileges sufficient to access and read the MySQL database (by default set to \code{root}), saving the file as \code{castro.conf} in the subdirectory \code{HistoryExplorer}.
+To run the front-end, a working version of Java Runtime Environment must be installed, and the
+database back-end requires a working version of MySQL Server. The archive must first be extracted
+into a new directory. After extracting, a database for the similarity matrices, metadata and other
+information must be created for use by the server. An automated script is supplied which sets up a
+database with the necessary information for the Castro corpus: inside the \code{scripts}
+subdirectory is a file named \code{setup\_db.sh} This file must first be run by the user to include
+the correct username and password of a system user with MySQL administrator privileges (by default
+set to \code{root}). The script can then be run to set-up the necessary database structure.
+With the MySQL backend set-up, the History Explorer frontend GUI can be run, accessing the database
+and allowing the user to enter queries, view results, and navigate the information provided in
+real-time. To run the application for the first time, the frontend must be configured to access the
+MySQL database. This is done by creating a configuration file, by opening and editing the file
+\code{castro.conf.template} the subdirectory \code{HistoryExplorer}, replacing the MySQL username
+and password in the template file to that of a user with privileges sufficient to access and read
+the MySQL database (by default set to \code{root}), saving the file as \code{castro.conf} in the
+subdirectory \code{HistoryExplorer}.
 
 The application can then be run with the script \code{historyExplorer} in the \code{HistoryExplorer} directory. The size of the database is exceptionally large, and not only is much of the data accessed and loaded concurrently, but calculations are performed on large amounts of data both concurrently and in real-time: Thus, the application is rather demanding and, for optimal performance, it is recommended to set-up the application on a system with at least a dual-core 2.0GHz CPU and 2GB or more of available RAM (the script is set by default to launch the Java VM with a heap space of 1024MB). Be advised that the high memory requirments of the application might slow down the computer, especially after peforming multiple queries. 
 
