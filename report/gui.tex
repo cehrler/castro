@@ -114,16 +114,16 @@ The edge density slider on the left-hand control panel corresponds to the edge d
 \item \scare{Thick edge const} If the edge strength is higher then the mean of the edge strength multiplied by thick edge constant, then the edge is thick.
 \end{itemize}
 
-The following settings control the edge appearance in absolute-similarity mode:
+In absoulute-similarity mode, if the strength of the edge lies between the dotted edge threshold and the normal edge threshold, then the edge is dotted. If the strength of the edge is greater than the thick edge threshold, then the edge is thick. If the strength of the edge lies between the normal edge threshold and the thick edge threshold, then the edge is normal.
 
 \begin{itemize}
-\item \scare{Dotted edge const}: If the strength of the edge lies between the dotted edge threshold and the normal edge threshold, then the edge is dotted.
-\item \scare{Thick edge const}: If the strength of the edge is greater than the thick edge threshold, then the edge is thick.
+\item \scare{Dotted edge const}: The dotted-edge threshold value is computed as a product of the normal edge threshold and the dotted edge constant.
+\item \scare{Thick edge const}: The thick-edge threshold value is computed as a product of the normal edge threshold and the thick edge constant.
 \end{itemize}
 
-If the strength of the edge lies between the normal edge threshold and the thick edge threshold, then the edge is normal.
 
-The threshold value for normal edges is determined by the slider in the main control panel. The dotted-edge threshold value is then computed as a product of the normal edge threshold and the dotted edge constant. Likewise, the thick-edge threshold value is computed as a product of the normal edge threshold and the thick edge constant.
+
+The threshold value for normal edges is determined by the slider in the main control panel. 
 \item[\scare{Clustering Settings}] \hfill \\
 The user can enable automatic document clustering using CWC (disabled by default), and specify the
 maximum number of clusters formed, the minimum size of each cluster, as well as the temporary graph
