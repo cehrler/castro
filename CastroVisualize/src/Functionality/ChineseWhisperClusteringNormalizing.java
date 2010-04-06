@@ -1,6 +1,5 @@
-//============================================================================
-// Name        : ChineseWhisperClusteringAdjusted.java
-// Author      : Michal Richter, Michalisek
+// Name        : ChineseWhisperClusteringNormalizing.java
+// Author      : Michal Richter
 // Version     : 2.5.1
 // Copyright   : All rights regarding the source material are reserved by the authors: With the exception
 //               of Caroline Sporleder and Martin Schreiber at Saarland University in Germany and for
@@ -13,14 +12,13 @@
 //               and so are glad to grant permission to people wishing to incorporate this project into
 //               others or to use it for other purposes, and are asked to contact the authors for these
 //               permissions.
-// Description : Implementation of the modified CHWC (See the report)
+// Description : Our modification of CHWC with the working name "Give it to the poor"
 //               
 //============================================================================
 
 package Functionality;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -30,18 +28,83 @@ import java.util.Map;
 
 import GUI.SettingsWindow;
 
-public class ChineseWhisperClusteringAdjusted extends ChineseWhisperClustering {
+public class ChineseWhisperClusteringNormalizing extends ChineseWhisperClustering {
+
+	public ChineseWhisperClusteringNormalizing() {}
 	
-	public ChineseWhisperClusteringAdjusted() {}
-	
-		
-	
-	
-	public void Evaluate(Graph g, int maxNumClusters, int numIterations)
+	private double clusterSizeDepMultiplier(int size)
 	{
-		System.err.println("Chinese whisper adjusted!");
+		double retVal = -1;
 		
-		int numMaster = SettingsWindow.ChineseWhisperClusteringAdjusted_numMasterEdges;
+		if (size == 1) retVal = 1;
+		retVal = (size - 1) * SettingsWindow.ChineseWhisperClusteingNormalizing_sizeAddConstant + 1;
+		/*if (size == 2) retVal = 1.2;
+		if (size == 3) retVal = 1.4;
+		if (size == 4) retVal = 1.6;
+		if (size == 5) retVal = 1.8;
+		if (size == 6) retVal =  2;
+		if (size == 7) retVal = 2.2;
+		if (size == 8) retVal = 7.4;
+		if (size > 8) retVal = (double)size;*/
+		
+		if (retVal >= 0)
+		{
+			//System.err.println("clusterSizeDepMultiplier: " + retVal);
+			return retVal;
+		}
+		
+		System.err.println("Invalid cluster size value: " + size);
+		System.exit(1);
+		
+		return 0;
+		
+	}
+	
+	protected MyPair getBestClassForNode(Node n, Map<Node, Integer> nodesMap, Map<Integer, Integer> numNodesPerClass)
+	{
+		Map<Integer, Double> activationMap = new HashMap<Integer, Double>();
+		
+		Map<Node, Double> neighboursMap = n.getNeighborsMap();
+		
+		double maxActivation = -1000;
+		int bestClass = -1;
+		double currActivation;
+		
+		for (Iterator<Node> it = neighboursMap.keySet().iterator(); it.hasNext(); )
+		{
+			Node bleNode = it.next();
+			
+			int bleClassID = nodesMap.get(bleNode); 
+			
+			if (activationMap.containsKey(bleClassID))
+			{
+				activationMap.put(bleClassID, activationMap.get(bleClassID) + neighboursMap.get(bleNode));
+			}
+			else
+			{
+				activationMap.put(bleClassID, neighboursMap.get(bleNode));
+			}
+			
+			currActivation = activationMap.get(bleClassID) / clusterSizeDepMultiplier(numNodesPerClass.get(bleClassID));
+			if (currActivation  > maxActivation)
+			{
+				maxActivation = currActivation ;
+				bestClass = bleClassID;
+			}
+			
+		}
+		
+		MyPair pair = new MyPair();
+		pair.classID = bestClass;
+		pair.activationScore = maxActivation;
+		return pair;
+		
+	}
+	
+	@Override
+	public void Evaluate(Graph g, int maxNumClusters, int numIterations) {
+		System.err.println("Chinese whisper normalizing!");
+		
 		double activationThresholdMultiplier = SettingsWindow.ChineseWhisperClusteringAdjusted_activationThresholdMultiplier;
 		int minimalClusterSize = SettingsWindow.ChineseWhisperClustering_minimalSizeOfCluster;
 		List<Node> ln = new ArrayList<Node>();
@@ -74,29 +137,11 @@ public class ChineseWhisperClusteringAdjusted extends ChineseWhisperClustering {
 		}
 		
 		double edgeStrengthMean = sum / numEdgesToCountMean;
-		
-		Collections.sort(le, new Comparator<Edge>() {
-			public int compare(Edge arg0, Edge arg1) {
-				return (arg0.getStrength().compareTo(arg1.getStrength()));
-			}
-		});
-		Collections.reverse(le);
-		
-		Edge e;
-		for (int i = 0; i < Math.min(le.size(), numMaster); i++)
+
+		final Map<Integer, Integer> numNodesPerClass = new HashMap<Integer, Integer>();
+		for (int i = 0; i < ln.size(); i++)
 		{
-			e = le.get(i);
-			MyPair firstNodePair = getBestClassForNode(e.getNode1(), nodesMap);
-			MyPair secondNodePair = getBestClassForNode(e.getNode2(), nodesMap);
-			
-			if (firstNodePair.activationScore > secondNodePair.activationScore)
-			{
-				nodesMap.put(e.getNode1(), firstNodePair.classID);
-			}
-			else
-			{
-				nodesMap.put(e.getNode2(), secondNodePair.classID);
-			}
+			numNodesPerClass.put(i, 1);
 		}
 		
 		for (int i = 0; i < numIterations; i++)
@@ -107,21 +152,22 @@ public class ChineseWhisperClusteringAdjusted extends ChineseWhisperClustering {
 			{
 				Node n = ln.get(j);
 				
-				MyPair bestPair = getBestClassForNode(n, nodesMap);
+				MyPair bestPair = getBestClassForNode(n, nodesMap, numNodesPerClass);
 				
 				if (bestPair.activationScore > edgeStrengthMean * activationThresholdMultiplier)
 				{
+					numNodesPerClass.put(bestPair.classID, numNodesPerClass.get(bestPair.classID) + 1);
+					numNodesPerClass.put(nodesMap.get(n), numNodesPerClass.get(nodesMap.get(n)) - 1);
 					nodesMap.put(n, bestPair.classID);
 				}
 			}
 			
 		}
 		
-		final Map<Integer, Integer> numNodesPerClass = new HashMap<Integer, Integer>();
 		
 		Node n;
 		int classID;
-		for (Iterator<Node> it = nodesMap.keySet().iterator(); it.hasNext(); )
+		/*for (Iterator<Node> it = nodesMap.keySet().iterator(); it.hasNext(); )
 		{
 			n = it.next();
 			classID = nodesMap.get(n);
@@ -134,7 +180,7 @@ public class ChineseWhisperClusteringAdjusted extends ChineseWhisperClustering {
 			{
 				numNodesPerClass.put(classID, 1);
 			}
-		}
+		}*/
 		
 		List<Integer> listClassID = new ArrayList<Integer>(numNodesPerClass.keySet());
 		
@@ -168,4 +214,5 @@ public class ChineseWhisperClusteringAdjusted extends ChineseWhisperClustering {
 			}
 		}
 	}
+
 }
